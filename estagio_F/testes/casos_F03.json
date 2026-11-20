@@ -1,0 +1,34 @@
+{
+  "bloco": "F03",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "F03_E03_corrigido.c": [
+      {"id": "F03-E03-T1", "tipo": "normal", "stdin": "1000.00 10.0\n", "stdout": "Novo salario: 1100.00\n"},
+      {"id": "F03-E03-T2", "tipo": "borda", "stdin": "2500.00 0.0\n", "stdout": "Novo salario: 2500.00\n"},
+      {"id": "F03-E03-T3", "tipo": "normal", "stdin": "1200.00 15.0\n", "stdout": "Novo salario: 1380.00\n"},
+      {"id": "F03-E03-T4", "tipo": "borda", "stdin": "800.00 -10.0\n", "stdout": "Novo salario: 720.00\n"},
+      {"id": "F03-E03-T5", "tipo": "borda", "stdin": "0.00 25.0\n", "stdout": "Novo salario: 0.00\n"}
+    ],
+    "F03_E04.c": [
+      {"id": "F03-E04-T1", "tipo": "normal", "stdin": "500 120\n", "stdout": "Original: 500\nAtualizado: 380\n"},
+      {"id": "F03-E04-T2", "tipo": "borda", "stdin": "200 200\n", "stdout": "Original: 200\nAtualizado: 0\n"},
+      {"id": "F03-E04-T3", "tipo": "borda", "stdin": "150 200\n", "stdout": "Original: 150\nAtualizado: 150\n"},
+      {"id": "F03-E04-T4", "tipo": "borda", "stdin": "300 0\n", "stdout": "Original: 300\nAtualizado: 300\n"},
+      {"id": "F03-E04-T5", "tipo": "borda", "stdin": "300 -50\n", "stdout": "Original: 300\nAtualizado: 300\n"}
+    ],
+    "F03_E05.c": [
+      {"id": "F03-E05-T1", "tipo": "normal", "stdin": "25.0\n", "stdout": "Kelvin limitado: 298.15\n"},
+      {"id": "F03-E05-T2", "tipo": "borda", "stdin": "-300.0\n", "stdout": "Kelvin limitado: 0.00\n"},
+      {"id": "F03-E05-T3", "tipo": "borda", "stdin": "-273.15\n", "stdout": "Kelvin limitado: 0.00\n"},
+      {"id": "F03-E05-T4", "tipo": "borda", "stdin": "800.0\n", "stdout": "Kelvin limitado: 1000.00\n"},
+      {"id": "F03-E05-T5", "tipo": "borda", "stdin": "726.85\n", "stdout": "Kelvin limitado: 1000.00\n"}
+    ],
+    "F03_C03.c": [
+      {"id": "F03-C03-T1", "tipo": "normal", "stdin": "12 5\n", "stdout": "Total de pontos: 17\n"},
+      {"id": "F03-C03-T2", "tipo": "borda", "stdin": "0 7\n", "stdout": "Total de pontos: 7\n"},
+      {"id": "F03-C03-T3", "tipo": "borda", "stdin": "10 0\n", "stdout": "Total de pontos: 10\n"},
+      {"id": "F03-C03-T4", "tipo": "borda", "stdin": "10 -3\n", "stdout": "Total de pontos: 10\n"},
+      {"id": "F03-C03-T5", "tipo": "normal", "stdin": "20 1\n", "stdout": "Total de pontos: 21\n"}
+    ]
+  }
+}

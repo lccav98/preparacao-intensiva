@@ -1,0 +1,41 @@
+{
+  "bloco": "G08",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "G08_E03_corrigido.c": [
+      {"id": "G08-E03-T1", "tipo": "normal", "stdin": "2.0 8 5\n", "stdout": "Potencia: 256.00\nChamadas: 4\nFib: 5\n"},
+      {"id": "G08-E03-T2", "tipo": "normal", "stdin": "3.0 5 6\n", "stdout": "Potencia: 243.00\nChamadas: 3\nFib: 8\n"},
+      {"id": "G08-E03-T3", "tipo": "borda", "stdin": "5.0 0 0\n", "stdout": "Potencia: 1.00\nChamadas: 1\nFib: 0\n"},
+      {"id": "G08-E03-T4", "tipo": "borda", "stdin": "2.5 1 1\n", "stdout": "Potencia: 2.50\nChamadas: 1\nFib: 1\n"},
+      {"id": "G08-E03-T5", "tipo": "normal", "stdin": "-2.0 3 7\n", "stdout": "Potencia: -8.00\nChamadas: 2\nFib: 13\n"}
+    ],
+    "G08_E04.c": [
+      {"id": "G08-E04-T1", "tipo": "normal", "stdin": "5\n", "stdout": "Fib: 5\nChamadas: 15\n"},
+      {"id": "G08-E04-T2", "tipo": "borda", "stdin": "0\n", "stdout": "Fib: 0\nChamadas: 1\n"},
+      {"id": "G08-E04-T3", "tipo": "borda", "stdin": "1\n", "stdout": "Fib: 1\nChamadas: 1\n"},
+      {"id": "G08-E04-T4", "tipo": "normal", "stdin": "4\n", "stdout": "Fib: 3\nChamadas: 9\n"},
+      {"id": "G08-E04-T5", "tipo": "normal", "stdin": "8\n", "stdout": "Fib: 21\nChamadas: 67\n"}
+    ],
+    "G08_E05.c": [
+      {"id": "G08-E05-T1", "tipo": "normal", "stdin": "2.0 8\n", "stdout": "Resultado: 256.00\nChamadas linear: 8\nChamadas rapida: 4\n"},
+      {"id": "G08-E05-T2", "tipo": "normal", "stdin": "2.0 7\n", "stdout": "Resultado: 128.00\nChamadas linear: 7\nChamadas rapida: 3\n"},
+      {"id": "G08-E05-T3", "tipo": "borda", "stdin": "5.0 0\n", "stdout": "Resultado: 1.00\nChamadas linear: 1\nChamadas rapida: 1\n"},
+      {"id": "G08-E05-T4", "tipo": "borda", "stdin": "3.5 1\n", "stdout": "Resultado: 3.50\nChamadas linear: 1\nChamadas rapida: 1\n"},
+      {"id": "G08-E05-T5", "tipo": "borda", "stdin": "1.0 32\n", "stdout": "Resultado: 1.00\nChamadas linear: 32\nChamadas rapida: 6\n"}
+    ],
+    "G08_E06.c": [
+      {"id": "G08-E06-T1", "tipo": "normal", "stdin": "2.0 8\n", "stdout": "Potencia: 256.00\nMultiplicacoes: 3\n"},
+      {"id": "G08-E06-T2", "tipo": "normal", "stdin": "3.0 5\n", "stdout": "Potencia: 243.00\nMultiplicacoes: 3\n"},
+      {"id": "G08-E06-T3", "tipo": "borda", "stdin": "2.0 -2\n", "stdout": "Potencia: 0.25\nMultiplicacoes: 1\n"},
+      {"id": "G08-E06-T4", "tipo": "borda", "stdin": "5.0 0\n", "stdout": "Potencia: 1.00\nMultiplicacoes: 0\n"},
+      {"id": "G08-E06-T5", "tipo": "borda", "stdin": "2.0 -1\n", "stdout": "Potencia: 0.50\nMultiplicacoes: 0\n"}
+    ],
+    "G08_C03.c": [
+      {"id": "G08-C03-T1", "tipo": "normal", "stdin": "2.0 10 6\n", "stdout": "Potencia: 1024.00\nChamadas: 4\nFib(K): 8\n"},
+      {"id": "G08-C03-T2", "tipo": "borda", "stdin": "2.0 0 0\n", "stdout": "Potencia: 1.00\nChamadas: 1\nFib(K): 0\n"},
+      {"id": "G08-C03-T3", "tipo": "borda", "stdin": "4.0 1 1\n", "stdout": "Potencia: 4.00\nChamadas: 1\nFib(K): 1\n"},
+      {"id": "G08-C03-T4", "tipo": "normal", "stdin": "1.5 4 4\n", "stdout": "Potencia: 5.06\nChamadas: 3\nFib(K): 3\n"},
+      {"id": "G08-C03-T5", "tipo": "normal", "stdin": "-3.0 3 7\n", "stdout": "Potencia: -27.00\nChamadas: 2\nFib(K): 13\n"}
+    ]
+  }
+}

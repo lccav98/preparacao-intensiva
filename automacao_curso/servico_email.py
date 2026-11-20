@@ -1,0 +1,624 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Servico de entrega de folhas de prova e boletins de feedback por e-mail.
+Suporta envio/recebimento SMTP/IMAP real quando configurado e opera com
+spool MIME (.eml) deterministico local em spool_email/enviados e spool_email/recebidos.
+"""
+
+import email
+import email.utils
+import hashlib
+import html
+import imaplib
+import os
+import re
+import select
+import smtplib
+import threading
+import time
+from email.message import EmailMessage
+from email.policy import default as email_policy
+from typing import Any, Callable, Dict, List, Optional
+
+import banco_dados
+import config
+from catalogo_curricular import BlocoCurricular
+
+
+def _despachar_mime(msg: EmailMessage, nome_arquivo_eml: str) -> Dict[str, Any]:
+    config.garantir_diretorios()
+    if "X-Prep-Origem" not in msg:
+        msg["X-Prep-Origem"] = "sistema"
+
+    cfg = config.obter_integracoes()
+    smtp_host = cfg["smtp_host"]
+    smtp_port = int(cfg["smtp_port"])
+    smtp_user = cfg["smtp_user"]
+    smtp_pass = cfg["smtp_pass"]
+    if cfg["smtp_from"] and (not msg["From"] or msg["From"] == config.SMTP_FROM):
+        del msg["From"]
+        msg["From"] = cfg["smtp_from"]
+
+    caminho_eml = os.path.join(config.SPOOL_ENVIADOS_DIR, nome_arquivo_eml)
+    with open(caminho_eml, "wb") as f:
+        f.write(msg.as_bytes())
+
+    envio_real = False
+    erro_smtp = ""
+    if smtp_host and smtp_user and smtp_pass:
+        try:
+            if smtp_port == 465:
+                with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=12) as srv:
+                    srv.login(smtp_user, smtp_pass)
+                    srv.send_message(msg)
+            else:
+                with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as srv:
+                    srv.starttls()
+                    srv.login(smtp_user, smtp_pass)
+                    srv.send_message(msg)
+            envio_real = True
+        except Exception as exc:
+            erro_smtp = str(exc)
+
+    return {
+        "caminho_eml": caminho_eml,
+        "enviado_smtp": envio_real,
+        "modo_entrega": "SMTP_REAL" if envio_real else "SPOOL_LOCAL",
+        "erro_smtp": erro_smtp,
+    }
+
+
+def enviar_prova_por_email(
+    aluno: Dict[str, Any],
+    bloco: BlocoCurricular,
+    folha_info: Dict[str, Any],
+    variante: str = "V1",
+    tentativa: int = 1,
+    modo: str = "checagem",
+    disciplina: Optional[str] = None,
+) -> Dict[str, Any]:
+    protocolo = folha_info["protocolo"]
+    disc_id = config.normalizar_disciplina_id(
+        disciplina or getattr(bloco, "disciplina", "") or config.disciplina_por_protocolo(protocolo)
+    )
+    disc = config.obter_disciplina(disc_id)
+    tempo_alvo = folha_info["tempo_alvo_min"]
+    url_base = config.PUBLIC_URL or f"http://{config.DASHBOARD_HOST}:{config.DASHBOARD_PORT}"
+    modo_txt = "Checagem Independente (Sem Consulta)" if modo == "checagem" else "Sessao de Pratica Guiada"
+    instrucao_papel = (
+        "Resolva tudo a caneta no papel (escalonamentos, desenvolvimentos e resposta final exata em fracoes/radicais sem calculadora)."
+        if disc_id == "matrizes_vetores"
+        else "Resolva tudo a caneta no papel (sem compilador nas questoes de mesa/lacuna e escrevendo C99 a mao nas questoes de codigo)."
+    )
+
+    assunto = (
+        f"[{disc['tag_email']}] Prova {bloco.bloco_id} ({variante} - Tentativa #{tentativa}) "
+        f"[{protocolo}]"
+    )
+
+    corpo_texto = (
+        f"Ola {aluno['nome']},\n\n"
+        f"Sua folha de prova ({disc['nome_curto']}) do bloco {bloco.bloco_id} ({bloco.titulo}) esta pronta em anexo.\n"
+        f"Modalidade: {modo_txt} | Variante: {variante} | Tentativa: #{tentativa}\n"
+        f"Tempo-alvo: {tempo_alvo} minutos | Criterio de dominio: 100% de acerto.\n\n"
+        f"Passo a passo:\n"
+        f"1. Imprima o arquivo anexo ({protocolo}.html -> Imprimir / Salvar PDF).\n"
+        f"2. Antes de comecar a escrever, clique no Dashboard para iniciar o cronometro: {url_base}\n"
+        f"3. Preencha HORA INICIO, {instrucao_papel} e anote HORA TERMINO.\n"
+        f"4. Tire uma foto nitida ou escaneie a folha completa (com os 4 cantos [+] visiveis).\n"
+        f"5. Responda a este e-mail com a foto anexada (mantendo [{protocolo}] no assunto) ou envie pelo Dashboard.\n"
+    )
+
+    corpo_html = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<body style="font-family: Segoe UI, Arial, sans-serif; color: #1e293b; background: #f8fafc; padding: 20px;">
+  <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px;">
+    <h2 style="margin-top: 0; color: #0f172a;">Folha de Prova Liberada &mdash; {html.escape(disc['codigo'])} &bull; Bloco {html.escape(bloco.bloco_id)}</h2>
+    <p>Ola, <strong>{html.escape(aluno['nome'])}</strong>.</p>
+    <p>Sua nova folha de prova impressa para <strong>{html.escape(disc['nome'])} &mdash; {html.escape(bloco.titulo)}</strong> foi gerada e segue em anexo.</p>
+    <table style="width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px;">
+      <tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Protocolo</strong></td><td style="padding: 6px; border: 1px solid #cbd5e1; font-family: monospace;">{html.escape(protocolo)}</td></tr>
+      <tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Modalidade</strong></td><td style="padding: 6px; border: 1px solid #cbd5e1;">{html.escape(modo_txt)}</td></tr>
+      <tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Variante / Tentativa</strong></td><td style="padding: 6px; border: 1px solid #cbd5e1;">{html.escape(variante)} &bull; Tentativa #{tentativa}</td></tr>
+      <tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Tempo-alvo de Fluencia</strong></td><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>{tempo_alvo} minutos</strong></td></tr>
+    </table>
+    <ol style="line-height: 1.6;">
+      <li>Imprima a folha A4 em anexo (<code>{html.escape(protocolo)}.html</code>).</li>
+      <li>Anote a <strong>Hora de Inicio</strong> na folha (ou acione o cronometro em <a href="{url_base}">{url_base}</a>).</li>
+      <li>{html.escape(instrucao_papel)}</li>
+      <li>Fotografe ou escaneie a folha inteira mantendo os marcadores <code>[+]</code> visiveis e responda este e-mail com a imagem anexada.</li>
+    </ol>
+  </div>
+</body>
+</html>"""
+
+    msg = EmailMessage()
+    msg["Subject"] = assunto
+    msg["From"] = config.SMTP_FROM
+    msg["To"] = aluno["email"]
+    msg["X-Prep-Protocolo"] = protocolo
+    msg.set_content(corpo_texto)
+    msg.add_alternative(corpo_html, subtype="html")
+
+    with open(folha_info["caminho_folha_html"], "rb") as af:
+        msg.add_attachment(
+            af.read(),
+            maintype="text",
+            subtype="html",
+            filename=f"{protocolo}.html",
+        )
+
+    res = _despachar_mime(msg, f"ENVIO_PROVA_{protocolo}.eml")
+    res["assunto"] = assunto
+    return res
+
+
+def enviar_feedback_por_email(
+    aluno: Dict[str, Any],
+    resultado: Dict[str, Any],
+    nova_folha: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    protocolo = resultado["protocolo"]
+    disc_id = config.normalizar_disciplina_id(
+        resultado.get("disciplina") or config.disciplina_por_protocolo(protocolo)
+    )
+    disc = config.obter_disciplina(disc_id)
+    bloco = resultado["bloco"]
+    pct = resultado["percentual_acerto"]
+    assunto = (
+        f"[{disc['tag_email']}] Correcao & Feedback {bloco} "
+        f"({resultado['acertos_iniciais']}/{resultado['total_questoes']} - {pct:.0f}%) [{protocolo}]"
+    )
+
+    msg = EmailMessage()
+    msg["Subject"] = assunto
+    msg["From"] = config.SMTP_FROM
+    msg["To"] = aluno["email"]
+    msg["X-Prep-Protocolo"] = protocolo
+    msg.set_content(
+        f"Resultado de {bloco} ({protocolo}): {resultado['acertos_iniciais']}/{resultado['total_questoes']} ({pct:.0f}%).\n"
+        f"Tempo: {resultado['tempo_declarado_min']} min | Decisao: {resultado['proxima_acao']}.\n"
+        f"Consulte o HTML em anexo/corpo e o Dashboard para o feedback detalhado item a item."
+    )
+    msg.add_alternative(resultado["relatorio_feedback_html"], subtype="html")
+
+    if nova_folha and os.path.isfile(nova_folha.get("caminho_folha_html", "")):
+        novo_prot = nova_folha["protocolo"]
+        with open(nova_folha["caminho_folha_html"], "rb") as af:
+            msg.add_attachment(
+                af.read(),
+                maintype="text",
+                subtype="html",
+                filename=f"{novo_prot}.html",
+            )
+
+    res = _despachar_mime(msg, f"FEEDBACK_{protocolo}.eml")
+    res["assunto"] = assunto
+    return res
+
+
+def simular_resposta_email_aluno(
+    protocolo: str,
+    aluno_email: str,
+    caminho_imagem: str,
+) -> str:
+    """Grava no spool de entrada uma resposta de e-mail realista do aluno com foto anexada."""
+    config.garantir_diretorios()
+    msg = EmailMessage()
+    msg["Subject"] = f"Re: [Algoritmos C - UTFPR] Devolucao Prova [{protocolo}]"
+    msg["From"] = aluno_email
+    msg["To"] = config.SMTP_FROM
+    msg["X-Prep-Protocolo"] = protocolo
+    msg.set_content(
+        f"Ola tutor,\nSegue em anexo a foto da minha folha resolvida do protocolo {protocolo}.\nObrigado!"
+    )
+
+    ext = os.path.splitext(caminho_imagem)[1].lower().lstrip(".") or "png"
+    subtype = "jpeg" if ext in ("jpg", "jpeg") else "png"
+    with open(caminho_imagem, "rb") as f:
+        msg.add_attachment(
+            f.read(),
+            maintype="image",
+            subtype=subtype,
+            filename=os.path.basename(caminho_imagem),
+        )
+
+    destino_eml = os.path.join(config.SPOOL_RECEBIDOS_DIR, f"RESP_{protocolo}.eml")
+    with open(destino_eml, "wb") as f:
+        f.write(msg.as_bytes())
+    return destino_eml
+
+
+_UIDS_IMAP_IGNORADOS: set = set()
+
+
+def resolver_protocolo_entrada(protocolo_bruto: str, remetente_email: str) -> str:
+    """
+    Resolve o protocolo alvo de uma devolucao:
+    - Se o protocolo informado existe e ainda esta pendente ('emitida'/'em_execucao'), usa-o.
+    - Se o aluno respondeu em thread antigo (protocolo ja 'corrigida'), redireciona para a
+      prova pendente mais recente do aluno na mesma disciplina.
+    - Se nao ha protocolo no assunto, busca pela prova pendente do e-mail remetente.
+    """
+    prot = (protocolo_bruto or "").strip().upper()
+    rem_clean = email.utils.parseaddr(remetente_email or "")[1].strip().lower()
+
+    if prot:
+        prova = banco_dados.obter_prova(prot)
+        if prova:
+            if prova.get("status") in ("emitida", "em_execucao"):
+                return prot
+            disc_prot = prova.get("disciplina") or config.disciplina_por_protocolo(prot)
+            pend = banco_dados.obter_prova_pendente_por_aluno_id(
+                int(prova["aluno_id"]), disciplina=disc_prot
+            )
+            if pend:
+                return pend["protocolo"]
+            return prot
+
+    if rem_clean:
+        pend_rem = banco_dados.obter_prova_pendente_por_email(rem_clean)
+        if pend_rem:
+            return pend_rem["protocolo"]
+
+    return prot
+
+
+def _extrair_anexo_resposta(msg: email.message.EmailMessage) -> Optional[Dict[str, Any]]:
+    for part in msg.iter_attachments():
+        ctype = (part.get_content_type() or "").lower()
+        fname_raw = part.get_filename() or ""
+        eh_pdf = ctype == "application/pdf" or fname_raw.lower().endswith(".pdf")
+        eh_img = ctype.startswith("image/") or fname_raw.lower().endswith((".png", ".jpg", ".jpeg"))
+        if eh_img or eh_pdf:
+            payload = part.get_payload(decode=True)
+            if not payload:
+                continue
+            return {
+                "payload": payload,
+                "eh_pdf": eh_pdf,
+                "filename": fname_raw,
+            }
+    return None
+
+
+def coletar_respostas_por_email() -> List[Dict[str, str]]:
+    """
+    Varre e-mails recebidos (IMAP real via BODY.PEEK[] se configurado + spool_email/recebidos)
+    com protecao anti-loop, deduplicacao por msg_chave e resolucao por remetente.
+    """
+    config.garantir_diretorios()
+    cfg = config.obter_integracoes()
+    coletados: List[Dict[str, str]] = []
+
+    # 1. Buscar via IMAP se configurado (usa BODY.PEEK[] para nao marcar e-mails pessoais como lidos)
+    if cfg["imap_host"] and cfg["imap_user"] and cfg["imap_pass"]:
+        try:
+            with imaplib.IMAP4_SSL(cfg["imap_host"], int(cfg["imap_port"]), timeout=15) as mail:
+                mail.login(cfg["imap_user"], cfg["imap_pass"])
+                mail.select("INBOX")
+                status, data = mail.uid("search", None, "UNSEEN")
+                if status == "OK" and data and data[0]:
+                    for uid_b in data[0].split():
+                        uid_str = uid_b.decode("ascii", errors="ignore")
+                        chave_mem = (cfg["imap_user"], uid_str)
+                        if chave_mem in _UIDS_IMAP_IGNORADOS:
+                            continue
+                        st, raw = mail.uid("fetch", uid_b, "(BODY.PEEK[])")
+                        if st != "OK" or not raw or not isinstance(raw[0], tuple):
+                            continue
+                        raw_bytes = raw[0][1]
+                        msg = email.message_from_bytes(raw_bytes, policy=email_policy)
+
+                        if str(msg.get("X-Prep-Origem", "")).strip().lower() == "sistema":
+                            _UIDS_IMAP_IGNORADOS.add(chave_mem)
+                            continue
+
+                        anexo = _extrair_anexo_resposta(msg)
+                        if not anexo:
+                            _UIDS_IMAP_IGNORADOS.add(chave_mem)
+                            continue
+
+                        assunto = str(msg.get("Subject", ""))
+                        prot_hdr = str(msg.get("X-Prep-Protocolo", ""))
+                        remetente = str(msg.get("From", ""))
+                        rem_clean = email.utils.parseaddr(remetente)[1].strip().lower()
+                        tem_prot = bool(
+                            re.search(r"PREP-(?:MV-)?[A-H]\d{2}-V\d+-T\d+-[A-F0-9]+", f"{prot_hdr} {assunto}", re.IGNORECASE)
+                        )
+                        pend_aluno = banco_dados.obter_prova_pendente_por_email(rem_clean)
+
+                        # So baixa automaticamente e-mails que sejam do curso (protocolo PREP- ou aluno com prova pendente)
+                        if not tem_prot and not pend_aluno:
+                            _UIDS_IMAP_IGNORADOS.add(chave_mem)
+                            continue
+
+                        msg_id = str(msg.get("Message-ID", "")).strip()
+                        msg_chave = msg_id or f"sha256:{hashlib.sha256(raw_bytes).hexdigest()}"
+                        if banco_dados.email_ja_processado(msg_chave):
+                            mail.uid("store", uid_b, "+FLAGS", "(\\Seen)")
+                            continue
+
+                        eml_path = os.path.join(
+                            config.SPOOL_RECEBIDOS_DIR, f"IMAP_{int(time.time())}_{uid_str}.eml"
+                        )
+                        with open(eml_path, "wb") as f:
+                            f.write(raw_bytes)
+                        mail.uid("store", uid_b, "+FLAGS", "(\\Seen)")
+        except Exception:
+            pass
+
+    # 2. Processar arquivos .eml presentes no spool_email/recebidos
+    processados_dir = os.path.join(config.SPOOL_RECEBIDOS_DIR, "processados")
+    os.makedirs(processados_dir, exist_ok=True)
+
+    for nome in sorted(os.listdir(config.SPOOL_RECEBIDOS_DIR)):
+        if not nome.lower().endswith(".eml"):
+            continue
+        caminho_eml = os.path.join(config.SPOOL_RECEBIDOS_DIR, nome)
+        with open(caminho_eml, "rb") as f:
+            raw_eml = f.read()
+        msg = email.message_from_bytes(raw_eml, policy=email_policy)
+
+        if str(msg.get("X-Prep-Origem", "")).strip().lower() == "sistema":
+            os.replace(caminho_eml, os.path.join(processados_dir, nome))
+            continue
+
+        msg_id = str(msg.get("Message-ID", "")).strip()
+        msg_chave = msg_id or f"sha256:{hashlib.sha256(raw_eml).hexdigest()}"
+        if banco_dados.email_ja_processado(msg_chave):
+            os.replace(caminho_eml, os.path.join(processados_dir, nome))
+            continue
+
+        assunto = str(msg.get("Subject", ""))
+        prot_hdr = str(msg.get("X-Prep-Protocolo", ""))
+        remetente = str(msg.get("From", ""))
+        m_prot = re.search(r"(PREP-(?:MV-)?[A-H]\d{2}-V\d+-T\d+-[A-F0-9]+)", f"{prot_hdr} {assunto}", re.IGNORECASE)
+        prot_bruto = m_prot.group(1).upper() if m_prot else ""
+        protocolo = resolver_protocolo_entrada(prot_bruto, remetente)
+
+        anexo = _extrair_anexo_resposta(msg)
+        caminho_img_salvo = ""
+        if anexo:
+            ext_default = ".pdf" if anexo["eh_pdf"] else ".png"
+            fname = anexo["filename"] or f"anexo_{protocolo or 'prova'}{ext_default}"
+            safe_name = re.sub(r"[^a-zA-Z0-9._-]", "_", fname)
+            destino_img = os.path.join(
+                config.UPLOADS_DIR, f"mail_{int(time.time())}_{safe_name}"
+            )
+            with open(destino_img, "wb") as out_f:
+                out_f.write(anexo["payload"])
+            caminho_img_salvo = destino_img
+
+        os.replace(caminho_eml, os.path.join(processados_dir, nome))
+        if caminho_img_salvo:
+            coletados.append(
+                {
+                    "msg_chave": msg_chave,
+                    "protocolo": protocolo,
+                    "remetente": remetente,
+                    "assunto": assunto,
+                    "caminho_imagem": caminho_img_salvo,
+                    "caminho_eml": os.path.join(processados_dir, nome),
+                }
+            )
+        else:
+            banco_dados.registrar_email_processado(
+                msg_chave, protocolo, remetente, assunto, "ignorado_sem_anexo", "Sem anexo PDF/imagem"
+            )
+
+    return coletados
+
+
+def testar_conexao_email(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """Testa credenciais SMTP e IMAP com timeout curto antes de salvar/ativar."""
+    res = {"smtp_ok": False, "smtp_erro": "", "imap_ok": False, "imap_erro": ""}
+    if cfg.get("smtp_host") and cfg.get("smtp_user") and cfg.get("smtp_pass"):
+        try:
+            port = int(cfg.get("smtp_port") or 587)
+            if port == 465:
+                with smtplib.SMTP_SSL(cfg["smtp_host"], port, timeout=8) as srv:
+                    srv.login(cfg["smtp_user"], cfg["smtp_pass"])
+            else:
+                with smtplib.SMTP(cfg["smtp_host"], port, timeout=8) as srv:
+                    srv.starttls()
+                    srv.login(cfg["smtp_user"], cfg["smtp_pass"])
+            res["smtp_ok"] = True
+        except Exception as exc:
+            res["smtp_erro"] = str(exc)
+    else:
+        res["smtp_erro"] = "Credenciais SMTP incompletas."
+
+    if cfg.get("imap_host") and cfg.get("imap_user") and cfg.get("imap_pass"):
+        try:
+            port = int(cfg.get("imap_port") or 993)
+            with imaplib.IMAP4_SSL(cfg["imap_host"], port, timeout=8) as mail:
+                mail.login(cfg["imap_user"], cfg["imap_pass"])
+                mail.select("INBOX")
+            res["imap_ok"] = True
+        except Exception as exc:
+            res["imap_erro"] = str(exc)
+    else:
+        res["imap_erro"] = "Credenciais IMAP incompletas."
+
+    return res
+
+
+class EmailAutoWatcher:
+    """
+    Worker em segundo plano que detecta respostas recebidas em tempo real:
+    - Com IMAP configurado: usa IMAP IDLE (push instantaneo no Gmail) com fallback para polling.
+    - Sem IMAP configurado: vigia continuamente spool_email/recebidos/ a cada 5s.
+    """
+
+    def __init__(self, fn_processar: Callable[[], List[Dict[str, Any]]]):
+        self.fn_processar = fn_processar
+        self._lock = threading.Lock()
+        self._status_lock = threading.Lock()
+        self._stop_event = threading.Event()
+        self._wake_event = threading.Event()
+        self._thread: Optional[threading.Thread] = None
+        self._status: Dict[str, Any] = {
+            "worker_ativo": False,
+            "modo": "spool_local",
+            "ultimo_ciclo_em": "",
+            "ultima_correcao_em": "",
+            "total_processados": 0,
+            "ultimo_erro": "",
+        }
+
+    def iniciar(self) -> None:
+        if self._thread and self._thread.is_alive():
+            return
+        self._stop_event.clear()
+        self._thread = threading.Thread(
+            target=self._loop_principal, name="EmailAutoWatcher", daemon=True
+        )
+        self._thread.start()
+        with self._status_lock:
+            self._status["worker_ativo"] = True
+
+    def parar(self, timeout: float = 3.0) -> None:
+        self._stop_event.set()
+        self._wake_event.set()
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=timeout)
+        with self._status_lock:
+            self._status["worker_ativo"] = False
+
+    def acordar(self) -> None:
+        self._wake_event.set()
+
+    def executar_ciclo_agora(self) -> List[Dict[str, Any]]:
+        with self._lock:
+            agora = time.strftime("%Y-%m-%d %H:%M:%S")
+            try:
+                resultados = self.fn_processar() or []
+                with self._status_lock:
+                    self._status["ultimo_ciclo_em"] = agora
+                    self._status["ultimo_erro"] = ""
+                    ok_cnt = sum(1 for r in resultados if not r.get("erro"))
+                    if ok_cnt > 0:
+                        self._status["total_processados"] += ok_cnt
+                        self._status["ultima_correcao_em"] = agora
+                return resultados
+            except Exception as exc:
+                with self._status_lock:
+                    self._status["ultimo_ciclo_em"] = agora
+                    self._status["ultimo_erro"] = str(exc)
+                return []
+
+    def obter_status(self) -> Dict[str, Any]:
+        cfg = config.obter_integracoes()
+        imap_cfg = bool(cfg["imap_host"] and cfg["imap_user"] and cfg["imap_pass"])
+        smtp_cfg = bool(cfg["smtp_host"] and cfg["smtp_user"] and cfg["smtp_pass"])
+        gemini_cfg = bool(cfg["gemini_api_key"])
+        with self._status_lock:
+            st = dict(self._status)
+        st["imap_configurado"] = imap_cfg
+        st["smtp_configurado"] = smtp_cfg
+        st["gemini_configurado"] = gemini_cfg
+        st["imap_user"] = cfg["imap_user"]
+        st["smtp_user"] = cfg["smtp_user"]
+        st["imap_host"] = cfg["imap_host"]
+        st["smtp_host"] = cfg["smtp_host"]
+        if not imap_cfg:
+            st["modo"] = "spool_local"
+        return st
+
+    def _aguardar_imap_idle(self, cfg: Dict[str, Any]) -> None:
+        with imaplib.IMAP4_SSL(cfg["imap_host"], int(cfg["imap_port"]), timeout=15) as mail:
+            mail.login(cfg["imap_user"], cfg["imap_pass"])
+            mail.select("INBOX")
+            if "IDLE" not in getattr(mail, "capabilities", ()):
+                with self._status_lock:
+                    self._status["modo"] = "imap_polling"
+                self._wake_event.wait(timeout=int(cfg["imap_poll_sec"]))
+                self._wake_event.clear()
+                return
+
+            with self._status_lock:
+                self._status["modo"] = "imap_idle"
+
+            tag = mail._new_tag()
+            mail.send(tag + b" IDLE\r\n")
+            resp_ini = mail.readline()
+            if not resp_ini.startswith(b"+"):
+                self._wake_event.wait(timeout=int(cfg["imap_poll_sec"]))
+                self._wake_event.clear()
+                return
+
+            deadline = time.time() + 240.0
+            try:
+                while not self._stop_event.is_set() and not self._wake_event.is_set():
+                    if time.time() >= deadline:
+                        break
+                    pending = getattr(mail.sock, "pending", lambda: 0)()
+                    if pending > 0:
+                        readable = [mail.sock]
+                    else:
+                        readable, _, _ = select.select([mail.sock], [], [], 1.5)
+                    if readable:
+                        linha = mail.readline()
+                        if not linha:
+                            break
+                        if b"EXISTS" in linha.upper() or b"RECENT" in linha.upper():
+                            break
+            finally:
+                try:
+                    mail.send(b"DONE\r\n")
+                    fim_lim = time.time() + 5.0
+                    while time.time() < fim_lim:
+                        l_end = mail.readline()
+                        if not l_end or l_end.startswith(tag):
+                            break
+                except Exception:
+                    pass
+            self._wake_event.clear()
+
+    def _loop_principal(self) -> None:
+        while not self._stop_event.is_set():
+            cfg = config.obter_integracoes()
+            self.executar_ciclo_agora()
+            if self._stop_event.is_set():
+                break
+
+            if cfg["imap_host"] and cfg["imap_user"] and cfg["imap_pass"]:
+                try:
+                    self._aguardar_imap_idle(cfg)
+                except Exception as exc:
+                    with self._status_lock:
+                        self._status["modo"] = "imap_polling"
+                        self._status["ultimo_erro"] = f"IMAP IDLE reconectando: {exc}"
+                    self._wake_event.wait(timeout=int(cfg["imap_poll_sec"]))
+                    self._wake_event.clear()
+            else:
+                with self._status_lock:
+                    self._status["modo"] = "spool_local"
+                self._wake_event.wait(timeout=5.0)
+                self._wake_event.clear()
+
+
+def listar_emails_spool() -> List[Dict[str, str]]:
+    config.garantir_diretorios()
+    itens = []
+    for pasta, direcao in [(config.SPOOL_ENVIADOS_DIR, "ENVIADO"), (config.SPOOL_RECEBIDOS_DIR, "RECEBIDO")]:
+        if not os.path.isdir(pasta):
+            continue
+        for fn in sorted(os.listdir(pasta), reverse=True):
+            if fn.endswith(".eml"):
+                p = os.path.join(pasta, fn)
+                with open(p, "rb") as f:
+                    msg = email.message_from_bytes(f.read(), policy=email_policy)
+                itens.append(
+                    {
+                        "arquivo": fn,
+                        "direcao": direcao,
+                        "assunto": str(msg.get("Subject", "")),
+                        "de": str(msg.get("From", "")),
+                        "para": str(msg.get("To", "")),
+                        "protocolo": str(msg.get("X-Prep-Protocolo", "")),
+                    }
+                )
+    return itens

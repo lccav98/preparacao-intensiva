@@ -1,0 +1,55 @@
+{
+  "bloco": "B10",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "B10_E02_corrigido.c": [
+      {"id": "B10-E02-T1", "tipo": "normal", "stdin": "5000.00\n", "stdout": "Imposto: R$ 0.00\n"},
+      {"id": "B10-E02-T2", "tipo": "borda", "stdin": "9999.99\n", "stdout": "Imposto: R$ 0.00\n"},
+      {"id": "B10-E02-T3", "tipo": "borda", "stdin": "10000.00\n", "stdout": "Imposto: R$ 1000.00\n"},
+      {"id": "B10-E02-T4", "tipo": "bug_trap", "stdin": "24999.995\n", "stdout": "Imposto: R$ 2500.00\n"},
+      {"id": "B10-E02-T5", "tipo": "borda", "stdin": "25000.00\n", "stdout": "Imposto: R$ 2500.00\n"},
+      {"id": "B10-E02-T6", "tipo": "normal", "stdin": "30000.00\n", "stdout": "Imposto: R$ 4500.00\n"}
+    ],
+    "B10_E04.c": [
+      {"id": "B10-E04-T1", "tipo": "borda", "stdin": "0.0 2.0 4.0\n", "stdout": "Nao e equacao de segundo grau\n"},
+      {"id": "B10-E04-T2", "tipo": "normal", "stdin": "1.0 -5.0 6.0\n", "stdout": "Raizes: 3.00 e 2.00\n"},
+      {"id": "B10-E04-T3", "tipo": "borda", "stdin": "1.0 -4.0 4.0\n", "stdout": "Raiz unica: 2.00\n"},
+      {"id": "B10-E04-T4", "tipo": "normal", "stdin": "1.0 1.0 1.0\n", "stdout": "Sem raizes reais\n"},
+      {"id": "B10-E04-T5", "tipo": "normal", "stdin": "2.0 -10.0 8.0\n", "stdout": "Raizes: 4.00 e 1.00\n"}
+    ],
+    "B10_E05.c": [
+      {"id": "B10-E05-T1", "tipo": "borda", "stdin": "29 2 2024\n", "stdout": "Data Valida: Bissexto\n"},
+      {"id": "B10-E05-T2", "tipo": "borda", "stdin": "29 2 1900\n", "stdout": "Data Invalida\n"},
+      {"id": "B10-E05-T3", "tipo": "borda", "stdin": "29 2 2000\n", "stdout": "Data Valida: Bissexto\n"},
+      {"id": "B10-E05-T4", "tipo": "borda", "stdin": "28 2 2023\n", "stdout": "Data Valida: Nao Bissexto\n"},
+      {"id": "B10-E05-T5", "tipo": "borda", "stdin": "31 4 2023\n", "stdout": "Data Invalida\n"},
+      {"id": "B10-E05-T6", "tipo": "normal", "stdin": "30 4 2023\n", "stdout": "Data Valida: Nao Bissexto\n"},
+      {"id": "B10-E05-T7", "tipo": "borda", "stdin": "15 13 2024\n", "stdout": "Data Invalida\n"},
+      {"id": "B10-E05-T8", "tipo": "borda", "stdin": "10 5 -5\n", "stdout": "Data Invalida\n"}
+    ],
+    "B10_E06.c": [
+      {"id": "B10-E06-T1", "tipo": "normal", "stdin": "1 80.0\n", "stdout": "Fatura Residencial: R$ 48.00\n"},
+      {"id": "B10-E06-T2", "tipo": "borda", "stdin": "1 100.0\n", "stdout": "Fatura Residencial: R$ 60.00\n"},
+      {"id": "B10-E06-T3", "tipo": "normal", "stdin": "1 150.0\n", "stdout": "Fatura Residencial: R$ 102.50\n"},
+      {"id": "B10-E06-T4", "tipo": "normal", "stdin": "2 150.0\n", "stdout": "Fatura Comercial: R$ 112.50\n"},
+      {"id": "B10-E06-T5", "tipo": "borda", "stdin": "2 200.0\n", "stdout": "Fatura Comercial: R$ 150.00\n"},
+      {"id": "B10-E06-T6", "tipo": "normal", "stdin": "2 250.0\n", "stdout": "Fatura Comercial: R$ 197.50\n"},
+      {"id": "B10-E06-T7", "tipo": "normal", "stdin": "3 1000.0\n", "stdout": "Fatura Industrial: R$ 800.00\n"},
+      {"id": "B10-E06-T8", "tipo": "borda", "stdin": "1 -10.0\n", "stdout": "Consumo Invalido\n"},
+      {"id": "B10-E06-T9", "tipo": "borda", "stdin": "4 100.0\n", "stdout": "Tipo Invalido\n"}
+    ],
+    "B10_C02.c": [
+      {"id": "B10-C02-T1", "tipo": "normal", "stdin": "3.0 4.0 5.0\n", "stdout": "Escaleno - Area: 6.00\n"},
+      {"id": "B10-C02-T2", "tipo": "normal", "stdin": "6.0 6.0 6.0\n", "stdout": "Equilatero - Area: 15.59\n"},
+      {"id": "B10-C02-T3", "tipo": "normal", "stdin": "5.0 5.0 6.0\n", "stdout": "Isosceles - Area: 12.00\n"},
+      {"id": "B10-C02-T4", "tipo": "borda", "stdin": "1.0 2.0 10.0\n", "stdout": "Invalido\n"}
+    ],
+    "B10_C03.c": [
+      {"id": "B10-C03-T1", "tipo": "borda", "stdin": "1412.00 0\n", "stdout": "INSS: R$ 105.90\nIRRF: R$ 0.00\nLiquido: R$ 1306.10\n"},
+      {"id": "B10-C03-T2", "tipo": "normal", "stdin": "2500.00 1\n", "stdout": "INSS: R$ 225.00\nIRRF: R$ 0.00\nLiquido: R$ 2275.00\n"},
+      {"id": "B10-C03-T3", "tipo": "normal", "stdin": "3500.00 0\n", "stdout": "INSS: R$ 420.00\nIRRF: R$ 462.00\nLiquido: R$ 2618.00\n"},
+      {"id": "B10-C03-T4", "tipo": "normal", "stdin": "5000.00 2\n", "stdout": "INSS: R$ 550.00\nIRRF: R$ 915.93\nLiquido: R$ 3534.07\n"},
+      {"id": "B10-C03-T5", "tipo": "borda", "stdin": "-100.00 0\n", "stdout": "Entrada Invalida\n"}
+    ]
+  }
+}

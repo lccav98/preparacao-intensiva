@@ -1,0 +1,41 @@
+{
+  "bloco": "E02",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "E02_E03_corrigido.c": [
+      {"id": "E02-E03-T1", "tipo": "normal", "stdin": "1 5 3\n5 9 2\n9 4 5\n5\n", "stdout": "Soma: 43\nMaior: 9 (1, 1)\nAlvo: (0, 1)\n"},
+      {"id": "E02-E03-T2", "tipo": "borda", "stdin": "-8 -3 -9\n-2 -7 -2\n-10 -2 -5\n-2\n", "stdout": "Soma: -48\nMaior: -2 (1, 0)\nAlvo: (1, 0)\n"},
+      {"id": "E02-E03-T3", "tipo": "borda", "stdin": "1 2 3\n4 5 6\n7 8 9\n10\n", "stdout": "Soma: 45\nMaior: 9 (2, 2)\nAlvo: nao encontrado\n"},
+      {"id": "E02-E03-T4", "tipo": "borda", "stdin": "0 0 0\n0 0 0\n0 0 0\n0\n", "stdout": "Soma: 0\nMaior: 0 (0, 0)\nAlvo: (0, 0)\n"},
+      {"id": "E02-E03-T5", "tipo": "normal", "stdin": "2 4 6\n8 10 12\n14 16 18\n18\n", "stdout": "Soma: 90\nMaior: 18 (2, 2)\nAlvo: (2, 2)\n"}
+    ],
+    "E02_E04.c": [
+      {"id": "E02-E04-T1", "tipo": "normal", "stdin": "1 2 3 4\n5 6 7 8\n9 10 11 12\n", "stdout": "Media: 6.50\nAcima da media: 6\n"},
+      {"id": "E02-E04-T2", "tipo": "borda", "stdin": "5 5 5 5\n5 5 5 5\n5 5 5 5\n", "stdout": "Media: 5.00\nAcima da media: 0\n"},
+      {"id": "E02-E04-T3", "tipo": "borda", "stdin": "2 2 2 2\n4 4 4 4\n6 6 6 6\n", "stdout": "Media: 4.00\nAcima da media: 4\n"},
+      {"id": "E02-E04-T4", "tipo": "normal", "stdin": "-10 -20 -30 -40\n-10 -20 -30 -40\n-10 -20 -30 -40\n", "stdout": "Media: -25.00\nAcima da media: 6\n"},
+      {"id": "E02-E04-T5", "tipo": "borda", "stdin": "0 0 0 0\n0 0 0 0\n0 0 0 12\n", "stdout": "Media: 1.00\nAcima da media: 1\n"}
+    ],
+    "E02_E05.c": [
+      {"id": "E02-E05-T1", "tipo": "normal", "stdin": "1 2 3 4 5\n6 7 8 9 10\n11 12 13 14 15\n16 17 18 19 20\n", "stdout": "Soma: 210\nMaior: 20 (3, 4)\nMenor: 1 (0, 0)\n"},
+      {"id": "E02-E05-T2", "tipo": "borda", "stdin": "-5 -4 -3 -2 -1\n-5 -4 -3 -2 -1\n-5 -4 -3 -2 -1\n-5 -4 -3 -2 -1\n", "stdout": "Soma: -60\nMaior: -1 (0, 4)\nMenor: -5 (0, 0)\n"},
+      {"id": "E02-E05-T3", "tipo": "borda", "stdin": "7 7 7 7 7\n7 7 7 7 7\n7 7 7 7 7\n7 7 7 7 7\n", "stdout": "Soma: 140\nMaior: 7 (0, 0)\nMenor: 7 (0, 0)\n"},
+      {"id": "E02-E05-T4", "tipo": "borda", "stdin": "1000 1001 1002 1003 1004\n1005 1006 1007 1008 1009\n1010 1011 1012 1013 1014\n1015 1016 1017 1018 1019\n", "stdout": "Soma: 20190\nMaior: 1019 (3, 4)\nMenor: 1000 (0, 0)\n"},
+      {"id": "E02-E05-T5", "tipo": "normal", "stdin": "10 20 30 40 50\n10 20 30 40 50\n10 20 30 40 50\n10 20 30 40 50\n", "stdout": "Soma: 600\nMaior: 50 (0, 4)\nMenor: 10 (0, 0)\n"}
+    ],
+    "E02_C02_corrigido.c": [
+      {"id": "E02-C02-T1", "tipo": "normal", "stdin": "2 3\n5 2 8\n2 9 1\n2\n", "stdout": "Menor: 1 (1, 2)\nPosicao: (0, 1)\n"},
+      {"id": "E02-C02-T2", "tipo": "borda", "stdin": "2 2\n1200 1500\n1000 1200\n1200\n", "stdout": "Menor: 1000 (1, 0)\nPosicao: (0, 0)\n"},
+      {"id": "E02-C02-T3", "tipo": "borda", "stdin": "1 1\n-7\n-7\n", "stdout": "Menor: -7 (0, 0)\nPosicao: (0, 0)\n"},
+      {"id": "E02-C02-T4", "tipo": "borda", "stdin": "2 2\n-3 -1\n-3 -9\n0\n", "stdout": "Menor: -9 (1, 1)\nPosicao: nao encontrada\n"},
+      {"id": "E02-C02-T5", "tipo": "normal", "stdin": "3 2\n4 1\n1 5\n1 2\n1\n", "stdout": "Menor: 1 (0, 1)\nPosicao: (0, 1)\n"}
+    ],
+    "E02_C03.c": [
+      {"id": "E02-C03-T1", "tipo": "normal", "stdin": "2 3\n1 9 3\n9 2 4\n9\n", "stdout": "Soma: 28\nMaior: 9 (0, 1)\nBusca: (0, 1)\n"},
+      {"id": "E02-C03-T2", "tipo": "borda", "stdin": "1 1\n-15\n5\n", "stdout": "Soma: -15\nMaior: -15 (0, 0)\nBusca: nao encontrado\n"},
+      {"id": "E02-C03-T3", "tipo": "borda", "stdin": "3 2\n-9 -4\n-4 -8\n-12 -4\n-4\n", "stdout": "Soma: -41\nMaior: -4 (0, 1)\nBusca: (0, 1)\n"},
+      {"id": "E02-C03-T4", "tipo": "borda", "stdin": "1 4\n0 0 0 0\n0\n", "stdout": "Soma: 0\nMaior: 0 (0, 0)\nBusca: (0, 0)\n"},
+      {"id": "E02-C03-T5", "tipo": "normal", "stdin": "4 1\n3\n7\n7\n2\n7\n", "stdout": "Soma: 19\nMaior: 7 (1, 0)\nBusca: (1, 0)\n"}
+    ]
+  }
+}

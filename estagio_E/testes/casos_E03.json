@@ -1,0 +1,41 @@
+{
+  "bloco": "E03",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "E03_E03_corrigido.c": [
+      {"id": "E03-E03-T1", "tipo": "normal", "stdin": "1 2 3 4\n5 6 7 8\n9 10 11 12\n", "stdout": "Linhas: 10 26 42\nColunas: 15 18 21 24\n"},
+      {"id": "E03-E03-T2", "tipo": "borda", "stdin": "0 0 0 0\n0 0 0 0\n0 0 0 0\n", "stdout": "Linhas: 0 0 0\nColunas: 0 0 0 0\n"},
+      {"id": "E03-E03-T3", "tipo": "borda", "stdin": "-1 -2 -3 -4\n1 2 3 4\n5 -5 5 -5\n", "stdout": "Linhas: -10 10 0\nColunas: 5 -5 5 -5\n"},
+      {"id": "E03-E03-T4", "tipo": "normal", "stdin": "10 0 0 0\n0 20 0 0\n0 0 30 40\n", "stdout": "Linhas: 10 20 70\nColunas: 10 20 30 40\n"},
+      {"id": "E03-E03-T5", "tipo": "borda", "stdin": "-5 -5 -5 -5\n-5 -5 -5 -5\n-5 -5 -5 -5\n", "stdout": "Linhas: -20 -20 -20\nColunas: -15 -15 -15 -15\n"}
+    ],
+    "E03_E04.c": [
+      {"id": "E03-E04-T1", "tipo": "normal", "stdin": "1 2 3 4\n5 6 7 8\n9 10 11 12\n2 3\n", "stdout": "Linha 2: 5 6 7 8\nSoma linha: 26\nColuna 3: 3 7 11\nSoma coluna: 21\n"},
+      {"id": "E03-E04-T2", "tipo": "borda", "stdin": "10 20 30 40\n1 2 3 4\n-5 -5 -5 -5\n1 1\n", "stdout": "Linha 1: 10 20 30 40\nSoma linha: 100\nColuna 1: 10 1 -5\nSoma coluna: 6\n"},
+      {"id": "E03-E04-T3", "tipo": "borda", "stdin": "10 20 30 40\n1 2 3 4\n-5 -5 -5 -5\n3 4\n", "stdout": "Linha 3: -5 -5 -5 -5\nSoma linha: -20\nColuna 4: 40 4 -5\nSoma coluna: 39\n"},
+      {"id": "E03-E04-T4", "tipo": "borda", "stdin": "0 0 0 0\n0 0 0 0\n0 0 0 0\n2 2\n", "stdout": "Linha 2: 0 0 0 0\nSoma linha: 0\nColuna 2: 0 0 0\nSoma coluna: 0\n"},
+      {"id": "E03-E04-T5", "tipo": "normal", "stdin": "-1 -2 -3 -4\n-5 -6 -7 -8\n-9 -10 -11 -12\n1 4\n", "stdout": "Linha 1: -1 -2 -3 -4\nSoma linha: -10\nColuna 4: -4 -8 -12\nSoma coluna: -24\n"}
+    ],
+    "E03_E05.c": [
+      {"id": "E03-E05-T1", "tipo": "normal", "stdin": "8 3 9 0\n3 5 17 1\n2 8 6 23\n15 7 3 2\n", "stdout": "Linhas: 20 26 39 27\nColunas: 28 23 35 26\nMaior linha: 2 (39)\n"},
+      {"id": "E03-E05-T2", "tipo": "borda", "stdin": "1 2 3 4\n4 3 2 1\n0 0 0 0\n2 3 4 1\n", "stdout": "Linhas: 10 10 0 10\nColunas: 7 8 9 6\nMaior linha: 0 (10)\n"},
+      {"id": "E03-E05-T3", "tipo": "borda", "stdin": "-5 -2 -1 -3\n-1 -1 -1 -1\n-4 -4 -4 -4\n-10 0 0 0\n", "stdout": "Linhas: -11 -4 -16 -10\nColunas: -20 -7 -6 -8\nMaior linha: 1 (-4)\n"},
+      {"id": "E03-E05-T4", "tipo": "borda", "stdin": "0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0\n", "stdout": "Linhas: 0 0 0 0\nColunas: 0 0 0 0\nMaior linha: 0 (0)\n"},
+      {"id": "E03-E05-T5", "tipo": "normal", "stdin": "1 1 1 1\n2 2 2 2\n3 3 3 3\n4 4 4 4\n", "stdout": "Linhas: 4 8 12 16\nColunas: 10 10 10 10\nMaior linha: 3 (16)\n"}
+    ],
+    "E03_C02_corrigido.c": [
+      {"id": "E03-C02-T1", "tipo": "normal", "stdin": "1 2 3 4 5\n6 7 8 9 10\n11 12 13 14 15\n2\n", "stdout": "Linhas: 15 40 65\nColuna 2: 3 8 13\n"},
+      {"id": "E03-C02-T2", "tipo": "borda", "stdin": "10 0 0 0 1\n20 0 0 0 2\n30 0 0 0 3\n0\n", "stdout": "Linhas: 11 22 33\nColuna 0: 10 20 30\n"},
+      {"id": "E03-C02-T3", "tipo": "borda", "stdin": "10 0 0 0 1\n20 0 0 0 2\n30 0 0 0 3\n4\n", "stdout": "Linhas: 11 22 33\nColuna 4: 1 2 3\n"},
+      {"id": "E03-C02-T4", "tipo": "normal", "stdin": "-1 -1 -1 -1 -1\n-2 -2 -2 -2 -2\n0 0 0 0 0\n3\n", "stdout": "Linhas: -5 -10 0\nColuna 3: -1 -2 0\n"},
+      {"id": "E03-C02-T5", "tipo": "borda", "stdin": "0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0\n1\n", "stdout": "Linhas: 0 0 0\nColuna 1: 0 0 0\n"}
+    ],
+    "E03_C03.c": [
+      {"id": "E03-C03-T1", "tipo": "normal", "stdin": "2 3\n1 2 3\n4 5 6\n", "stdout": "Linhas: 6 15\nColunas: 5 7 9\n"},
+      {"id": "E03-C03-T2", "tipo": "borda", "stdin": "1 1\n-9\n", "stdout": "Linhas: -9\nColunas: -9\n"},
+      {"id": "E03-C03-T3", "tipo": "borda", "stdin": "1 4\n2 -3 5 -4\n", "stdout": "Linhas: 0\nColunas: 2 -3 5 -4\n"},
+      {"id": "E03-C03-T4", "tipo": "borda", "stdin": "4 1\n10\n-2\n5\n7\n", "stdout": "Linhas: 10 -2 5 7\nColunas: 20\n"},
+      {"id": "E03-C03-T5", "tipo": "normal", "stdin": "3 2\n-1 4\n2 -6\n8 1\n", "stdout": "Linhas: 3 -4 9\nColunas: 9 -1\n"}
+    ]
+  }
+}

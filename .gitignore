@@ -1,0 +1,17 @@
+﻿.env
+*.log
+*.pid
+*.exe
+__pycache__/
+*.pyc
+.jev/
+automacao_curso/dados/
+automacao_curso/folhas_emitidas/
+automacao_curso/spool_email/
+automacao_curso/uploads_provas/
+dados/
+folhas_emitidas/
+spool_email/
+uploads_provas/
+*.db
+00_acompanhamento.csv

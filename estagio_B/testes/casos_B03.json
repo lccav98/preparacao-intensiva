@@ -1,0 +1,40 @@
+{
+  "bloco": "B03",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "B03_E03_corrigido.c": [
+      {"id": "B03-E03-T1", "tipo": "normal", "stdin": "-5\n", "stdout": "Fim\n"},
+      {"id": "B03-E03-T2", "tipo": "borda", "stdin": "0\n", "stdout": "Fim\n"},
+      {"id": "B03-E03-T3", "tipo": "normal", "stdin": "7\n", "stdout": "Positivo\nFim\n"},
+      {"id": "B03-E03-T4", "tipo": "borda", "stdin": "10\n", "stdout": "Positivo\nNumero igual a 10\nFim\n"},
+      {"id": "B03-E03-T5", "tipo": "normal", "stdin": "15\n", "stdout": "Positivo\nFim\n"}
+    ],
+    "B03_E04.c": [
+      {"id": "B03-E04-T1", "tipo": "normal", "stdin": "4\n", "stdout": "O numero 4 eh par\nFim do programa\n"},
+      {"id": "B03-E04-T2", "tipo": "normal", "stdin": "7\n", "stdout": "Fim do programa\n"},
+      {"id": "B03-E04-T3", "tipo": "borda", "stdin": "0\n", "stdout": "O numero 0 eh par\nFim do programa\n"},
+      {"id": "B03-E04-T4", "tipo": "normal", "stdin": "11\n", "stdout": "Fim do programa\n"},
+      {"id": "B03-E04-T5", "tipo": "normal", "stdin": "100\n", "stdout": "O numero 100 eh par\nFim do programa\n"}
+    ],
+    "B03_E05.c": [
+      {"id": "B03-E05-T1", "tipo": "normal", "stdin": "60.0\n", "stdout": "Boa viagem\n"},
+      {"id": "B03-E05-T2", "tipo": "borda", "stdin": "80.0\n", "stdout": "Boa viagem\n"},
+      {"id": "B03-E05-T3", "tipo": "borda", "stdin": "80.1\n", "stdout": "Multa: R$ 0.50\nBoa viagem\n"},
+      {"id": "B03-E05-T4", "tipo": "normal", "stdin": "90.0\n", "stdout": "Multa: R$ 50.00\nBoa viagem\n"},
+      {"id": "B03-E05-T5", "tipo": "normal", "stdin": "110.0\n", "stdout": "Multa: R$ 150.00\nBoa viagem\n"}
+    ],
+    "B03_C02_corrigido.c": [
+      {"id": "B03-C02-T1", "tipo": "normal", "stdin": "-10\n", "stdout": "Fim\n"},
+      {"id": "B03-C02-T2", "tipo": "borda", "stdin": "0\n", "stdout": "Fim\n"},
+      {"id": "B03-C02-T3", "tipo": "normal", "stdin": "50\n", "stdout": "Positivo\nFim\n"},
+      {"id": "B03-C02-T4", "tipo": "borda", "stdin": "100\n", "stdout": "Positivo\nCem\nFim\n"}
+    ],
+    "B03_C03.c": [
+      {"id": "B03-C03-T1", "tipo": "normal", "stdin": "50.00\n", "stdout": "Valor final: R$ 50.00\n"},
+      {"id": "B03-C03-T2", "tipo": "borda", "stdin": "99.99\n", "stdout": "Valor final: R$ 99.99\n"},
+      {"id": "B03-C03-T3", "tipo": "borda", "stdin": "100.00\n", "stdout": "Valor final: R$ 90.00\n"},
+      {"id": "B03-C03-T4", "tipo": "normal", "stdin": "150.00\n", "stdout": "Valor final: R$ 135.00\n"},
+      {"id": "B03-C03-T5", "tipo": "normal", "stdin": "200.00\n", "stdout": "Valor final: R$ 180.00\n"}
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "bloco": "D05",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "D05_E03_corrigido.c": [
+      {"id": "D05-E03-T1", "tipo": "normal", "stdin": "4\n2 4 1 3\n3\n1 2 3\n", "stdout": "Convolucao: 15 17\n"},
+      {"id": "D05-E03-T2", "tipo": "normal", "stdin": "4\n4 1 3 2\n3\n1 2 5\n", "stdout": "Convolucao: 25 13\n"},
+      {"id": "D05-E03-T3", "tipo": "borda", "stdin": "3\n10 20 30\n3\n1 0 -1\n", "stdout": "Convolucao: 20\n"},
+      {"id": "D05-E03-T4", "tipo": "borda", "stdin": "4\n2 -3 4 0\n1\n3\n", "stdout": "Convolucao: 6 -9 12 0\n"},
+      {"id": "D05-E03-T5", "tipo": "borda", "stdin": "1\n-5\n1\n-2\n", "stdout": "Convolucao: 10\n"}
+    ],
+    "D05_E04.c": [
+      {"id": "D05-E04-T1", "tipo": "normal", "stdin": "5\n1 2 1 2 1\n3\n1 2 1\n", "stdout": "Ocorrencias: 2\nIndices: 0 2\n"},
+      {"id": "D05-E04-T2", "tipo": "borda", "stdin": "4\n7 7 7 7\n2\n7 7\n", "stdout": "Ocorrencias: 3\nIndices: 0 1 2\n"},
+      {"id": "D05-E04-T3", "tipo": "borda", "stdin": "5\n1 2 3 4 5\n2\n3 5\n", "stdout": "Ocorrencias: 0\nIndices: nenhum\n"},
+      {"id": "D05-E04-T4", "tipo": "borda", "stdin": "4\n9 8 1 2\n2\n1 2\n", "stdout": "Ocorrencias: 1\nIndices: 2\n"},
+      {"id": "D05-E04-T5", "tipo": "borda", "stdin": "3\n-1 0 1\n3\n-1 0 1\n", "stdout": "Ocorrencias: 1\nIndices: 0\n"}
+    ],
+    "D05_E05.c": [
+      {"id": "D05-E05-T1", "tipo": "normal", "stdin": "5\n1 3 2 5 4\n3\n1 0 2\n", "stdout": "Resultado (3): 4 11 8\nMaior convolucao: 11 (indice 1)\n"},
+      {"id": "D05-E05-T2", "tipo": "borda", "stdin": "5\n1 2 1 2 1\n2\n1 2\n", "stdout": "Resultado (4): 4 5 4 5\nMaior convolucao: 5 (indice 1)\n"},
+      {"id": "D05-E05-T3", "tipo": "borda", "stdin": "4\n-5 -2 -8 -1\n2\n1 3\n", "stdout": "Resultado (3): -17 -14 -25\nMaior convolucao: -14 (indice 1)\n"},
+      {"id": "D05-E05-T4", "tipo": "borda", "stdin": "3\n2 5 1\n3\n4 1 2\n", "stdout": "Resultado (1): 13\nMaior convolucao: 13 (indice 0)\n"},
+      {"id": "D05-E05-T5", "tipo": "borda", "stdin": "3\n3 -4 2\n1\n-2\n", "stdout": "Resultado (3): -6 8 -4\nMaior convolucao: 8 (indice 1)\n"}
+    ],
+    "D05_E06.c": [
+      {"id": "D05-E06-T1", "tipo": "normal", "stdin": "5\n1 2 1 2 1\n2\n1 2\n", "stdout": "Ocorrencias: 2\nConvolucao: 4 5 4 5\n"},
+      {"id": "D05-E06-T2", "tipo": "borda", "stdin": "2\n5 6\n3\n5 6 7\n", "stdout": "Ocorrencias: 0\nConvolucao: vazia\n"},
+      {"id": "D05-E06-T3", "tipo": "borda", "stdin": "3\n4 5 6\n3\n4 5 6\n", "stdout": "Ocorrencias: 1\nConvolucao: 73\n"},
+      {"id": "D05-E06-T4", "tipo": "borda", "stdin": "4\n3 1 3 3\n1\n3\n", "stdout": "Ocorrencias: 3\nConvolucao: 9 3 9 9\n"},
+      {"id": "D05-E06-T5", "tipo": "normal", "stdin": "4\n-1 2 -3 4\n2\n-2 1\n", "stdout": "Ocorrencias: 0\nConvolucao: -5 8 -11\n"}
+    ],
+    "D05_C02_corrigido.c": [
+      {"id": "D05-C02-T1", "tipo": "borda", "stdin": "3\n1 1 1\n2\n1 1\n", "stdout": "Ocorrencias: 2\n"},
+      {"id": "D05-C02-T2", "tipo": "borda", "stdin": "5\n9 0 1 2 3\n2\n2 3\n", "stdout": "Ocorrencias: 1\n"},
+      {"id": "D05-C02-T3", "tipo": "borda", "stdin": "4\n1 2 1 3\n2\n2 2\n", "stdout": "Ocorrencias: 0\n"},
+      {"id": "D05-C02-T4", "tipo": "borda", "stdin": "2\n5 5\n2\n5 5\n", "stdout": "Ocorrencias: 1\n"},
+      {"id": "D05-C02-T5", "tipo": "normal", "stdin": "6\n1 0 1 0 1 0\n3\n1 0 1\n", "stdout": "Ocorrencias: 2\n"}
+    ],
+    "D05_C03.c": [
+      {"id": "D05-C03-T1", "tipo": "normal", "stdin": "5\n1 2 3 4 5\n3\n1 2 4\n", "stdout": "Tamanho: 3\nValores: 11 18 25\nSoma total: 54\n"},
+      {"id": "D05-C03-T2", "tipo": "normal", "stdin": "4\n-2 3 -1 4\n2\n2 -3\n", "stdout": "Tamanho: 3\nValores: 12 -11 11\nSoma total: 12\n"},
+      {"id": "D05-C03-T3", "tipo": "borda", "stdin": "3\n2 0 -1\n3\n5 3 1\n", "stdout": "Tamanho: 1\nValores: -3\nSoma total: -3\n"},
+      {"id": "D05-C03-T4", "tipo": "borda", "stdin": "3\n4 -1 2\n1\n10\n", "stdout": "Tamanho: 3\nValores: 40 -10 20\nSoma total: 50\n"},
+      {"id": "D05-C03-T5", "tipo": "borda", "stdin": "4\n0 0 0 0\n2\n3 7\n", "stdout": "Tamanho: 3\nValores: 0 0 0\nSoma total: 0\n"}
+    ]
+  }
+}

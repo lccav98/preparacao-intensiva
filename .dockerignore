@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.log
+*.tmp
+*.bak
+.git/
+.jev/
+automacao_curso/dados/
+automacao_curso/uploads_provas/
+automacao_curso/spool_email/
+automacao_curso/folhas_emitidas/
+automacao_curso/dashboard_evolucao.html

@@ -1,0 +1,41 @@
+{
+  "bloco": "D06",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "D06_E03_corrigido.c": [
+      {"id": "D06-E03-T1", "tipo": "normal", "stdin": "C101\nIntroducao a Programacao C\n", "stdout": "Codigo: C101\nDesc: [Introducao a Programacao C]\n"},
+      {"id": "D06-E03-T2", "tipo": "borda", "stdin": "ABCDEFGHIJKLMNO\nTeste limite 15\n", "stdout": "Codigo: ABCDEFGHIJKLMNO\nDesc: [Teste limite 15]\n"},
+      {"id": "D06-E03-T3", "tipo": "borda", "stdin": "X1\n\n", "stdout": "Codigo: X1\nDesc: []\n"},
+      {"id": "D06-E03-T4", "tipo": "normal", "stdin": "A0\n  123  456  \n", "stdout": "Codigo: A0\nDesc: [  123  456  ]\n"},
+      {"id": "D06-E03-T5", "tipo": "borda", "stdin": "007\nAgente Zero\n", "stdout": "Codigo: 007\nDesc: [Agente Zero]\n"}
+    ],
+    "D06_E04.c": [
+      {"id": "D06-E04-T1", "tipo": "normal", "stdin": "INFO\nAlgoritmos e Estruturas\n", "stdout": "Tag: INFO\nTitulo: [Algoritmos e Estruturas]\n"},
+      {"id": "D06-E04-T2", "tipo": "borda", "stdin": "12345678901234567890\nLimite exato da tag\n", "stdout": "Tag: 12345678901234567890\nTitulo: [Limite exato da tag]\n"},
+      {"id": "D06-E04-T3", "tipo": "borda", "stdin": "T\nA\n", "stdout": "Tag: T\nTitulo: [A]\n"},
+      {"id": "D06-E04-T4", "tipo": "borda", "stdin": "EMPTY\n\n", "stdout": "Tag: EMPTY\nTitulo: []\n"},
+      {"id": "D06-E04-T5", "tipo": "borda", "stdin": "TAG1   \nLinha limpa\n", "stdout": "Tag: TAG1\nTitulo: [Linha limpa]\n"}
+    ],
+    "D06_E05.c": [
+      {"id": "D06-E05-T1", "tipo": "normal", "stdin": "Algoritmos em C\ne\n", "stdout": "Resultado: [Algoritmos ]\n"},
+      {"id": "D06-E05-T2", "tipo": "borda", "stdin": "Banana\nB\n", "stdout": "Resultado: []\n"},
+      {"id": "D06-E05-T3", "tipo": "borda", "stdin": "Linguagem C\nz\n", "stdout": "Resultado: [Linguagem C]\n"},
+      {"id": "D06-E05-T4", "tipo": "normal", "stdin": "a-b-c-d\n-\n", "stdout": "Resultado: [a]\n"},
+      {"id": "D06-E05-T5", "tipo": "borda", "stdin": "UTFPR\nR\n", "stdout": "Resultado: [UTFP]\n"}
+    ],
+    "D06_C02_corrigido.c": [
+      {"id": "D06-C02-T1", "tipo": "normal", "stdin": "UTFPR\nPonta Grossa\n", "stdout": "Sigla: UTFPR | Cidade: Ponta Grossa\n"},
+      {"id": "D06-C02-T2", "tipo": "borda", "stdin": "PARANA2026\nCuritiba Sul\n", "stdout": "Sigla: PARANA2026 | Cidade: Curitiba Sul\n"},
+      {"id": "D06-C02-T3", "tipo": "normal", "stdin": "USP\nSaoPaulo\n", "stdout": "Sigla: USP | Cidade: SaoPaulo\n"},
+      {"id": "D06-C02-T4", "tipo": "borda", "stdin": "TEST\n\n", "stdout": "Sigla: TEST | Cidade: \n"},
+      {"id": "D06-C02-T5", "tipo": "borda", "stdin": "C\nBelo Horizonte\n", "stdout": "Sigla: C | Cidade: Belo Horizonte\n"}
+    ],
+    "D06_C03.c": [
+      {"id": "D06-C03-T1", "tipo": "normal", "stdin": "20260012\nMaria Silva\nAlgoritmos em C\n", "stdout": "Matricula: 20260012\nNome: Maria Silva\nDisciplina: Algoritmos em C\n"},
+      {"id": "D06-C03-T2", "tipo": "borda", "stdin": "123456789012\nJoao Pedro\nCalculo I\n", "stdout": "Matricula: 123456789012\nNome: Joao Pedro\nDisciplina: Calculo I\n"},
+      {"id": "D06-C03-T3", "tipo": "borda", "stdin": "M1   \nAna\nFisica 1\n", "stdout": "Matricula: M1\nNome: Ana\nDisciplina: Fisica 1\n"},
+      {"id": "D06-C03-T4", "tipo": "borda", "stdin": "A1\nCarlos\n\n", "stdout": "Matricula: A1\nNome: Carlos\nDisciplina: \n"},
+      {"id": "D06-C03-T5", "tipo": "normal", "stdin": "RA99\nLuis  Souza\nEstrutura de Dados\n", "stdout": "Matricula: RA99\nNome: Luis  Souza\nDisciplina: Estrutura de Dados\n"}
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include "imagem.h"
+#include "funcoes.h"
+
+int main(void) {
+    static int img[ALTURA][LARGURA];
+    if (!lerImagem(img)) {
+        printf("Erro ao ler imagem.\n");
+        return 1;
+    }
+    aplicarMediana(img);
+    salvarImagem(img);
+    return 0;
+}

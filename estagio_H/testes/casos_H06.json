@@ -1,0 +1,230 @@
+{
+  "bloco": "H06",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "H06_E03_corrigido/main.c": [
+      {
+        "id": "H06-E03-T1",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n245 235 225 215 205 245 235\n235 225 215 205 245 235 225\n225 215 255 245 235 225 215\n215 205 245 0 225 215 205\n205 245 235 225 215 205 245\n245 235 225 215 205 245 235\n235 225 215 205 245 235 225\n"
+      },
+      {
+        "id": "H06-E03-T2",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n1 20\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n0 135 135 135 135 135 135\n135 235 135 135 135 135 135\n135 135 135 135 135 135 135\n135 135 135 0 135 135 135\n135 135 135 135 135 135 135\n135 135 135 135 135 135 135\n135 135 135 135 135 135 230\n"
+      },
+      {
+        "id": "H06-E03-T3",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n4\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n"
+      },
+      {
+        "id": "H06-E03-T4",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n9\n2 4\n4\n3\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\nOpcao invalida.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\nTamanho invalido. Use 3, 5 ou 7.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Inverter cores\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n255 242 229 216 203 190 177\n218 205 192 179 166 153 140\n181 168 155 142 129 116 103\n144 131 118 105 92 79 66\n107 94 81 68 55 55 29\n70 57 57 55 55 55 248\n33 20 7 250 237 224 211\n"
+      },
+      {
+        "id": "H06-E03-T5",
+        "tipo": "borda",
+        "stdin": "P3\n7 7\n255\n",
+        "stdout": "Erro ao ler imagem.\n"
+      }
+    ],
+    "H06_E04/main.c": [
+      {
+        "id": "H06-E04-T1",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n4 30\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n0 0 255 255 255 0 0\n0 255 255 255 0 0 255\n255 255 0 0 0 255 255\n255 255 0 255 255 255 255\n255 0 0 255 255 255 0\n0 0 255 255 255 0 0\n0 255 255 255 0 0 255\n"
+      },
+      {
+        "id": "H06-E04-T2",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n1 -20\n3\n4 128\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 255\n0 0 0 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 0\n255 255 255 0 0 0 0\n"
+      },
+      {
+        "id": "H06-E04-T3",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n4 -1\n4 256\n4 255\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nLimiar invalido. Use 0 a 255.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nLimiar invalido. Use 0 a 255.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 255 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n"
+      },
+      {
+        "id": "H06-E04-T4",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n2 5\n4 100\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n"
+      },
+      {
+        "id": "H06-E04-T5",
+        "tipo": "borda",
+        "stdin": "P2\n3 3\n255\n",
+        "stdout": "Erro ao ler imagem.\n"
+      }
+    ],
+    "H06_E05/main.c": [
+      {
+        "id": "H06-E05-T1",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n78 65 52 39 26 13 0\n115 102 89 76 63 50 37\n152 139 126 113 100 87 74\n189 176 163 150 137 124 111\n226 213 200 187 174 161 148\n7 250 237 224 211 198 185\n44 31 18 5 248 235 222\n"
+      },
+      {
+        "id": "H06-E05-T2",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n4\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n"
+      },
+      {
+        "id": "H06-E05-T3",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n1 15\n4\n3\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n35 25 65 55 45 35 25\n45 35 35 45 45 45 35\n55 45 45 35 55 45 45\n65 55 45 35 35 45 55\n25 55 55 45 45 35 65\n35 35 55 55 45 35 25\n45 35 25 65 55 45 35\n"
+      },
+      {
+        "id": "H06-E05-T4",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n2 3\n4\n9\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\nOpcao invalida.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n20 20 20 20 20 20 20\n20 40 60 80 60 40 20\n20 60 77 117 77 60 20\n20 80 117 177 117 80 20\n20 60 77 117 77 60 20\n20 40 60 80 60 40 20\n20 20 20 20 20 20 20\n"
+      },
+      {
+        "id": "H06-E05-T5",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n4\n2 7\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Espelhar horizontalmente\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n100 100 100 100 100 100 250\n100 100 100 100 100 0 100\n100 100 100 100 100 100 100\n100 100 100 102 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n5 100 100 100 100 100 100\n"
+      }
+    ],
+    "H06_E06/main.c": [
+      {
+        "id": "H06-E06-T1",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n1 20\n3\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 30\nMaximo: 70\nMedia: 48.78\nP2\n7 7\n255\n30 40 50 60 70 30 40\n40 50 50 50 40 40 50\n50 50 60 40 50 50 60\n60 50 40 40 50 60 70\n70 40 50 50 60 60 30\n30 40 50 60 60 40 40\n40 50 60 70 30 40 50\n"
+      },
+      {
+        "id": "H06-E06-T2",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n2 3\n4 100\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 255\nMedia: 156.12\nP2\n7 7\n255\n0 0 0 0 0 0 0\n0 0 0 0 0 255 255\n0 0 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 0\n255 255 255 0 0 0 0\n"
+      },
+      {
+        "id": "H06-E06-T3",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 255\nMedia: 102.24\nP2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n"
+      },
+      {
+        "id": "H06-E06-T4",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n4 260\n2 7\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nLimiar invalido. Use 0 a 255.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 20\nMaximo: 200\nMedia: 49.96\nP2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 48 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n"
+      },
+      {
+        "id": "H06-E06-T5",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n1 -10\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar limiarizacao\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 0\nMedia: 0.00\nP2\n7 7\n255\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n"
+      }
+    ],
+    "H06_C03/main.c": [
+      {
+        "id": "H06-C03-T1",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n4\n1 -20\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n225 215 205 195 185 225 215\n215 205 195 185 225 215 205\n205 195 235 225 215 205 195\n195 185 225 0 205 195 185\n185 225 215 205 195 185 225\n225 215 205 195 185 225 215\n215 205 195 185 225 215 205\n"
+      },
+      {
+        "id": "H06-C03-T2",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n3\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n255 242 229 216 203 190 177\n218 205 192 179 166 153 140\n181 168 155 142 129 116 103\n144 131 118 105 92 79 66\n107 94 81 68 55 55 29\n70 57 57 55 55 55 248\n33 20 7 250 237 224 211\n"
+      },
+      {
+        "id": "H06-C03-T3",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n4\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n"
+      },
+      {
+        "id": "H06-C03-T4",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n2 5\n4\n8\n2 2\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\nOpcao invalida.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\nTamanho invalido. Use 3, 5 ou 7.\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Aplicar negativo\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n235 235 235 235 235 235 235\n235 235 235 235 235 235 235\n235 235 179 179 179 235 235\n235 235 179 179 179 235 235\n235 235 179 179 179 235 235\n235 235 235 235 235 235 235\n235 235 235 235 235 235 235\n"
+      },
+      {
+        "id": "H06-C03-T5",
+        "tipo": "borda",
+        "stdin": "P3\n7 7\n255\n",
+        "stdout": "Erro ao ler imagem.\n"
+      }
+    ],
+    "H06_OP1_opcional/main.c": [
+      {
+        "id": "H06-OP1-T1",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30\n",
+        "stdout": "P2\n7 7\n255\n40 50 60 70 80 40 50\n50 60 70 80 40 50 60\n60 70 30 40 50 60 70\n70 80 40 255 60 70 80\n80 40 50 60 70 80 40\n40 50 60 70 80 40 50\n50 60 70 80 40 50 60\n"
+      },
+      {
+        "id": "H06-OP1-T2",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n-40\n",
+        "stdout": "P2\n7 7\n255\n210 60 60 60 60 60 60\n60 0 60 60 60 60 60\n60 60 60 60 60 60 60\n60 60 60 215 60 60 60\n60 60 60 60 60 60 60\n60 60 60 60 60 60 60\n60 60 60 60 60 60 0\n"
+      },
+      {
+        "id": "H06-OP1-T3",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n0\n",
+        "stdout": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n"
+      },
+      {
+        "id": "H06-OP1-T4",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n300\n",
+        "stdout": "P2\n7 7\n255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n"
+      },
+      {
+        "id": "H06-OP1-T5",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n-300\n",
+        "stdout": "P2\n7 7\n255\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n0 0 0 0 0 0 0\n"
+      }
+    ],
+    "H06_OP2_opcional/main.c": [
+      {
+        "id": "H06-OP2-T1",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n30 40 0 10 20 30 40\n40 50 10 255 30 40 50\n50 10 20 30 40 50 10\n10 20 30 40 50 10 20\n20 30 40 50 10 20 30\n4\n1 20\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 255\nMedia: 32.96\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 20\nMaximo: 255\nMedia: 52.55\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n30 40 50 60 70 30 40\n40 50 60 70 30 40 50\n50 60 20 30 40 50 60\n60 70 30 255 50 60 70\n70 30 40 50 60 70 30\n30 40 50 60 70 30 40\n40 50 60 70 30 40 50\n"
+      },
+      {
+        "id": "H06-OP2-T2",
+        "tipo": "normal",
+        "stdin": "P2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 213 226\n185 198 211 224 237 250 7\n222 235 248 5 18 31 44\n3\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 248\nMedia: 121.08\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n0 13 26 39 52 65 78\n37 50 63 76 89 102 115\n74 87 100 113 126 139 152\n111 124 137 150 163 176 189\n148 161 174 187 200 200 226\n185 198 198 200 200 200 7\n222 235 248 5 18 31 44\n"
+      },
+      {
+        "id": "H06-OP2-T3",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 255 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n4\n2 7\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 255\nMedia: 102.24\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 250\nMedia: 99.12\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n250 100 100 100 100 100 100\n100 0 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 102 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 100\n100 100 100 100 100 100 5\n"
+      },
+      {
+        "id": "H06-OP2-T4",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 0\nMaximo: 200\nMedia: 48.98\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n20 20 200 200 200 20 20\n20 20 200 0 200 20 20\n20 20 200 200 200 20 20\n20 20 20 20 20 20 20\n20 20 20 20 20 20 20\n"
+      },
+      {
+        "id": "H06-OP2-T5",
+        "tipo": "borda",
+        "stdin": "P2\n7 7\n255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n4\n0\n",
+        "stdout": "===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nMinimo: 255\nMaximo: 255\nMedia: 255.00\n===== PROCESSAMENTO DE IMAGENS =====\n1 - Ajustar brilho\n2 - Aplicar desfoque (blur)\n3 - Aplicar filtro da mediana\n4 - Exibir estatisticas\n0 - Salvar e sair\nEscolha uma opcao:\nP2\n7 7\n255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n255 255 255 255 255 255 255\n"
+      }
+    ]
+  }
+}

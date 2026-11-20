@@ -1,0 +1,30 @@
+{
+  "bloco": "A09",
+  "tolerancia_numerica": 0.0,
+  "casos_por_arquivo": {
+    "A09_E03_corrigido.c": [
+      {
+        "id": "A09-E03-T1",
+        "tipo": "deterministico",
+        "stdin": "",
+        "stdout": "float: 4 bytes\ndouble: 8 bytes\nfloat 0.1f (10 casas): 0.1000000015\nfloat 0.1f (20 casas): 0.10000000149011611938\ndouble 0.1 (10 casas): 0.1000000000\ndouble 0.1 (20 casas): 0.10000000000000000555\n"
+      }
+    ],
+    "A09_E05.c": [
+      {
+        "id": "A09-E05-T1",
+        "tipo": "deterministico",
+        "stdin": "",
+        "stdout": "float 10 casas: 0.3000000119\nfloat 20 casas: 0.30000001192092895508\ndouble 10 casas: 0.3000000000\ndouble 20 casas: 0.30000000000000004441\n"
+      }
+    ],
+    "A09_C03.c": [
+      {
+        "id": "A09-C03-T1",
+        "tipo": "deterministico",
+        "stdin": "",
+        "stdout": "char: 1 bytes\nshort: 2 bytes\nint: 4 bytes\nlong: 8 bytes\nfloat: 4 bytes\ndouble: 8 bytes\n"
+      }
+    ]
+  }
+}

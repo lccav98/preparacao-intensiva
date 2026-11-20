@@ -1,0 +1,41 @@
+{
+  "bloco": "F02",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "F02_E03_corrigido.c": [
+      {"id": "F02-E03-T1", "tipo": "normal", "stdin": "3 4\n", "stdout": "Soma dos quadrados: 25\n"},
+      {"id": "F02-E03-T2", "tipo": "borda", "stdin": "0 0\n", "stdout": "Soma dos quadrados: 0\n"},
+      {"id": "F02-E03-T3", "tipo": "borda", "stdin": "-3 4\n", "stdout": "Soma dos quadrados: 25\n"},
+      {"id": "F02-E03-T4", "tipo": "borda", "stdin": "-5 -2\n", "stdout": "Soma dos quadrados: 29\n"},
+      {"id": "F02-E03-T5", "tipo": "normal", "stdin": "10 0\n", "stdout": "Soma dos quadrados: 100\n"}
+    ],
+    "F02_E04.c": [
+      {"id": "F02-E04-T1", "tipo": "normal", "stdin": "2 2024\n", "stdout": "Dias: 29\n"},
+      {"id": "F02-E04-T2", "tipo": "borda", "stdin": "2 1900\n", "stdout": "Dias: 28\n"},
+      {"id": "F02-E04-T3", "tipo": "borda", "stdin": "2 2000\n", "stdout": "Dias: 29\n"},
+      {"id": "F02-E04-T4", "tipo": "normal", "stdin": "4 2025\n", "stdout": "Dias: 30\n"},
+      {"id": "F02-E04-T5", "tipo": "borda", "stdin": "13 2025\n", "stdout": "Mes invalido\n"}
+    ],
+    "F02_E05.c": [
+      {"id": "F02-E05-T1", "tipo": "normal", "stdin": "1 30\n", "stdout": "Perfeitos: 2\n"},
+      {"id": "F02-E05-T2", "tipo": "borda", "stdin": "6 6\n", "stdout": "Perfeitos: 1\n"},
+      {"id": "F02-E05-T3", "tipo": "borda", "stdin": "7 27\n", "stdout": "Perfeitos: 0\n"},
+      {"id": "F02-E05-T4", "tipo": "normal", "stdin": "1 500\n", "stdout": "Perfeitos: 3\n"},
+      {"id": "F02-E05-T5", "tipo": "borda", "stdin": "-5 5\n", "stdout": "Perfeitos: 0\n"}
+    ],
+    "F02_C02_corrigido.c": [
+      {"id": "F02-C02-T1", "tipo": "normal", "stdin": "12 18\n", "stdout": "MDC: 6\nMMC: 36\n"},
+      {"id": "F02-C02-T2", "tipo": "borda", "stdin": "7 13\n", "stdout": "MDC: 1\nMMC: 91\n"},
+      {"id": "F02-C02-T3", "tipo": "borda", "stdin": "5 5\n", "stdout": "MDC: 5\nMMC: 5\n"},
+      {"id": "F02-C02-T4", "tipo": "normal", "stdin": "24 6\n", "stdout": "MDC: 6\nMMC: 24\n"},
+      {"id": "F02-C02-T5", "tipo": "borda", "stdin": "1 9\n", "stdout": "MDC: 1\nMMC: 9\n"}
+    ],
+    "F02_C03.c": [
+      {"id": "F02-C03-T1", "tipo": "normal", "stdin": "1 10\n", "stdout": "Primos: 4\n"},
+      {"id": "F02-C03-T2", "tipo": "borda", "stdin": "2 2\n", "stdout": "Primos: 1\n"},
+      {"id": "F02-C03-T3", "tipo": "borda", "stdin": "-10 1\n", "stdout": "Primos: 0\n"},
+      {"id": "F02-C03-T4", "tipo": "borda", "stdin": "14 16\n", "stdout": "Primos: 0\n"},
+      {"id": "F02-C03-T5", "tipo": "normal", "stdin": "10 30\n", "stdout": "Primos: 6\n"}
+    ]
+  }
+}

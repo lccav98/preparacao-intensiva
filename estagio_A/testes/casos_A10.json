@@ -1,0 +1,38 @@
+{
+  "bloco": "A10",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "A10_E03_corrigido.c": [
+      {"id": "A10-E03-T1", "tipo": "normal", "stdin": "1200.00\n", "stdout": "Total: R$ 1250.00\n"},
+      {"id": "A10-E03-T2", "tipo": "borda", "stdin": "0.0\n", "stdout": "Total: R$ 50.00\n"},
+      {"id": "A10-E03-T3", "tipo": "normal", "stdin": "2345.67\n", "stdout": "Total: R$ 2395.67\n"},
+      {"id": "A10-E03-T4", "tipo": "borda", "stdin": "-50.0\n", "stdout": "Total: R$ 0.00\n"}
+    ],
+    "A10_E04.c": [
+      {"id": "A10-E04-T1", "tipo": "normal", "stdin": "10.0 25.0\n", "stdout": "Area: 250.00 m2\nPerimetro: 70.00 m\n"},
+      {"id": "A10-E04-T2", "tipo": "borda", "stdin": "0.0 15.0\n", "stdout": "Area: 0.00 m2\nPerimetro: 30.00 m\n"},
+      {"id": "A10-E04-T3", "tipo": "borda", "stdin": "0.0 0.0\n", "stdout": "Area: 0.00 m2\nPerimetro: 0.00 m\n"},
+      {"id": "A10-E04-T4", "tipo": "normal", "stdin": "12.5 8.2\n", "stdout": "Area: 102.50 m2\nPerimetro: 41.40 m\n"},
+      {"id": "A10-E04-T5", "tipo": "borda", "stdin": "0.4 0.6\n", "stdout": "Area: 0.24 m2\nPerimetro: 2.00 m\n"}
+    ],
+    "A10_E05.c": [
+      {"id": "A10-E05-T1", "tipo": "normal", "stdin": "2000.00 5000.00\n1800.00 4000.00\n", "stdout": "Comissao 1: R$ 250.00\nComissao 2: R$ 200.00\nTotal 1: R$ 2000.00\nTotal 2: R$ 2250.00\n"},
+      {"id": "A10-E05-T2", "tipo": "borda", "stdin": "1500.00 0.0\n2200.00 0.0\n", "stdout": "Comissao 1: R$ 0.00\nComissao 2: R$ 0.00\nTotal 1: R$ 2200.00\nTotal 2: R$ 1500.00\n"},
+      {"id": "A10-E05-T3", "tipo": "borda", "stdin": "0.0 0.0\n0.0 0.0\n", "stdout": "Comissao 1: R$ 0.00\nComissao 2: R$ 0.00\nTotal 1: R$ 0.00\nTotal 2: R$ 0.00\n"},
+      {"id": "A10-E05-T4", "tipo": "normal", "stdin": "1200.40 3000.00\n1500.60 2400.00\n", "stdout": "Comissao 1: R$ 150.00\nComissao 2: R$ 120.00\nTotal 1: R$ 1620.60\nTotal 2: R$ 1350.40\n"},
+      {"id": "A10-E05-T5", "tipo": "borda", "stdin": "1000.00 1240.00\n1000.00 1240.00\n", "stdout": "Comissao 1: R$ 62.00\nComissao 2: R$ 62.00\nTotal 1: R$ 1062.00\nTotal 2: R$ 1062.00\n"}
+    ],
+    "A10_C02_corrigido.c": [
+      {"id": "A10-C02-T1", "tipo": "normal", "stdin": "200.00\n", "stdout": "Taxa aplicada: \"10%\"\nValor final: R$ 220.00\n"},
+      {"id": "A10-C02-T2", "tipo": "borda", "stdin": "0.0\n", "stdout": "Taxa aplicada: \"10%\"\nValor final: R$ 0.00\n"},
+      {"id": "A10-C02-T3", "tipo": "normal", "stdin": "154.20\n", "stdout": "Taxa aplicada: \"10%\"\nValor final: R$ 169.62\n"},
+      {"id": "A10-C02-T4", "tipo": "borda", "stdin": "12.00\n", "stdout": "Taxa aplicada: \"10%\"\nValor final: R$ 13.20\n"}
+    ],
+    "A10_C03.c": [
+      {"id": "A10-C03-T1", "tipo": "normal", "stdin": "10.0 20.0 500.00\n", "stdout": "Dimensoes trocadas: 20.00 x 10.00\nArea: 200.00 m2\nComissao: R$ 5000.00\n"},
+      {"id": "A10-C03-T2", "tipo": "borda", "stdin": "15.0 30.0 0.0\n", "stdout": "Dimensoes trocadas: 30.00 x 15.00\nArea: 450.00 m2\nComissao: R$ 0.00\n"},
+      {"id": "A10-C03-T3", "tipo": "borda", "stdin": "0.0 0.0 0.0\n", "stdout": "Dimensoes trocadas: 0.00 x 0.00\nArea: 0.00 m2\nComissao: R$ 0.00\n"},
+      {"id": "A10-C03-T4", "tipo": "normal", "stdin": "12.0 15.0 250.40\n", "stdout": "Dimensoes trocadas: 15.00 x 12.00\nArea: 180.00 m2\nComissao: R$ 2253.60\n"}
+    ]
+  }
+}

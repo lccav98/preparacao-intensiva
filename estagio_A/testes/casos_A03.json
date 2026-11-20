@@ -1,0 +1,46 @@
+{
+  "bloco": "A03",
+  "tolerancia_numerica": 0,
+  "casos_por_arquivo": {
+    "A03_E03_corrigido.c": [
+      {
+        "id": "A03-E03-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Diretorio: C:\\usuarios\\aluno\nMensagem: \"Compilado!\"\n"
+      }
+    ],
+    "A03_E04.c": [
+      {
+        "id": "A03-E04-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "UTFPR - Campus Ponta Grossa\nDisciplina: Algoritmos\nPadrao: \"C99\"\n"
+      }
+    ],
+    "A03_E05.c": [
+      {
+        "id": "A03-E05-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Comando\tFuncao\n\"gcc\"\tCompila C\n\\n\tNova linha\n\\\\\tBarra literal\n"
+      }
+    ],
+    "A03_C02_corrigido.c": [
+      {
+        "id": "A03-C02-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Codigo:\t100\nRota:\tC:\\projetos\\teste\nNota:\t\"Aprovado\"\n"
+      }
+    ],
+    "A03_C03.c": [
+      {
+        "id": "A03-C03-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Relatorio\t\"Final\"\nPasta:\tD:\\aulas\\c\nSituacao:\tOK\n"
+      }
+    ]
+  }
+}

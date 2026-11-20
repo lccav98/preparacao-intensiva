@@ -1,0 +1,32 @@
+{
+  "bloco": "A07",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "A07_E04_corrigido.c": [
+      {"id": "A07-E04-T1", "tipo": "normal", "stdin": "10 20\n", "stdout": "x = 20, y = 10\n"},
+      {"id": "A07-E04-T2", "tipo": "borda", "stdin": "-8 -3\n", "stdout": "x = -3, y = -8\n"},
+      {"id": "A07-E04-T3", "tipo": "borda", "stdin": "0 0\n", "stdout": "x = 0, y = 0\n"},
+      {"id": "A07-E04-T4", "tipo": "borda", "stdin": "7 7\n", "stdout": "x = 7, y = 7\n"},
+      {"id": "A07-E04-T5", "tipo": "borda", "stdin": "0 -15\n", "stdout": "x = -15, y = 0\n"}
+    ],
+    "A07_E05.c": [
+      {"id": "A07-E05-T1", "tipo": "normal", "stdin": "3.50 8.25\n", "stdout": "Antes: a = 3.50, b = 8.25\nDepois: a = 8.25, b = 3.50\n"},
+      {"id": "A07-E05-T2", "tipo": "borda", "stdin": "-4.75 -1.25\n", "stdout": "Antes: a = -4.75, b = -1.25\nDepois: a = -1.25, b = -4.75\n"},
+      {"id": "A07-E05-T3", "tipo": "borda", "stdin": "0.0 0.0\n", "stdout": "Antes: a = 0.00, b = 0.00\nDepois: a = 0.00, b = 0.00\n"},
+      {"id": "A07-E05-T4", "tipo": "borda", "stdin": "5.50 5.50\n", "stdout": "Antes: a = 5.50, b = 5.50\nDepois: a = 5.50, b = 5.50\n"}
+    ],
+    "A07_E06.c": [
+      {"id": "A07-E06-T1", "tipo": "normal", "stdin": "10 20 30\n", "stdout": "Antes: 10 20 30\nDepois: 30 10 20\n"},
+      {"id": "A07-E06-T2", "tipo": "borda", "stdin": "-5 -2 -9\n", "stdout": "Antes: -5 -2 -9\nDepois: -9 -5 -2\n"},
+      {"id": "A07-E06-T3", "tipo": "borda", "stdin": "0 0 0\n", "stdout": "Antes: 0 0 0\nDepois: 0 0 0\n"},
+      {"id": "A07-E06-T4", "tipo": "borda", "stdin": "4 4 0\n", "stdout": "Antes: 4 4 0\nDepois: 0 4 4\n"}
+    ],
+    "A07_C03.c": [
+      {"id": "A07-C03-T1", "tipo": "normal", "stdin": "1 2 3\n", "stdout": "Resultado: 2 3 1\n"},
+      {"id": "A07-C03-T2", "tipo": "borda", "stdin": "-10 -20 -30\n", "stdout": "Resultado: -20 -30 -10\n"},
+      {"id": "A07-C03-T3", "tipo": "borda", "stdin": "0 0 0\n", "stdout": "Resultado: 0 0 0\n"},
+      {"id": "A07-C03-T4", "tipo": "borda", "stdin": "9 9 9\n", "stdout": "Resultado: 9 9 9\n"},
+      {"id": "A07-C03-T5", "tipo": "borda", "stdin": "-4 0 8\n", "stdout": "Resultado: 0 8 -4\n"}
+    ]
+  }
+}

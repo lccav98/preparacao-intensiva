@@ -1,0 +1,48 @@
+{
+  "bloco": "D03",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "D03_E03_corrigido.c": [
+      {"id": "D03-E03-T1", "tipo": "normal", "stdin": "5\n4 7 9 7 2\n7\n", "stdout": "Indice: 1\nInvertido: 2 7 9 7 4\n"},
+      {"id": "D03-E03-T2", "tipo": "borda", "stdin": "4\n10 20 30 40\n5\n", "stdout": "Indice: -1\nInvertido: 40 30 20 10\n"},
+      {"id": "D03-E03-T3", "tipo": "borda", "stdin": "4\n8 3 1 9\n8\n", "stdout": "Indice: 0\nInvertido: 9 1 3 8\n"},
+      {"id": "D03-E03-T4", "tipo": "borda", "stdin": "1\n-6\n-6\n", "stdout": "Indice: 0\nInvertido: -6\n"},
+      {"id": "D03-E03-T5", "tipo": "borda", "stdin": "1\n-6\n0\n", "stdout": "Indice: -1\nInvertido: -6\n"}
+    ],
+    "D03_E04.c": [
+      {"id": "D03-E04-T1", "tipo": "normal", "stdin": "5\n3 12 7 19 15\n10\n", "stdout": "Mais proximo: 12 (indice 1, distancia 2)\n"},
+      {"id": "D03-E04-T2", "tipo": "borda", "stdin": "4\n12 5 8 15\n10\n", "stdout": "Mais proximo: 12 (indice 0, distancia 2)\n"},
+      {"id": "D03-E04-T3", "tipo": "normal", "stdin": "4\n-10 -3 4 8\n-3\n", "stdout": "Mais proximo: -3 (indice 1, distancia 0)\n"},
+      {"id": "D03-E04-T4", "tipo": "borda", "stdin": "1\n-7\n5\n", "stdout": "Mais proximo: -7 (indice 0, distancia 12)\n"},
+      {"id": "D03-E04-T5", "tipo": "borda", "stdin": "3\n-20 -10 -5\n0\n", "stdout": "Mais proximo: -5 (indice 2, distancia 5)\n"}
+    ],
+    "D03_E05.c": [
+      {"id": "D03-E05-T1", "tipo": "normal", "stdin": "6\n3 8 -4 7 0 -5\n", "stdout": "Pares (3): 8 -4 0\nImpares (3): 3 7 -5\n"},
+      {"id": "D03-E05-T2", "tipo": "borda", "stdin": "3\n2 -6 0\n", "stdout": "Pares (3): 2 -6 0\nImpares (0): nenhum\n"},
+      {"id": "D03-E05-T3", "tipo": "borda", "stdin": "3\n-1 -3 -7\n", "stdout": "Pares (0): nenhum\nImpares (3): -1 -3 -7\n"},
+      {"id": "D03-E05-T4", "tipo": "borda", "stdin": "1\n0\n", "stdout": "Pares (1): 0\nImpares (0): nenhum\n"},
+      {"id": "D03-E05-T5", "tipo": "borda", "stdin": "1\n-9\n", "stdout": "Pares (0): nenhum\nImpares (1): -9\n"}
+    ],
+    "D03_E06.c": [
+      {"id": "D03-E06-T1", "tipo": "normal", "stdin": "4\n10 20 30 40\n", "stdout": "Invertido: 40 30 20 10\nMedia: 25.00\nAbaixo (2): 20 10\nAcima ou igual (2): 40 30\n"},
+      {"id": "D03-E06-T2", "tipo": "borda", "stdin": "3\n5 5 5\n", "stdout": "Invertido: 5 5 5\nMedia: 5.00\nAbaixo (0): nenhum\nAcima ou igual (3): 5 5 5\n"},
+      {"id": "D03-E06-T3", "tipo": "borda", "stdin": "1\n-4\n", "stdout": "Invertido: -4\nMedia: -4.00\nAbaixo (0): nenhum\nAcima ou igual (1): -4\n"},
+      {"id": "D03-E06-T4", "tipo": "normal", "stdin": "5\n1 2 3 4 5\n", "stdout": "Invertido: 5 4 3 2 1\nMedia: 3.00\nAbaixo (2): 2 1\nAcima ou igual (3): 5 4 3\n"},
+      {"id": "D03-E06-T5", "tipo": "borda", "stdin": "4\n-10 0 2 4\n", "stdout": "Invertido: 4 2 0 -10\nMedia: -1.00\nAbaixo (1): -10\nAcima ou igual (3): 4 2 0\n"}
+    ],
+    "D03_C02_corrigido.c": [
+      {"id": "D03-C02-T1", "tipo": "normal", "stdin": "6\n5 2 5 8 5 1\n5\n", "stdout": "Ocorrencias: 0 2 4\nMais proximo: 5 (indice 0)\n"},
+      {"id": "D03-C02-T2", "tipo": "borda", "stdin": "4\n-10 2 12 18\n10\n", "stdout": "Ocorrencias: nenhuma\nMais proximo: 12 (indice 2)\n"},
+      {"id": "D03-C02-T3", "tipo": "borda", "stdin": "4\n7 13 7 13\n10\n", "stdout": "Ocorrencias: nenhuma\nMais proximo: 7 (indice 0)\n"},
+      {"id": "D03-C02-T4", "tipo": "borda", "stdin": "1\n0\n0\n", "stdout": "Ocorrencias: 0\nMais proximo: 0 (indice 0)\n"},
+      {"id": "D03-C02-T5", "tipo": "borda", "stdin": "1\n-5\n5\n", "stdout": "Ocorrencias: nenhuma\nMais proximo: -5 (indice 0)\n"}
+    ],
+    "D03_C03.c": [
+      {"id": "D03-C03-T1", "tipo": "normal", "stdin": "6\n2 9 4 12 1 8\n6\n", "stdout": "Menores invertidos (3): 1 4 2\nMaiores ou iguais (3): 9 12 8\n"},
+      {"id": "D03-C03-T2", "tipo": "borda", "stdin": "3\n10 20 30\n10\n", "stdout": "Menores invertidos (0): nenhum\nMaiores ou iguais (3): 10 20 30\n"},
+      {"id": "D03-C03-T3", "tipo": "borda", "stdin": "4\n-5 -1 0 3\n5\n", "stdout": "Menores invertidos (4): 3 0 -1 -5\nMaiores ou iguais (0): nenhum\n"},
+      {"id": "D03-C03-T4", "tipo": "borda", "stdin": "1\n-2\n0\n", "stdout": "Menores invertidos (1): -2\nMaiores ou iguais (0): nenhum\n"},
+      {"id": "D03-C03-T5", "tipo": "normal", "stdin": "5\n1 2 10 3 4\n5\n", "stdout": "Menores invertidos (4): 4 3 2 1\nMaiores ou iguais (1): 10\n"}
+    ]
+  }
+}

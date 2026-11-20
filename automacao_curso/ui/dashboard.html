@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="doc-title">Painel Gerencial — Preparação Intensiva (UTFPR-PG)</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-2: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --err: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container { max-width: 1360px; margin: 0 auto; padding: 20px; }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    header h1 { margin: 0; font-size: 1.4rem; letter-spacing: -0.02em; }
+    header p { margin: 2px 0 0 0; font-size: 0.85rem; color: var(--muted); }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    select, input, button {
+      font-family: inherit;
+      font-size: 0.88rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      background: var(--surface-2);
+      color: var(--text);
+    }
+    button { cursor: pointer; font-weight: 600; transition: opacity 0.15s; }
+    button:hover { opacity: 0.9; }
+    .btn-primary { background: #0284c7; border-color: #0369a1; }
+    .btn-ok { background: #059669; border-color: #047857; }
+    .btn-warn { background: #d97706; border-color: #b45309; }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .kpi-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+    .kpi-val { font-size: 1.5rem; font-weight: 700; margin: 4px 0; }
+    .kpi-sub { font-size: 0.82rem; color: var(--muted); }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    .card h2 {
+      margin: 0 0 12px 0;
+      font-size: 1.05rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .estagios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+    }
+    .estagio-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .estagio-titulo { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: #e2e8f0; }
+    .blocos-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill {
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: #0f172a;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .pill.dominado { background: rgba(16, 185, 129, 0.2); border-color: var(--ok); color: #6ee7b7; }
+    .pill.atual { background: rgba(56, 189, 248, 0.25); border-color: var(--accent); color: #7dd3fc; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3); }
+    .pill.recuperacao { background: rgba(245, 158, 11, 0.2); border-color: var(--warn); color: #fcd34d; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; }
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .b-ok { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+    .b-err { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .b-warn { background: rgba(245,158,11,0.2); color: #fcd34d; }
+    .b-info { background: rgba(56,189,248,0.2); color: #7dd3fc; }
+    .cronometro {
+      font-family: monospace;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 8px 0;
+    }
+    .item-fb {
+      border-left: 4px solid var(--border);
+      background: var(--surface-2);
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    .item-fb.ok { border-left-color: var(--ok); }
+    .item-fb.err { border-left-color: var(--err); }
+    pre.ocr-box {
+      background: #020617;
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      margin: 6px 0;
+    }
+    .status-msg { margin-top: 8px; font-size: 0.84rem; color: #7dd3fc; min-height: 20px; }
+    dialog.auth-modal {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 20px 22px;
+      width: min(460px, 92vw);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    }
+    dialog.auth-modal[open] {
+      display: block;
+    }
+    dialog.auth-modal:modal {
+      overscroll-behavior: contain;
+    }
+    dialog.auth-modal::backdrop {
+      overflow: hidden;
+      overscroll-behavior: contain;
+      background-color: rgba(2, 6, 23, 0.72);
+    }
+    .modal-field {
+      margin-bottom: 12px;
+    }
+    .modal-field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #e2e8f0;
+    }
+    .modal-field input,
+    .modal-field select {
+      width: 100%;
+    }
+    .error-msg {
+      display: none;
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: #fca5a5;
+      font-weight: 500;
+    }
+    select:is(:user-invalid, .user-invalid-fallback),
+    input:is(:user-invalid, .user-invalid-fallback) {
+      border-color: var(--err);
+    }
+    select:is(:user-invalid, .user-invalid-fallback) ~ .error-msg,
+    input:is(:user-invalid, .user-invalid-fallback) ~ .error-msg {
+      display: block;
+    }
+    .visually-hidden:where(:not(:focus-within, :active)) {
+      position: absolute !important;
+      clip-path: inset(50%) !important;
+      overflow: hidden !important;
+      width: 1px !important;
+      height: 1px !important;
+      margin: -1px !important;
+      padding: 0 !important;
+      border: 0 !important;
+      white-space: nowrap !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1 id="hdr-titulo">Curso Multi-Disciplina (UTFPR-PG) &mdash; Painel de Evolucao e Correcao</h1>
+        <p id="hdr-subtitulo">Entrega de Provas A4 por E-mail &bull; Correcao em 3 Camadas + JEV &bull; Progressao por Dominio 100%</p>
+      </div>
+      <div class="toolbar">
+        <label for="sel-disciplina" class="visually-hidden">Disciplina</label>
+        <select id="sel-disciplina" aria-label="Disciplina ativa" onchange="trocarDisciplina()"></select>
+        <label for="sel-aluno" class="visually-hidden">Aluno selecionado</label>
+        <select id="sel-aluno" aria-label="Aluno selecionado" onchange="trocarAluno()"></select>
+        <select id="sel-modo-emissao" aria-label="Modalidade da folha" title="Modalidade da folha a emitir">
+          <option value="">Modo atual do aluno</option>
+          <option value="pratica">Prática Guiada</option>
+          <option value="checagem">Checagem Independente</option>
+        </select>
+        <button class="btn-primary" onclick="novoAluno()">+ Novo Aluno</button>
+        <button class="btn-primary" onclick="abrirModalMatricula()">+ Matricular Aluno</button>
+        <button class="btn-ok" onclick="emitirProva()">Emitir &amp; Enviar Prova</button>
+        <button class="btn-warn" onclick="coletarEmails()">Coletar Respostas E-mail</button>
+        <button class="btn-primary" onclick="verPortalAluno()">Ver Portal do Aluno</button>
+        <button onclick="resetarPinAluno()">Gerar Novo PIN</button>
+        <button onclick="baixarCsv()">Baixar CSV</button>
+        <button id="btn-config-integracoes" onclick="abrirModalIntegracoes()">Configurar E-mail &amp; IA</button>
+        <span class="badge b-info" id="badge-autocoleta" title="Status da coleta automatica em segundo plano">Auto-Coleta: --</span>
+        <button id="btn-config-auth" class="btn-warn" onclick="abrirModalAuth()">Configurar Senha (Acesso Livre)</button>
+        <button id="btn-sair-admin" onclick="sairAdmin()">Sair</button>
+      </div>
+    </header>
+
+    <section class="card" id="card-turma">
+      <h2><span>Visao Geral da Turma</span></h2>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Aluno</th><th>E-mail</th><th>Bloco / Modo</th>
+              <th>Dominados</th><th>Ultima Nota</th><th>PIN Inicial</th><th>Acoes</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-turma"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="kpis">
+      <div class="kpi">
+        <div class="kpi-label">Bloco Atual do Aluno</div>
+        <div class="kpi-val" id="kpi-bloco">--</div>
+        <div class="kpi-sub" id="kpi-bloco-sub">--</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label" id="kpi-progresso-lbl">Dominio Curricular</div>
+        <div class="kpi-val" id="kpi-progresso">0 / --</div>
+        <div class="kpi-sub" id="kpi-progresso-sub">0% concluido</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Precisao &amp; Fluencia</div>
+        <div class="kpi-val" id="kpi-acerto">--%</div>
+        <div class="kpi-sub" id="kpi-tempo">Tempo medio: -- min</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Roteamento Economico JEV</div>
+        <div class="kpi-val" id="kpi-jev">--%</div>
+        <div class="kpi-sub" id="kpi-jev-sub">Camada Leve (Local + System One)</div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card">
+        <h2>
+          <span>1. Folha Impressa &amp; Cronometro da Sessao</span>
+          <span class="badge b-info" id="badge-protocolo">Sem prova emitida</span>
+        </h2>
+        <div id="info-prova-atual" style="font-size: 0.88rem; color: var(--muted); margin-bottom: 8px;">
+          Emita uma folha A4 para enviar ao e-mail do aluno e imprimir.
+        </div>
+        <div class="cronometro" id="cronometro-display">00:00</div>
+        <div class="toolbar">
+          <button class="btn-primary" onclick="abrirFolhaImpressao()">Abrir Folha A4 (Imprimir)</button>
+          <button class="btn-ok" id="btn-iniciar-cron" onclick="iniciarCronometro()">Iniciar Cronometro</button>
+          <button class="btn-warn" id="btn-encerrar-cron" onclick="encerrarCronometro()">Encerrar Cronometro (Travar Tempo)</button>
+        </div>
+        <div class="status-msg" id="msg-emissao"></div>
+      </div>
+
+      <div class="card">
+        <h2>
+          <span>2. Enviar Foto / Scan (PNG, JPG ou PDF)</span>
+          <span class="badge b-warn" id="badge-motor-correcao">OCR + Oraculo</span>
+        </h2>
+        <p style="font-size: 0.84rem; color: var(--muted); margin-top: 0;">
+          O aluno pode responder ao e-mail com o arquivo anexado ou fazer upload direto (.png, .jpg ou .pdf do CamScanner) abaixo:
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+          <input type="file" id="input-foto" accept="image/png,image/jpeg,application/pdf,.pdf" />
+          <input type="text" id="input-protocolo" placeholder="Protocolo (opcional se visivel na foto)" style="flex: 1;" />
+          <button class="btn-ok" onclick="enviarFotoUpload()">Corrigir Foto Agora</button>
+        </div>
+        <div class="status-msg" id="msg-correcao"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span>3. Ultimo Feedback Detalhado &amp; Analise de Erros</span>
+        <span id="fb-resumo-badge"></span>
+      </h2>
+      <div id="ultimo-feedback">Nenhuma correcao registrada ainda.</div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card">
+        <h2><span>4. Evolucao de Desempenho e Tempo</span></h2>
+        <div id="grafico-svg">Sem dados historicos suficientes.</div>
+      </div>
+      <div class="card">
+        <h2><span>5. Caixa de E-mails (Provas &amp; Feedbacks)</span></h2>
+        <div style="max-height: 240px; overflow-y: auto;">
+          <table>
+            <thead><tr><th>Dir.</th><th>Protocolo</th><th>Assunto</th></tr></thead>
+            <tbody id="tbody-emails"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span id="mapa-titulo">6. Mapa Curricular Completo</span>
+        <span style="font-size: 0.8rem; color: var(--muted);" id="bloco-detalhe-hover">Clique em qualquer bloco para detalhes</span>
+      </h2>
+      <div class="estagios-grid" id="mapa-estagios"></div>
+    </section>
+
+    <section class="card">
+      <h2><span>7. Historico Sincronizado com <code id="csv-nome-arquivo">00_acompanhamento.csv</code></span></h2>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th><th>Bloco</th><th>Var/Tent</th><th>Tempo</th>
+              <th>Acertos</th><th>Resultado</th><th>Dificuldade</th><th>Proxima Acao</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-csv"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    window.__INITIAL_STATE__ = __INITIAL_STATE_JSON__;
+    let ESTADO = window.__INITIAL_STATE__ || null;
+    let DISCIPLINA_ATIVA = (new URLSearchParams(window.location.search).get("disciplina"))
+      || (ESTADO && ESTADO.disciplina_ativa && ESTADO.disciplina_ativa.id)
+      || "algoritmos";
+    let cronInterval = null;
+    let cronInicioMs = null;
+
+    const MODO_SERVIDOR = window.location.protocol.startsWith("http");
+
+    async function carregarEstado(alunoId = null, discOverride = null) {
+      if (discOverride) DISCIPLINA_ATIVA = discOverride;
+      if (MODO_SERVIDOR) {
+        const params = new URLSearchParams();
+        params.set("disciplina", DISCIPLINA_ATIVA);
+        if (alunoId) params.set("aluno_id", String(alunoId));
+        const r = await fetch(`/api/estado?${params.toString()}`);
+        if (r.status === 401 || r.status === 403) {
+          window.location.href = "/login";
+          return;
+        }
+        ESTADO = await r.json();
+        if (ESTADO && ESTADO.disciplina_ativa && ESTADO.disciplina_ativa.id) {
+          DISCIPLINA_ATIVA = ESTADO.disciplina_ativa.id;
+        }
+      }
+      renderizarTudo();
+    }
+
+    function trocarDisciplina() {
+      const val = document.getElementById("sel-disciplina").value;
+      DISCIPLINA_ATIVA = val || "algoritmos";
+      if (cronInterval) {
+        clearInterval(cronInterval);
+        cronInterval = null;
+      }
+      if (window.history && window.history.replaceState) {
+        const u = new URL(window.location.href);
+        u.searchParams.set("disciplina", DISCIPLINA_ATIVA);
+        window.history.replaceState({}, "", u.toString());
+      }
+      carregarEstado(null, DISCIPLINA_ATIVA);
+    }
+
+    function renderizarTudo() {
+      if (!ESTADO) return;
+      const disc = ESTADO.disciplina_ativa || {
+        id: DISCIPLINA_ATIVA, codigo: "CC61A", nome: "Algoritmos em C",
+        nome_curto: "Algoritmos C (CC61A)", total_blocos: 73, tipo_avaliacao: "codigo_c"
+      };
+      DISCIPLINA_ATIVA = disc.id || DISCIPLINA_ATIVA;
+      const totBlocos = (ESTADO.indicadores && ESTADO.indicadores.total_blocos) || disc.total_blocos || 73;
+
+      document.title = `${disc.nome} (${disc.codigo}) — Painel Gerencial`;
+      document.getElementById("hdr-titulo").textContent = `${disc.nome} (${disc.codigo}) — Painel de Evolucao e Correcao`;
+      document.getElementById("hdr-subtitulo").textContent = disc.id === "matrizes_vetores"
+        ? "Entrega de Provas A4 por E-mail • Correcao via OCR + Oraculo Matematico Exato + JEV • Progressao 100%"
+        : "Entrega de Provas A4 por E-mail • Correcao via OCR + Oraculo C99 + JEV • Progressao por Dominio 100%";
+      document.getElementById("badge-motor-correcao").textContent = disc.id === "matrizes_vetores"
+        ? "OCR + Oraculo Matematico"
+        : "OCR + Oraculo C99";
+      document.getElementById("csv-nome-arquivo").textContent = disc.id === "matrizes_vetores"
+        ? "00_acompanhamento_mv.csv"
+        : "00_acompanhamento.csv";
+
+      const selDisc = document.getElementById("sel-disciplina");
+      if (selDisc) {
+        const discs = ESTADO.disciplinas || [disc];
+        selDisc.innerHTML = discs.map(d =>
+          `<option value="${escapeHtml(d.id)}" ${d.id === DISCIPLINA_ATIVA ? "selected" : ""}>${escapeHtml(d.nome_curto || d.nome)}</option>`
+        ).join("");
+      }
+
+      const sel = document.getElementById("sel-aluno");
+      sel.innerHTML = "";
+      (ESTADO.alunos || []).forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a.id;
+        opt.textContent = `${a.nome} (${a.bloco_atual})`;
+        if (ESTADO.aluno_ativo && a.id === ESTADO.aluno_ativo.id) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      if (!(ESTADO.alunos || []).length) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "Nenhum aluno matriculado nesta disciplina";
+        sel.appendChild(opt);
+      }
+
+      const al = ESTADO.aluno_ativo;
+      const ind = ESTADO.indicadores || {};
+      const jev = ESTADO.metricas_jev || {};
+      const auth = ESTADO.auth_status || { auth_ativa: false, origem: "aberto" };
+      const btnAuth = document.getElementById("btn-config-auth");
+      const btnSair = document.getElementById("btn-sair-admin");
+      if (btnAuth) {
+        btnAuth.textContent = auth.auth_ativa
+          ? "Seguranca: Login Ativo"
+          : "Configurar Senha (Acesso Livre)";
+        btnAuth.className = auth.auth_ativa ? "btn-ok" : "btn-warn";
+      }
+      if (btnSair) {
+        btnSair.style.display = auth.auth_ativa ? "inline-block" : "none";
+      }
+      const auto = ESTADO.automacao_email || {};
+      const badgeAuto = document.getElementById("badge-autocoleta");
+      if (badgeAuto) {
+        let lblAuto = "Auto-Coleta: Spool Local (5s)";
+        let clsAuto = "badge b-warn";
+        if (auto.imap_configurado) {
+          lblAuto = auto.modo === "imap_idle"
+            ? "Auto-Coleta: IMAP Tempo Real"
+            : "Auto-Coleta: IMAP Polling";
+          clsAuto = "badge b-ok";
+        }
+        if ((auto.total_processados || 0) > 0) {
+          lblAuto += ` (${auto.total_processados} proc.)`;
+        }
+        badgeAuto.textContent = lblAuto;
+        badgeAuto.className = clsAuto;
+        badgeAuto.title = auto.ultimo_erro
+          ? `Ultimo aviso: ${auto.ultimo_erro}`
+          : `Ultimo ciclo: ${auto.ultimo_ciclo_em || "--"}`;
+      }
+
+      if (al) {
+        document.getElementById("kpi-bloco").textContent = `${al.bloco_atual} (${al.variante_atual})`;
+        document.getElementById("kpi-bloco-sub").textContent = `Tentativa #${al.tentativa_bloco} • Modo: ${al.modo_atual.toUpperCase()} • ${al.status_curso}`;
+      } else {
+        document.getElementById("kpi-bloco").textContent = "--";
+        document.getElementById("kpi-bloco-sub").textContent = "Matricule ou cadastre um aluno nesta disciplina";
+      }
+      const dom = ind.blocos_dominados || 0;
+      document.getElementById("kpi-progresso-lbl").textContent = `Dominio Curricular (${totBlocos} Blocos)`;
+      document.getElementById("kpi-progresso").textContent = `${dom} / ${totBlocos}`;
+      document.getElementById("kpi-progresso-sub").textContent = `${totBlocos ? ((dom / totBlocos) * 100).toFixed(1) : "0.0"}% da ementa ${disc.codigo}`;
+      document.getElementById("kpi-acerto").textContent = `${ind.media_acerto_pct || 0}%`;
+      document.getElementById("kpi-tempo").textContent = `Tempo medio: ${ind.tempo_medio_min || 0} min (${ind.total_submissoes || 0} avaliacoes)`;
+      document.getElementById("kpi-jev").textContent = `${jev.light_share_pct ?? 100}%`;
+      document.getElementById("kpi-jev-sub").textContent = `Local: ${jev.local || 0} | JEV: ${jev.jev || 0} | Escalate: ${jev.escalate || 0}`;
+
+      const tbTurma = document.getElementById("tbody-turma");
+      if (tbTurma) {
+        const turma = ESTADO.resumo_turma || [];
+        if (!turma.length) {
+          tbTurma.innerHTML = `<tr><td colspan="7" style="color:var(--muted);">Nenhum aluno matriculado em ${escapeHtml(disc.nome)} ainda. Clique em "+ Matricular Aluno" ou "+ Novo Aluno".</td></tr>`;
+        } else {
+          tbTurma.innerHTML = turma.map(t => `
+            <tr>
+              <td><strong>${escapeHtml(t.nome)}</strong></td>
+              <td>${escapeHtml(t.email)}</td>
+              <td><strong>${escapeHtml(t.bloco_atual)}</strong> (${escapeHtml(t.variante_atual)} T#${t.tentativa_bloco} &bull; ${escapeHtml(t.modo_atual)})</td>
+              <td>${t.blocos_dominados || 0} / ${totBlocos}</td>
+              <td>${t.ultimo_acerto_pct !== null && t.ultimo_acerto_pct !== undefined ? t.ultimo_acerto_pct + "%" : "--"}</td>
+              <td style="font-family:monospace;">${escapeHtml(t.pin_inicial || "******")}</td>
+              <td>
+                <button onclick="carregarEstado(${t.id}, '${escapeHtml(DISCIPLINA_ATIVA)}')">Selecionar</button>
+                <button class="btn-primary" onclick="window.open('/aluno?aluno_id=${t.id}&disciplina=${encodeURIComponent(DISCIPLINA_ATIVA)}', '_blank')">Portal</button>
+              </td>
+            </tr>
+          `).join("");
+        }
+      }
+
+      // Prova atual
+      const provas = ESTADO.provas_emitidas || [];
+      if (provas.length > 0) {
+        const p = provas[0];
+        document.getElementById("badge-protocolo").textContent = p.protocolo;
+        const tempoTravadoTxt = p.tempo_cronometrado_min > 0 ? ` | Tempo travado: <strong>${p.tempo_cronometrado_min} min</strong>` : "";
+        document.getElementById("info-prova-atual").innerHTML =
+          `Ultima folha: <strong>${p.bloco} (${p.variante} T#${p.tentativa} &bull; ${p.modo})</strong> | Meta: <strong>${p.tempo_alvo_min} min</strong> | Status: <strong>${p.status.toUpperCase()}</strong>${tempoTravadoTxt}`;
+        if (p.tempo_cronometrado_min > 0 && !cronInterval) {
+          const totalSeg = Math.round(p.tempo_cronometrado_min * 60);
+          document.getElementById("cronometro-display").textContent =
+            `${String(Math.floor(totalSeg / 60)).padStart(2, "0")}:${String(totalSeg % 60).padStart(2, "0")} (TRAVADO)`;
+        } else if (!cronInterval) {
+          document.getElementById("cronometro-display").textContent = "00:00";
+        }
+      } else {
+        document.getElementById("badge-protocolo").textContent = "Sem prova emitida";
+        document.getElementById("info-prova-atual").textContent = "Emita uma folha A4 para este aluno.";
+        if (!cronInterval) document.getElementById("cronometro-display").textContent = "00:00";
+      }
+
+      // Ultimo feedback
+      const subs = ESTADO.submissoes || [];
+      const fbDiv = document.getElementById("ultimo-feedback");
+      if (subs.length > 0) {
+        const s = subs[0];
+        const cls = s.percentual_acerto >= 100 ? "b-ok" : "b-err";
+        document.getElementById("fb-resumo-badge").innerHTML =
+          `<span class="badge ${cls}">${s.bloco} (${s.variante}): ${s.acertos_iniciais}/${s.total_questoes} (${s.percentual_acerto}%) &bull; ${s.proxima_acao}</span>`;
+
+        const itensHtml = (s.itens || []).map(it => {
+          const ok = it.status_correcao === "correto";
+          return `<div class="item-fb ${ok ? "ok" : "err"}">
+            <div style="display:flex;justify-content:space-between;font-weight:700;">
+              <span>${it.questao_id} (${it.tipo_questao})</span>
+              <span>${ok ? "CORRETO" : "ERRO (" + it.categoria_erro + ")"} &bull; Camada ${it.camada_avaliacao}</span>
+            </div>
+            <pre class="ocr-box">${escapeHtml(it.resposta_extraida || "(em branco)")}</pre>
+            <div>${escapeHtml(it.feedback_item)}</div>
+          </div>`;
+        }).join("");
+
+        fbDiv.innerHTML = `<p style="margin-top:0;font-size:0.88rem;">
+          <strong>Protocolo:</strong> <code>${s.protocolo}</code> | <strong>Tempo:</strong> ${s.tempo_declarado_min} min (${s.fluencia_tempo}) |
+          <strong>Dificuldades:</strong> ${s.dificuldade_observada} | <strong>Decisao:</strong> <strong>${s.proxima_acao}</strong>
+        </p>${itensHtml}`;
+      } else {
+        fbDiv.textContent = "Nenhuma prova corrigida ainda para este aluno.";
+      }
+
+      // Grafico SVG de evolucao
+      renderizarGrafico(subs.slice().reverse());
+
+      // E-mails
+      const tbEm = document.getElementById("tbody-emails");
+      tbEm.innerHTML = (ESTADO.emails_spool || []).slice(0, 12).map(em => `
+        <tr>
+          <td><span class="badge ${em.direcao === "ENVIADO" ? "b-info" : "b-ok"}">${em.direcao}</span></td>
+          <td style="font-family:monospace;font-size:0.78rem;">${escapeHtml(em.protocolo || "-")}</td>
+          <td>${escapeHtml(em.assunto)}</td>
+        </tr>
+      `).join("");
+
+      // Mapa curricular dinamico
+      const estList = Object.keys(
+        (ESTADO.mapa_blocos || []).reduce((acc, b) => { acc[b.estagio] = 1; return acc; }, {})
+      ).sort();
+      const faixaEst = estList.length ? `${estList[0]} &ndash; ${estList[estList.length - 1]}` : "--";
+      document.getElementById("mapa-titulo").innerHTML =
+        `6. Mapa Curricular Completo (${escapeHtml(disc.codigo)} &bull; Estagios ${faixaEst} &bull; ${totBlocos} Blocos)`;
+      renderizarMapa();
+
+      // CSV
+      const tbCsv = document.getElementById("tbody-csv");
+      tbCsv.innerHTML = (ESTADO.acompanhamento_csv || []).slice().reverse().map(r => `
+        <tr>
+          <td>${escapeHtml(r.data)}</td>
+          <td><strong>${escapeHtml(r.bloco)}</strong></td>
+          <td>${escapeHtml(r.variante)} / T${escapeHtml(r.tentativa)}</td>
+          <td>${escapeHtml(r.tempo_resolucao)} min</td>
+          <td>${escapeHtml(r.acertos_iniciais)}/${escapeHtml(r.total_questoes)}</td>
+          <td><span class="badge ${String(r.resultado_checagem).startsWith("APROVADO") ? "b-ok" : "b-warn"}">${escapeHtml(r.resultado_checagem)}</span></td>
+          <td>${escapeHtml(r.dificuldade_observada)}</td>
+          <td><strong>${escapeHtml(r.proxima_acao)}</strong></td>
+        </tr>
+      `).join("");
+    }
+
+    function renderizarGrafico(subsAsc) {
+      const box = document.getElementById("grafico-svg");
+      if (!subsAsc.length) {
+        box.textContent = "Aguardando primeiras submissoes para plotar evolucao.";
+        return;
+      }
+      const w = 520, h = 190, pad = 28;
+      const n = subsAsc.length;
+      const pts = subsAsc.map((s, idx) => {
+        const x = n === 1 ? w / 2 : pad + (idx * (w - 2 * pad)) / (n - 1);
+        const y = h - pad - ((s.percentual_acerto / 100) * (h - 2 * pad));
+        return { x, y, label: `${s.bloco}(${s.variante})`, pct: s.percentual_acerto, t: s.tempo_declarado_min };
+      });
+      const poly = pts.map(p => `${p.x},${p.y}`).join(" ");
+      const dots = pts.map(p => `
+        <circle cx="${p.x}" cy="${p.y}" r="5" fill="${p.pct >= 100 ? '#10b981' : '#f59e0b'}" />
+        <text x="${p.x}" y="${p.y - 10}" fill="#f8fafc" font-size="10" text-anchor="middle">${p.pct}%</text>
+        <text x="${p.x}" y="${h - 8}" fill="#94a3b8" font-size="10" text-anchor="middle">${p.label}</text>
+      `).join("");
+      box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;background:#0f172a;border-radius:6px;">
+        <line x1="${pad}" y1="${pad}" x2="${w - pad}" y2="${pad}" stroke="#10b981" stroke-dasharray="4" stroke-opacity="0.4" />
+        <polyline fill="none" stroke="#38bdf8" stroke-width="2.5" points="${poly}" />
+        ${dots}
+      </svg>`;
+    }
+
+    function renderizarMapa() {
+      const grid = document.getElementById("mapa-estagios");
+      const blocos = ESTADO.mapa_blocos || [];
+      const aprovados = new Set(ESTADO.blocos_aprovados || []);
+      const al = ESTADO.aluno_ativo;
+      const porEst = {};
+      blocos.forEach(b => {
+        if (!porEst[b.estagio]) porEst[b.estagio] = [];
+        porEst[b.estagio].push(b);
+      });
+      grid.innerHTML = Object.keys(porEst).sort().map(est => {
+        const pills = porEst[est].map(b => {
+          let cls = "";
+          if (al && al.bloco_atual === b.bloco_id) {
+            cls = al.variante_atual === "V2" ? "recuperacao" : "atual";
+          } else if (aprovados.has(b.bloco_id)) {
+            cls = "dominado";
+          }
+          return `<span class="pill ${cls}" onclick='mostrarDetalheBloco(${JSON.stringify(b)})'>${b.bloco_id}</span>`;
+        }).join("");
+        return `<div class="estagio-box"><div class="estagio-titulo">Estagio ${est} (${porEst[est].length} blocos)</div><div class="blocos-pills">${pills}</div></div>`;
+      }).join("");
+    }
+
+    function mostrarDetalheBloco(b) {
+      document.getElementById("bloco-detalhe-hover").textContent =
+        `${b.bloco_id}: ${b.micro_habilidade} | Pre-req: ${(b.pre_requisitos || []).join(", ") || "Nenhum"} | Meta checagem: ${b.tempo_checagem_min} min`;
+    }
+
+    async function emitirProva() {
+      if (!MODO_SERVIDOR) return alert("Inicie servidor_dashboard.py para emitir novas provas ao vivo.");
+      const al = ESTADO.aluno_ativo;
+      if (!al) return alert("Selecione ou matricule um aluno nesta disciplina primeiro.");
+      const modoSel = document.getElementById("sel-modo-emissao").value || null;
+      const r = await fetch("/api/emitir-prova", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aluno_id: al.id, modo: modoSel, disciplina: DISCIPLINA_ATIVA }),
+      });
+      const d = await r.json();
+      const msgEl = document.getElementById("msg-emissao");
+      if (!r.ok || d.erro) {
+        msgEl.textContent = `Erro ao emitir prova: ${d.erro || r.status}`;
+        return;
+      }
+      if (d.email && d.email.modo_entrega === "SPOOL_LOCAL") {
+        msgEl.textContent = `Folha ${d.prova.protocolo} gerada e salva localmente (SPOOL_LOCAL - e-mail NAO enviado pela internet; configure PREP_SMTP_* para envio automatico).`;
+      } else {
+        msgEl.textContent = `Folha ${d.prova.protocolo} gerada e enviada por e-mail (${(d.email && d.email.modo_entrega) || "SMTP_REAL"}).`;
+      }
+      await carregarEstado(al.id, DISCIPLINA_ATIVA);
+    }
+
+    function abrirFolhaImpressao() {
+      const provas = ESTADO.provas_emitidas || [];
+      if (!provas.length) return alert("Emita uma prova primeiro.");
+      const prot = provas[0].protocolo;
+      if (MODO_SERVIDOR) {
+        window.open(`/folha/${prot}`, "_blank");
+      } else {
+        alert(`Abra o arquivo local: folhas_emitidas/${prot}.html`);
+      }
+    }
+
+    async function iniciarCronometro() {
+      if (MODO_SERVIDOR && ESTADO.provas_emitidas && ESTADO.provas_emitidas.length) {
+        const prot = ESTADO.provas_emitidas[0].protocolo;
+        await fetch("/api/iniciar-cronometro", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ protocolo: prot }),
+        });
+      }
+      cronInicioMs = Date.now();
+      if (cronInterval) clearInterval(cronInterval);
+      cronInterval = setInterval(() => {
+        const seg = Math.floor((Date.now() - cronInicioMs) / 1000);
+        const mm = String(Math.floor(seg / 60)).padStart(2, "0");
+        const ss = String(seg % 60).padStart(2, "0");
+        document.getElementById("cronometro-display").textContent = `${mm}:${ss}`;
+      }, 1000);
+      document.getElementById("msg-emissao").textContent = "Cronometro em execucao! Quando terminar a prova no papel, clique em 'Encerrar Cronometro'.";
+    }
+
+    async function encerrarCronometro() {
+      let seg = null;
+      if (cronInterval) {
+        clearInterval(cronInterval);
+        cronInterval = null;
+      }
+      if (cronInicioMs) {
+        seg = Math.max(1, Math.floor((Date.now() - cronInicioMs) / 1000));
+        const mm = String(Math.floor(seg / 60)).padStart(2, "0");
+        const ss = String(seg % 60).padStart(2, "0");
+        document.getElementById("cronometro-display").textContent = `${mm}:${ss} (TRAVADO)`;
+      }
+      if (MODO_SERVIDOR && ESTADO.provas_emitidas && ESTADO.provas_emitidas.length) {
+        const prot = ESTADO.provas_emitidas[0].protocolo;
+        const r = await fetch("/api/encerrar-cronometro", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ protocolo: prot, tempo_decorrido_seg: seg }),
+        });
+        const p = await r.json();
+        document.getElementById("msg-emissao").textContent =
+          `Tempo encerrado e travado em ${p.tempo_cronometrado_min} min. Agora voce pode escanear/fotografar e enviar com calma!`;
+        await carregarEstado(ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null, DISCIPLINA_ATIVA);
+      }
+    }
+
+    async function enviarFotoUpload() {
+      if (!MODO_SERVIDOR) return alert("Inicie servidor_dashboard.py para corrigir fotos ao vivo.");
+      const fileInput = document.getElementById("input-foto");
+      if (!fileInput.files || !fileInput.files[0]) return alert("Selecione uma foto (.png, .jpg ou .pdf) da prova.");
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const b64 = reader.result.split(",")[1];
+        const prot = document.getElementById("input-protocolo").value.trim();
+        document.getElementById("msg-correcao").textContent = DISCIPLINA_ATIVA === "matrizes_vetores"
+          ? "Executando OCR + Oraculo Matematico Exato + JEV..."
+          : "Executando OCR + Oraculo C99 + JEV...";
+        const r = await fetch("/api/submeter-foto", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nome_arquivo: file.name,
+            imagem_base64: b64,
+            protocolo: prot,
+            disciplina: DISCIPLINA_ATIVA,
+          }),
+        });
+        const res = await r.json();
+        if (res.erro) {
+          document.getElementById("msg-correcao").textContent = "Erro: " + res.erro;
+        } else {
+          document.getElementById("msg-correcao").textContent =
+            `Corrigido! Nota: ${res.acertos}/${res.total} (${res.percentual}%) | Acao: ${res.proxima_acao}`;
+          await carregarEstado(ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null, DISCIPLINA_ATIVA);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function coletarEmails() {
+      if (!MODO_SERVIDOR) return alert("Inicie servidor_dashboard.py para coletar e-mails.");
+      const r = await fetch("/api/coletar-emails", { method: "POST" });
+      const d = await r.json();
+      if (d.processados === 0) {
+        document.getElementById("msg-correcao").textContent =
+          "0 resposta(s) encontrada(s). Sem PREP_IMAP_* configurado, este botao verifica apenas a pasta local spool_email/recebidos.";
+      } else {
+        document.getElementById("msg-correcao").textContent = `${d.processados} resposta(s) por e-mail processadas.`;
+      }
+      await carregarEstado(ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null, DISCIPLINA_ATIVA);
+    }
+
+    async function novoAluno() {
+      if (!MODO_SERVIDOR) return;
+      const nome = prompt("Nome do aluno:");
+      if (!nome) return;
+      const email = prompt("E-mail do aluno:");
+      if (!email) return;
+      const bloco = prompt("Bloco inicial (ex: A01, B05):", "A01") || "A01";
+      const r = await fetch("/api/alunos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, email, bloco_inicial: bloco.toUpperCase(), disciplina: DISCIPLINA_ATIVA }),
+      });
+      const al = await r.json();
+      if (al.erro) {
+        alert("Erro: " + al.erro);
+        return;
+      }
+      document.getElementById("msg-emissao").textContent =
+        `Aluno ${al.nome} cadastrado em ${DISCIPLINA_ATIVA}! PIN inicial de acesso: ${al.pin_inicial || "(ja possuía PIN)"}`;
+      await carregarEstado(al.id, DISCIPLINA_ATIVA);
+    }
+
+    async function resetarPinAluno() {
+      if (!MODO_SERVIDOR || !ESTADO || !ESTADO.aluno_ativo) return;
+      const al = ESTADO.aluno_ativo;
+      const r = await fetch("/api/alunos/reset-pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aluno_id: al.id }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        alert("Erro ao redefinir PIN: " + (d.erro || r.status));
+        return;
+      }
+      document.getElementById("msg-emissao").textContent =
+        `Novo PIN gerado para ${d.nome} (${d.email}): ${d.pin_inicial}`;
+      await carregarEstado(al.id, DISCIPLINA_ATIVA);
+    }
+
+    function verPortalAluno() {
+      if (!MODO_SERVIDOR || !ESTADO || !ESTADO.aluno_ativo) return;
+      window.open(`/aluno?aluno_id=${ESTADO.aluno_ativo.id}&disciplina=${encodeURIComponent(DISCIPLINA_ATIVA)}`, "_blank");
+    }
+
+    function baixarCsv() {
+      if (!MODO_SERVIDOR) return;
+      window.location.href = `/api/admin/csv?disciplina=${encodeURIComponent(DISCIPLINA_ATIVA)}`;
+    }
+
+    async function sairAdmin() {
+      await fetch("/api/logout", { method: "POST" });
+      window.location.href = "/login";
+    }
+
+    function trocarAluno() {
+      const id = document.getElementById("sel-aluno").value;
+      carregarEstado(id || null, DISCIPLINA_ATIVA);
+    }
+
+    function escapeHtml(s) {
+      return String(s || "").replace(/[&<>"']/g, m => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+      })[m]);
+    }
+
+    renderizarTudo();
+    if (MODO_SERVIDOR) carregarEstado();
+
+    // OS <dialog> VIVEM DEPOIS DESTE BLOCO <script> (linhas 1153-1258).
+    // Aqui eles ainda nao foram analisados pelo parser, entao getElementById
+    // devolveria null e todo botao de modal (incl. "+ Matricular Aluno")
+    // cairia em `if (!dlgMat) return;` sem abrir nada.
+    // Por isso sao `let` e sao resolvidos por religarDialogos() num script
+    // pequeno colocado no fim do <body>, depois dos dialogs.
+    let dlgAuth = null;
+    let dlgInt = null;
+    let dlgMat = null;
+
+    function configurarDialogNativo(dlg) {
+      if (!dlg) return;
+      dlg.addEventListener("close", () => {
+        dlg.returnValue = "";
+      });
+      if (!("closedBy" in HTMLDialogElement.prototype)) {
+        const outsideDlg = (e) => {
+          const r = dlg.getBoundingClientRect();
+          return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+        };
+        let pressedOutside = false;
+        dlg.addEventListener("pointerdown", (e) => {
+          pressedOutside = outsideDlg(e);
+        });
+        dlg.addEventListener("pointerup", (e) => {
+          if (pressedOutside && outsideDlg(e)) dlg.close();
+          pressedOutside = false;
+        });
+      }
+    }
+
+    // Chamado no fim do <body> (apos os <dialog> existirem no DOM).
+    function religarDialogos() {
+      dlgAuth = document.getElementById("dlg-auth");
+      dlgInt = document.getElementById("dlg-integracoes");
+      dlgMat = document.getElementById("dlg-matricula");
+      configurarDialogNativo(dlgAuth);
+      configurarDialogNativo(dlgInt);
+      configurarDialogNativo(dlgMat);
+      religarFormMatricula();
+    }
+
+    const linkErrMat = (el, shown) => {
+      const errorId = el.dataset.error;
+      if (!errorId) return;
+      const ids = (el.getAttribute("aria-describedby") || "").split(/\s+/).filter(id => id && id !== errorId);
+      if (shown) ids.push(errorId);
+      if (ids.length) el.setAttribute("aria-describedby", ids.join(" "));
+      else el.removeAttribute("aria-describedby");
+    };
+    const syncAriaSelect = (el) => {
+      if (!el || !el.matches || !el.matches("select, input")) return;
+      const inv = CSS.supports("selector(:user-invalid)")
+        ? el.matches(":user-invalid")
+        : el.classList.contains("user-invalid-fallback");
+      el.setAttribute("aria-invalid", inv ? "true" : "false");
+      linkErrMat(el, inv);
+    };
+    // #form-matricula tambem so existe depois deste bloco: a ligacao dos
+    // listeners de validade/aria foi virada em funcao e e chamada em
+    // religarDialogos(), no fim do <body>.
+    function religarFormMatricula() {
+      const formMat = document.getElementById("form-matricula");
+      if (!formMat || formMat.dataset.wired === "1") return;
+      formMat.dataset.wired = "1";
+      if (!CSS.supports("selector(:user-invalid)")) {
+        formMat.addEventListener("change", (e) => {
+          if (e.target.checkValidity) {
+            e.target.classList.toggle("user-invalid-fallback", !e.target.validity.valid);
+          }
+          syncAriaSelect(e.target);
+        }, true);
+      } else {
+        formMat.addEventListener("change", (e) => syncAriaSelect(e.target), true);
+        formMat.addEventListener("blur", (e) => syncAriaSelect(e.target), true);
+        formMat.addEventListener("invalid", (e) => syncAriaSelect(e.target), true);
+      }
+    }
+
+    function abrirModalMatricula() {
+      if (!MODO_SERVIDOR || !dlgMat) return;
+      const todos = (ESTADO && ESTADO.todos_alunos) || [];
+      const selAl = document.getElementById("mat-aluno");
+      selAl.innerHTML = '<option value="" disabled selected>Selecione um aluno cadastrado...</option>' +
+        todos.map(a => {
+          const discsTxt = (a.disciplinas_matriculadas || []).join(", ") || "nenhuma";
+          return `<option value="${a.id}">${escapeHtml(a.nome)} (${escapeHtml(a.email)}) — [${escapeHtml(discsTxt)}]</option>`;
+        }).join("");
+      selAl.classList.remove("user-invalid-fallback");
+      selAl.setAttribute("aria-invalid", "false");
+      linkErrMat(selAl, false);
+
+      const selD = document.getElementById("mat-disciplina");
+      const discs = (ESTADO && ESTADO.disciplinas) || [];
+      selD.innerHTML = discs.map(d =>
+        `<option value="${escapeHtml(d.id)}" ${d.id === DISCIPLINA_ATIVA ? "selected" : ""}>${escapeHtml(d.nome_curto || d.nome)}</option>`
+      ).join("");
+      document.getElementById("mat-bloco").value = "A01";
+      document.getElementById("mat-modal-msg").textContent = "";
+      dlgMat.showModal();
+    }
+
+    function fecharModalMatricula() {
+      if (dlgMat && dlgMat.open) dlgMat.close();
+    }
+
+    async function salvarMatricula(e) {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const msg = document.getElementById("mat-modal-msg");
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const aid = Number(document.getElementById("mat-aluno").value);
+      const discId = document.getElementById("mat-disciplina").value;
+      const bloco = document.getElementById("mat-bloco").value.trim().toUpperCase() || "A01";
+      const emitir = document.getElementById("mat-emitir").checked;
+      msg.textContent = emitir ? "Matriculando e enviando 1ª folha A4..." : "Salvando matricula...";
+
+      const r = await fetch("/api/matriculas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          aluno_id: aid,
+          disciplina: discId,
+          bloco_inicial: bloco,
+          emitir_prova: emitir,
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        msg.textContent = "Erro: " + (d.erro || r.status);
+        return;
+      }
+      DISCIPLINA_ATIVA = discId;
+      fecharModalMatricula();
+      document.getElementById("msg-emissao").textContent =
+        emitir && d.emissao && d.emissao.prova
+          ? `Matricula confirmada e folha ${d.emissao.prova.protocolo} emitida!`
+          : `Aluno matriculado com sucesso em ${discId} (bloco ${bloco}).`;
+      await carregarEstado(aid, discId);
+    }
+
+    function abrirModalIntegracoes() {
+      if (!MODO_SERVIDOR || !dlgInt) return;
+      const auto = (ESTADO && ESTADO.automacao_email) || {};
+      const emailPadrao = auto.imap_user || auto.smtp_user || "lcezenilda@gmail.com";
+      document.getElementById("int-smtp-host").value = auto.smtp_host || "smtp.gmail.com";
+      document.getElementById("int-smtp-port").value = 587;
+      document.getElementById("int-imap-host").value = auto.imap_host || "imap.gmail.com";
+      document.getElementById("int-imap-port").value = 993;
+      document.getElementById("int-email").value = emailPadrao;
+      document.getElementById("int-app-pass").value = "";
+      document.getElementById("int-gemini-key").value = "";
+      document.getElementById("int-modal-msg").textContent = "";
+      document.getElementById("int-modal-status").textContent =
+        `Status atual: SMTP ${auto.smtp_configurado ? "OK" : "nao configurado"} | IMAP ${auto.imap_configurado ? "OK (" + (auto.modo || "ativo") + ")" : "nao configurado"} | Gemini Vision ${auto.gemini_configurado ? "OK" : "nao configurado"}`;
+      dlgInt.showModal();
+    }
+
+    function fecharModalIntegracoes() {
+      if (dlgInt && dlgInt.open) dlgInt.close();
+    }
+
+    function preencherPresetGmail() {
+      document.getElementById("int-smtp-host").value = "smtp.gmail.com";
+      document.getElementById("int-smtp-port").value = 587;
+      document.getElementById("int-imap-host").value = "imap.gmail.com";
+      document.getElementById("int-imap-port").value = 993;
+      if (!document.getElementById("int-email").value.trim()) {
+        document.getElementById("int-email").value = "lcezenilda@gmail.com";
+      }
+      document.getElementById("int-modal-msg").textContent =
+        "Preset Gmail aplicado. Informe a Senha de App de 16 caracteres do Google.";
+    }
+
+    async function salvarConfigIntegracoes(e) {
+      e.preventDefault();
+      const emailVal = document.getElementById("int-email").value.trim();
+      const appPass = document.getElementById("int-app-pass").value.trim();
+      const gemKey = document.getElementById("int-gemini-key").value.trim();
+      const testar = document.getElementById("int-testar").checked;
+      const msg = document.getElementById("int-modal-msg");
+      msg.textContent = testar ? "Testando conexao SMTP/IMAP..." : "Salvando configuracoes...";
+
+      const r = await fetch("/api/admin/config-integracoes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          smtp_host: document.getElementById("int-smtp-host").value.trim(),
+          smtp_port: Number(document.getElementById("int-smtp-port").value || 587),
+          smtp_user: emailVal,
+          smtp_from: emailVal,
+          smtp_pass: appPass,
+          imap_host: document.getElementById("int-imap-host").value.trim(),
+          imap_port: Number(document.getElementById("int-imap-port").value || 993),
+          imap_user: emailVal,
+          imap_pass: appPass,
+          gemini_api_key: gemKey,
+          testar_conexao: testar,
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        msg.textContent = "Erro: " + (d.erro || r.status);
+        return;
+      }
+      const tc = d.teste_conexao || {};
+      if (testar && ((!tc.smtp_ok && document.getElementById("int-smtp-host").value) || (!tc.imap_ok && document.getElementById("int-imap-host").value))) {
+        msg.textContent = `Salvo, mas atencao no teste -> SMTP: ${tc.smtp_ok ? "OK" : tc.smtp_erro} | IMAP: ${tc.imap_ok ? "OK" : tc.imap_erro}`;
+      } else {
+        fecharModalIntegracoes();
+        document.getElementById("msg-correcao").textContent =
+          "Integracao Gmail/IA salva e coleta automatica acordada!";
+      }
+      await carregarEstado(ESTADO && ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null);
+    }
+
+    if (MODO_SERVIDOR) {
+      setInterval(() => {
+        const modalAberto = (dlgAuth && dlgAuth.open) || (dlgInt && dlgInt.open) || (dlgMat && dlgMat.open);
+        if (document.visibilityState === "visible" && !modalAberto) {
+          carregarEstado(ESTADO && ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null, DISCIPLINA_ATIVA);
+        }
+      }, 12000);
+    }
+
+    function abrirModalAuth() {
+      if (!MODO_SERVIDOR || !dlgAuth) return;
+      const auth = (ESTADO && ESTADO.auth_status) || { auth_ativa: false, origem: "aberto", admin_email: "lcezenilda@gmail.com" };
+      document.getElementById("auth-admin-email").value = auth.admin_email || "lcezenilda@gmail.com";
+      document.getElementById("auth-admin-senha").value = "";
+      document.getElementById("auth-modal-msg").textContent = "";
+      const stTxt = auth.auth_ativa
+        ? (auth.origem === "env"
+          ? "Estado atual: Login ATIVO via variavel PREP_ADMIN_PASSWORD no servidor."
+          : "Estado atual: Login ATIVO (protege Painel Gerencial e isola cada aluno por PIN).")
+        : "Estado atual: ACESSO LIVRE (sem senha configurada — voce pode configurar todos os dados agora e ativar a senha depois).";
+      document.getElementById("auth-modal-status").textContent = stTxt;
+      document.getElementById("btn-desativar-auth").style.display =
+        auth.auth_ativa && auth.origem === "arquivo" ? "inline-block" : "none";
+      document.getElementById("btn-salvar-auth").disabled = auth.origem === "env";
+      dlgAuth.showModal();
+    }
+
+    function fecharModalAuth() {
+      if (dlgAuth && dlgAuth.open) dlgAuth.close();
+    }
+
+    async function salvarConfigAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById("auth-admin-email").value.trim();
+      const senha = document.getElementById("auth-admin-senha").value;
+      const msg = document.getElementById("auth-modal-msg");
+      const r = await fetch("/api/admin/config-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ativo: true, admin_email: email, admin_senha: senha }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        msg.textContent = "Erro: " + (d.erro || r.status);
+        return;
+      }
+      fecharModalAuth();
+      document.getElementById("msg-emissao").textContent =
+        "Senha da professora ativada! Agora o /login exige senha para Admin e PIN de 6 digitos para cada aluno.";
+      await carregarEstado(ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null);
+    }
+
+    async function desativarConfigAuth() {
+      const msg = document.getElementById("auth-modal-msg");
+      const r = await fetch("/api/admin/config-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ativo: false }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        msg.textContent = "Erro: " + (d.erro || r.status);
+        return;
+      }
+      fecharModalAuth();
+      document.getElementById("msg-emissao").textContent =
+        "Login local desativado. O servidor voltou para acesso livre de configuracao.";
+      await carregarEstado(ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null);
+    }
+  </script>
+
+  <dialog id="dlg-auth" class="auth-modal" closedby="any" aria-labelledby="dlg-auth-title">
+    <h2 id="dlg-auth-title" style="margin-top: 0; font-size: 1.1rem;">Configurar Senha de Acesso</h2>
+    <p id="auth-modal-status" style="font-size: 0.86rem; color: var(--muted); margin-top: 0;"></p>
+    <form id="form-config-auth" onsubmit="salvarConfigAuth(event)">
+      <div class="modal-field">
+        <label for="auth-admin-email">E-mail da Professora / Admin</label>
+        <input type="email" id="auth-admin-email" autocomplete="username" required />
+      </div>
+      <div class="modal-field">
+        <label for="auth-admin-senha">Nova Senha Administrativa (minimo 6 caracteres)</label>
+        <input type="password" id="auth-admin-senha" autocomplete="new-password" minlength="6" required autofocus />
+      </div>
+      <div class="status-msg" id="auth-modal-msg"></div>
+      <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
+        <button type="button" id="btn-desativar-auth" class="btn-warn" onclick="desativarConfigAuth()" style="display: none;">
+          Desativar Senha
+        </button>
+        <button type="button" onclick="fecharModalAuth()">Cancelar</button>
+        <button type="submit" id="btn-salvar-auth" class="btn-ok">Salvar e Ativar Senha</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-integracoes" class="auth-modal" closedby="any" aria-labelledby="dlg-int-title">
+    <h2 id="dlg-int-title" style="margin-top: 0; font-size: 1.1rem;">Configurar E-mail Automatico (Gmail) e IA</h2>
+    <p id="int-modal-status" style="font-size: 0.84rem; color: var(--muted); margin-top: 0;"></p>
+    <div style="margin-bottom: 10px;">
+      <button type="button" class="btn-primary" onclick="preencherPresetGmail()">Preencher Gmail</button>
+    </div>
+    <form id="form-config-integracoes" onsubmit="salvarConfigIntegracoes(event)">
+      <div class="modal-field">
+        <label for="int-email">E-mail Gmail da Professora / Turma</label>
+        <input type="email" id="int-email" autocomplete="username" required />
+      </div>
+      <div class="modal-field">
+        <label for="int-app-pass">Senha de App Google (16 caracteres — deixe vazio para manter)</label>
+        <input type="password" id="int-app-pass" autocomplete="off" autofocus />
+      </div>
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+        <div class="modal-field">
+          <label for="int-smtp-host">Host SMTP</label>
+          <input type="text" id="int-smtp-host" />
+        </div>
+        <div class="modal-field">
+          <label for="int-smtp-port">Porta SMTP</label>
+          <input type="number" id="int-smtp-port" value="587" />
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+        <div class="modal-field">
+          <label for="int-imap-host">Host IMAP</label>
+          <input type="text" id="int-imap-host" />
+        </div>
+        <div class="modal-field">
+          <label for="int-imap-port">Porta IMAP</label>
+          <input type="number" id="int-imap-port" value="993" />
+        </div>
+      </div>
+      <div class="modal-field">
+        <label for="int-gemini-key">Chave Gemini Vision (GEMINI_API_KEY — opcional para OCR 100% autonomo)</label>
+        <input type="password" id="int-gemini-key" autocomplete="off" />
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:8px;">
+        <input type="checkbox" id="int-testar" checked />
+        Testar conexao SMTP/IMAP ao salvar
+      </label>
+      <div class="status-msg" id="int-modal-msg"></div>
+      <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
+        <button type="button" onclick="fecharModalIntegracoes()">Cancelar</button>
+        <button type="submit" class="btn-ok">Salvar e Ativar Coleta Automatica</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-matricula" class="auth-modal" closedby="any" aria-labelledby="dlg-mat-title">
+    <h2 id="dlg-mat-title" style="margin-top: 0; font-size: 1.1rem;">Matricular Aluno Existente em Disciplina</h2>
+    <p style="font-size: 0.84rem; color: var(--muted); margin-top: 0;">
+      Adicione um aluno ja cadastrado a outra disciplina usando o mesmo e-mail e PIN de acesso.
+    </p>
+    <form id="form-matricula" onsubmit="salvarMatricula(event)">
+      <div class="modal-field">
+        <label for="mat-aluno">Aluno cadastrado</label>
+        <select id="mat-aluno" name="aluno_id" required aria-invalid="false" data-error="mat-aluno-err" autofocus>
+          <option value="" disabled selected>Selecione um aluno cadastrado...</option>
+        </select>
+        <div id="mat-aluno-err" class="error-msg">Selecione um aluno antes de confirmar.</div>
+      </div>
+      <div class="modal-field">
+        <label for="mat-disciplina">Disciplina</label>
+        <select id="mat-disciplina" name="disciplina" required></select>
+      </div>
+      <div class="modal-field">
+        <label for="mat-bloco">Bloco inicial (ex.: A01)</label>
+        <input type="text" id="mat-bloco" name="bloco_inicial" value="A01" required />
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:8px;">
+        <input type="checkbox" id="mat-emitir" checked />
+        Emitir e enviar 1a folha A4 por e-mail agora
+      </label>
+      <div class="status-msg" id="mat-modal-msg" aria-live="polite"></div>
+      <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
+        <button type="button" onclick="fecharModalMatricula()">Cancelar</button>
+        <button type="submit" class="btn-ok">Confirmar Matricula</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // Este bloco roda DEPOIS dos <dialog> acima, quando o DOM ja esta completo.
+    religarDialogos();
+  </script>
+</body>
+</html>

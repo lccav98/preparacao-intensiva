@@ -1,0 +1,49 @@
+{
+  "bloco": "C05",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "C05_E02_corrigido.c": [
+      {"id": "C05-E02-T1", "tipo": "borda", "stdin": "0\n", "stdout": ""},
+      {"id": "C05-E02-T2", "tipo": "borda", "stdin": "-3\n", "stdout": ""},
+      {"id": "C05-E02-T3", "tipo": "borda", "stdin": "1\n", "stdout": "3\n"},
+      {"id": "C05-E02-T4", "tipo": "normal", "stdin": "4\n", "stdout": "3\n6\n9\n12\n"},
+      {"id": "C05-E02-T5", "tipo": "normal", "stdin": "6\n", "stdout": "3\n6\n9\n12\n15\n18\n"}
+    ],
+    "C05_E03.c": [
+      {"id": "C05-E03-T1", "tipo": "borda", "stdin": "0\n", "stdout": "0! = 1\n"},
+      {"id": "C05-E03-T2", "tipo": "borda", "stdin": "1\n", "stdout": "1! = 1\n"},
+      {"id": "C05-E03-T3", "tipo": "normal", "stdin": "5\n", "stdout": "5! = 120\n"},
+      {"id": "C05-E03-T4", "tipo": "normal", "stdin": "7\n", "stdout": "7! = 5040\n"},
+      {"id": "C05-E03-T5", "tipo": "normal", "stdin": "12\n", "stdout": "12! = 479001600\n"},
+      {"id": "C05-E03-T6", "tipo": "extremo", "stdin": "15\n", "stdout": "15! = 1307674368000\n"}
+    ],
+    "C05_E04.c": [
+      {"id": "C05-E04-T1", "tipo": "borda", "stdin": "0 2\n", "stdout": "Contagem: 0\n"},
+      {"id": "C05-E04-T2", "tipo": "borda", "stdin": "1 5\n", "stdout": "1\nContagem: 1\n"},
+      {"id": "C05-E04-T3", "tipo": "normal", "stdin": "10 3\n", "stdout": "10\n7\n4\n1\nContagem: 4\n"},
+      {"id": "C05-E04-T4", "tipo": "normal", "stdin": "12 5\n", "stdout": "12\n7\n2\nContagem: 3\n"},
+      {"id": "C05-E04-T5", "tipo": "normal", "stdin": "5 1\n", "stdout": "5\n4\n3\n2\n1\nContagem: 5\n"}
+    ],
+    "C05_E05.c": [
+      {"id": "C05-E05-T1", "tipo": "borda", "stdin": "2\n", "stdout": "Quantidade: 0\nSoma: 0\n"},
+      {"id": "C05-E05-T2", "tipo": "borda", "stdin": "3\n", "stdout": "3\nQuantidade: 1\nSoma: 3\n"},
+      {"id": "C05-E05-T3", "tipo": "borda", "stdin": "15\n", "stdout": "3\n6\n9\n12\nQuantidade: 4\nSoma: 30\n"},
+      {"id": "C05-E05-T4", "tipo": "normal", "stdin": "20\n", "stdout": "3\n6\n9\n12\n18\nQuantidade: 5\nSoma: 48\n"},
+      {"id": "C05-E05-T5", "tipo": "extremo", "stdin": "30\n", "stdout": "3\n6\n9\n12\n18\n21\n24\n27\nQuantidade: 8\nSoma: 120\n"}
+    ],
+    "C05_C02_corrigido.c": [
+      {"id": "C05-C02-T1", "tipo": "borda", "stdin": "6 4\n", "stdout": "Soma pares: 0\nProximo i: 6\n"},
+      {"id": "C05-C02-T2", "tipo": "borda", "stdin": "4 4\n", "stdout": "Soma pares: 4\nProximo i: 5\n"},
+      {"id": "C05-C02-T3", "tipo": "borda", "stdin": "3 3\n", "stdout": "Soma pares: 0\nProximo i: 4\n"},
+      {"id": "C05-C02-T4", "tipo": "normal", "stdin": "1 6\n", "stdout": "Soma pares: 12\nProximo i: 7\n"},
+      {"id": "C05-C02-T5", "tipo": "normal", "stdin": "-4 2\n", "stdout": "Soma pares: -4\nProximo i: 3\n"}
+    ],
+    "C05_C03.c": [
+      {"id": "C05-C03-T1", "tipo": "borda", "stdin": "0\n", "stdout": "Entrada invalida\n"},
+      {"id": "C05-C03-T2", "tipo": "borda", "stdin": "-5\n", "stdout": "Entrada invalida\n"},
+      {"id": "C05-C03-T3", "tipo": "borda", "stdin": "1\n", "stdout": "Qtd par ou mult7: 0\nSoma impares > 5: 0\nMedia total: 1.00\n"},
+      {"id": "C05-C03-T4", "tipo": "normal", "stdin": "10\n", "stdout": "Qtd par ou mult7: 6\nSoma impares > 5: 16\nMedia total: 5.50\n"},
+      {"id": "C05-C03-T5", "tipo": "normal", "stdin": "14\n", "stdout": "Qtd par ou mult7: 8\nSoma impares > 5: 40\nMedia total: 7.50\n"}
+    ]
+  }
+}

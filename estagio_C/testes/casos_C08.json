@@ -1,0 +1,52 @@
+{
+  "bloco": "C08",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "C08_E02_corrigido.c": [
+      {"id": "C08-E02-T1", "tipo": "normal", "stdin": "5\n", "stdout": "Soma = 1.716667\n"},
+      {"id": "C08-E02-T2", "tipo": "borda", "stdin": "1\n", "stdout": "Soma = 1.000000\n"},
+      {"id": "C08-E02-T3", "tipo": "borda", "stdin": "0\n", "stdout": "Soma = 0.000000\n"},
+      {"id": "C08-E02-T4", "tipo": "extremo", "stdin": "15\n", "stdout": "Soma = 1.718282\n"}
+    ],
+    "C08_E03_corrigido.c": [
+      {"id": "C08-E03-T1", "tipo": "normal", "stdin": "0.1\n", "stdout": "Soma = 1.361111\n"},
+      {"id": "C08-E03-T2", "tipo": "borda", "stdin": "1.0\n", "stdout": "Soma = 1.000000\n"},
+      {"id": "C08-E03-T3", "tipo": "borda", "stdin": "1.5\n", "stdout": "Soma = 0.000000\n"},
+      {"id": "C08-E03-T4", "tipo": "normal", "stdin": "0.05\n", "stdout": "Soma = 1.423611\n"}
+    ],
+    "C08_E04.c": [
+      {"id": "C08-E04-T1", "tipo": "normal", "stdin": "1.0 10\n", "stdout": "e^x aprox: 2.718282\n"},
+      {"id": "C08-E04-T2", "tipo": "borda", "stdin": "0.0 5\n", "stdout": "e^x aprox: 1.000000\n"},
+      {"id": "C08-E04-T3", "tipo": "borda", "stdin": "2.0 1\n", "stdout": "e^x aprox: 1.000000\n"},
+      {"id": "C08-E04-T4", "tipo": "extremo", "stdin": "-1.0 12\n", "stdout": "e^x aprox: 0.367879\n"}
+    ],
+    "C08_E05.c": [
+      {"id": "C08-E05-T1", "tipo": "normal", "stdin": "3\n", "stdout": "S = 4.611111\n"},
+      {"id": "C08-E05-T2", "tipo": "borda", "stdin": "1\n", "stdout": "S = 1.000000\n"},
+      {"id": "C08-E05-T3", "tipo": "borda", "stdin": "0\n", "stdout": "Entrada Invalida\n"},
+      {"id": "C08-E05-T4", "tipo": "borda", "stdin": "-2\n", "stdout": "Entrada Invalida\n"},
+      {"id": "C08-E05-T5", "tipo": "extremo", "stdin": "10\n", "stdout": "S = 596.207123\n"}
+    ],
+    "C08_E06.c": [
+      {"id": "C08-E06-T1", "tipo": "normal", "stdin": "0.001\n", "stdout": "Soma = 2.71805556\nTermos = 7\n"},
+      {"id": "C08-E06-T2", "tipo": "borda", "stdin": "1.0\n", "stdout": "Soma = 2.00000000\nTermos = 2\n"},
+      {"id": "C08-E06-T3", "tipo": "borda", "stdin": "1.5\n", "stdout": "Soma = 0.00000000\nTermos = 0\n"},
+      {"id": "C08-E06-T4", "tipo": "borda", "stdin": "0.0\n", "stdout": "Tolerancia Invalida\n"},
+      {"id": "C08-E06-T5", "tipo": "borda", "stdin": "-0.1\n", "stdout": "Tolerancia Invalida\n"},
+      {"id": "C08-E06-T6", "tipo": "extremo", "stdin": "1e-8\n", "stdout": "Soma = 2.71828183\nTermos = 12\n"}
+    ],
+    "C08_C02.c": [
+      {"id": "C08-C02-T1", "tipo": "normal", "stdin": "0.5 5\n", "stdout": "ln(1+x) aprox: 0.407292\n"},
+      {"id": "C08-C02-T2", "tipo": "borda", "stdin": "0.0 4\n", "stdout": "ln(1+x) aprox: 0.000000\n"},
+      {"id": "C08-C02-T3", "tipo": "borda", "stdin": "1.0 1\n", "stdout": "ln(1+x) aprox: 1.000000\n"},
+      {"id": "C08-C02-T4", "tipo": "normal", "stdin": "-0.5 6\n", "stdout": "ln(1+x) aprox: -0.691146\n"},
+      {"id": "C08-C02-T5", "tipo": "extremo", "stdin": "1.0 100\n", "stdout": "ln(1+x) aprox: 0.688172\n"}
+    ],
+    "C08_C03.c": [
+      {"id": "C08-C03-T1", "tipo": "normal", "stdin": "0.1\n", "stdout": "Soma = 1.361111\nTermos = 3\n"},
+      {"id": "C08-C03-T2", "tipo": "borda", "stdin": "1.5\n", "stdout": "Soma = 0.000000\nTermos = 0\n"},
+      {"id": "C08-C03-T3", "tipo": "borda", "stdin": "1.0\n", "stdout": "Soma = 1.000000\nTermos = 1\n"},
+      {"id": "C08-C03-T4", "tipo": "extremo", "stdin": "0.01\n", "stdout": "Soma = 1.549768\nTermos = 10\n"}
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+services:
+  prep-dashboard:
+    build: .
+    container_name: prep-dashboard-mv
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    environment:
+      # Porta pública (Railway/Render injetam PORT automaticamente)
+      - PORT=8090
+      - PREP_DASHBOARD_HOST=0.0.0.0
+      # Disciplina padrão: Matrizes e Vetores (MAT121)
+      - DISCIPLINA_PADRAO=matrizes_vetores
+      # Diretório do curso Matrizes e Vetores (montado como volume no Windows)
+      - PREP_CURSO_MV_DIR=/cursos/matrizes_vetores
+      # Diretório de dados persistente (banco SQLite, CSVs, sessões)
+      - PREP_DATA_DIR=/data
+      # Senha da professora (obrigatória para acesso externo seguro)
+      - PREP_ADMIN_EMAIL=${PREP_ADMIN_EMAIL:-professora@utfpr-prep.local}
+      - PREP_ADMIN_PASSWORD=${PREP_ADMIN_PASSWORD}
+      - PREP_SECRET_KEY=${PREP_SECRET_KEY}
+      # E-mail/SMTP opcional (se ausente, usa Spool local determinístico)
+      - PREP_SMTP_HOST=${PREP_SMTP_HOST:-}
+      - PREP_SMTP_PORT=${PREP_SMTP_PORT:-587}
+      - PREP_SMTP_USER=${PREP_SMTP_USER:-}
+      - PREP_SMTP_PASS=${PREP_SMTP_PASS:-}
+      - PREP_SMTP_FROM=${PREP_SMTP_FROM:-tutor-mv@utfpr-prep.local}
+      - PREP_IMAP_HOST=${PREP_IMAP_HOST:-}
+      - PREP_IMAP_PORT=${PREP_IMAP_PORT:-993}
+      - PREP_IMAP_USER=${PREP_IMAP_USER:-}
+      - PREP_IMAP_PASS=${PREP_IMAP_PASS:-}
+      - PREP_IMAP_POLL_SEC=${PREP_IMAP_POLL_SEC:-15}
+      - PREP_WEBHOOK_TOKEN=${PREP_WEBHOOK_TOKEN:-}
+      # Visão OCR opcional
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - PREP_GEMINI_MODEL=gemini-2.5-flash
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      # URL pública (ex: https://seu-tunel.ngrok.io ou https://seu-app.railway.app)
+      - PREP_PUBLIC_URL=${PREP_PUBLIC_URL:-}
+    volumes:
+      # Persiste banco SQLite, dados de automação e CSVs
+      - prep_data:/data
+      # Em Windows, monta o curso Matrizes e Vetores como volume somente leitura
+      - ${CURSO_MV_WINDOWS_PATH:-C:/Users/d7opa/Documents/Matrizes e Vetores/Curso_Preparacao_Intensiva_Matrizes_Vetores}:/cursos/matrizes_vetores:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  prep_data:

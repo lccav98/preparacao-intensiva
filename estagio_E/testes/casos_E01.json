@@ -1,0 +1,41 @@
+{
+  "bloco": "E01",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "E01_E03_corrigido.c": [
+      {"id": "E01-E03-T1", "tipo": "normal", "stdin": "1 2 3\n4 5 6\n", "stdout": "1 2 3\n4 5 6\n"},
+      {"id": "E01-E03-T2", "tipo": "borda", "stdin": "-5 0 7\n-2 9 -1\n", "stdout": "-5 0 7\n-2 9 -1\n"},
+      {"id": "E01-E03-T3", "tipo": "borda", "stdin": "0 0 0\n0 0 0\n", "stdout": "0 0 0\n0 0 0\n"},
+      {"id": "E01-E03-T4", "tipo": "normal", "stdin": "8 8 8\n8 8 8\n", "stdout": "8 8 8\n8 8 8\n"},
+      {"id": "E01-E03-T5", "tipo": "borda", "stdin": "-100 50 0\n99 -1 42\n", "stdout": "-100 50 0\n99 -1 42\n"}
+    ],
+    "E01_E04.c": [
+      {"id": "E01-E04-T1", "tipo": "normal", "stdin": "1 2 3\n4 5 6\n7 8 9\n", "stdout": "7 8 9\n4 5 6\n1 2 3\n"},
+      {"id": "E01-E04-T2", "tipo": "borda", "stdin": "-1 -2 -3\n0 0 0\n1 2 3\n", "stdout": "1 2 3\n0 0 0\n-1 -2 -3\n"},
+      {"id": "E01-E04-T3", "tipo": "borda", "stdin": "0 0 0\n0 0 0\n0 0 0\n", "stdout": "0 0 0\n0 0 0\n0 0 0\n"},
+      {"id": "E01-E04-T4", "tipo": "normal", "stdin": "5 5 5\n5 5 5\n5 5 5\n", "stdout": "5 5 5\n5 5 5\n5 5 5\n"},
+      {"id": "E01-E04-T5", "tipo": "borda", "stdin": "10 20 30\n40 50 60\n10 20 30\n", "stdout": "10 20 30\n40 50 60\n10 20 30\n"}
+    ],
+    "E01_E05.c": [
+      {"id": "E01-E05-T1", "tipo": "normal", "stdin": "2 3\n10 20 30\n40 50 60\n", "stdout": "Cantos: 10 60\n10 20 30\n40 50 60\n"},
+      {"id": "E01-E05-T2", "tipo": "borda", "stdin": "1 1\n-42\n", "stdout": "Cantos: -42 -42\n-42\n"},
+      {"id": "E01-E05-T3", "tipo": "borda", "stdin": "1 4\n5 6 7 8\n", "stdout": "Cantos: 5 8\n5 6 7 8\n"},
+      {"id": "E01-E05-T4", "tipo": "borda", "stdin": "4 1\n9\n-1\n0\n3\n", "stdout": "Cantos: 9 3\n9\n-1\n0\n3\n"},
+      {"id": "E01-E05-T5", "tipo": "normal", "stdin": "3 2\n-7 0\n4 -2\n8 -9\n", "stdout": "Cantos: -7 -9\n-7 0\n4 -2\n8 -9\n"}
+    ],
+    "E01_C02_corrigido.c": [
+      {"id": "E01-C02-T1", "tipo": "normal", "stdin": "2 2\n1 2\n3 4\n", "stdout": "1 2\n3 4\n"},
+      {"id": "E01-C02-T2", "tipo": "borda", "stdin": "1 1\n99\n", "stdout": "99\n"},
+      {"id": "E01-C02-T3", "tipo": "borda", "stdin": "1 3\n-1 0 1\n", "stdout": "-1 0 1\n"},
+      {"id": "E01-C02-T4", "tipo": "borda", "stdin": "3 1\n10\n20\n30\n", "stdout": "10\n20\n30\n"},
+      {"id": "E01-C02-T5", "tipo": "normal", "stdin": "3 4\n1 2 3 4\n5 6 7 8\n9 10 11 12\n", "stdout": "1 2 3 4\n5 6 7 8\n9 10 11 12\n"}
+    ],
+    "E01_C03.c": [
+      {"id": "E01-C03-T1", "tipo": "normal", "stdin": "1 2 3 4\n5 6 7 8\n9 10 11 12\n", "stdout": "Matriz:\n1 2 3 4\n5 6 7 8\n9 10 11 12\nInversa:\n12 11 10 9\n8 7 6 5\n4 3 2 1\n"},
+      {"id": "E01-C03-T2", "tipo": "borda", "stdin": "0 0 0 0\n0 0 0 0\n0 0 0 0\n", "stdout": "Matriz:\n0 0 0 0\n0 0 0 0\n0 0 0 0\nInversa:\n0 0 0 0\n0 0 0 0\n0 0 0 0\n"},
+      {"id": "E01-C03-T3", "tipo": "normal", "stdin": "-12 -11 -10 -9\n-8 -7 -6 -5\n-4 -3 -2 -1\n", "stdout": "Matriz:\n-12 -11 -10 -9\n-8 -7 -6 -5\n-4 -3 -2 -1\nInversa:\n-1 -2 -3 -4\n-5 -6 -7 -8\n-9 -10 -11 -12\n"},
+      {"id": "E01-C03-T4", "tipo": "borda", "stdin": "1 2 3 4\n5 6 6 5\n4 3 2 1\n", "stdout": "Matriz:\n1 2 3 4\n5 6 6 5\n4 3 2 1\nInversa:\n1 2 3 4\n5 6 6 5\n4 3 2 1\n"},
+      {"id": "E01-C03-T5", "tipo": "borda", "stdin": "10 0 -5 3\n8 -2 7 1\n-9 4 0 6\n", "stdout": "Matriz:\n10 0 -5 3\n8 -2 7 1\n-9 4 0 6\nInversa:\n6 0 4 -9\n1 7 -2 8\n3 -5 0 10\n"}
+    ]
+  }
+}

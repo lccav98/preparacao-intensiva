@@ -1,0 +1,41 @@
+{
+  "bloco": "H02",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "H02_E03_corrigido/main.c": [
+      {"id": "H02-E03-T1", "tipo": "normal", "stdin": "P2\n3 3\n255\n200 240 10\n0 128 255\n50 100 180\n30\n", "stdout": "P2\n3 3\n255\n230 255 40\n30 158 255\n80 130 210\n"},
+      {"id": "H02-E03-T2", "tipo": "borda", "stdin": "P2\n3 3\n255\n200 240 10\n0 128 255\n50 100 180\n-30\n", "stdout": "P2\n3 3\n255\n170 210 0\n0 98 225\n20 70 150\n"},
+      {"id": "H02-E03-T3", "tipo": "borda", "stdin": "P2\n3 3\n255\n0 1 254\n255 127 128\n10 20 30\n0\n", "stdout": "P2\n3 3\n255\n0 1 254\n255 127 128\n10 20 30\n"},
+      {"id": "H02-E03-T4", "tipo": "borda", "stdin": "P2\n3 3\n255\n10 20 30\n40 50 60\n70 80 90\n300\n", "stdout": "P2\n3 3\n255\n255 255 255\n255 255 255\n255 255 255\n"},
+      {"id": "H02-E03-T5", "tipo": "borda", "stdin": "P2\n3 3\n255\n10 20 30\n40 50 60\n70 80 90\n-300\n", "stdout": "P2\n3 3\n255\n0 0 0\n0 0 0\n0 0 0\n"}
+    ],
+    "H02_E04/main.c": [
+      {"id": "H02-E04-T1", "tipo": "normal", "stdin": "P2\n3 3\n255\n5 200 240\n10 128 255\n0 30 250\n30\n", "stdout": "P2\n3 3\n255\n35 230 255\n40 158 255\n30 60 255\nExtremos (0 ou 255): 3\n"},
+      {"id": "H02-E04-T2", "tipo": "normal", "stdin": "P2\n3 3\n255\n5 200 240\n10 128 255\n0 30 250\n-30\n", "stdout": "P2\n3 3\n255\n0 170 210\n0 98 225\n0 0 220\nExtremos (0 ou 255): 4\n"},
+      {"id": "H02-E04-T3", "tipo": "borda", "stdin": "P2\n3 3\n255\n100 110 120\n130 140 150\n160 170 180\n10\n", "stdout": "P2\n3 3\n255\n110 120 130\n140 150 160\n170 180 190\nExtremos (0 ou 255): 0\n"},
+      {"id": "H02-E04-T4", "tipo": "borda", "stdin": "P2\n3 3\n255\n0 128 255\n10 20 30\n240 250 255\n255\n", "stdout": "P2\n3 3\n255\n255 255 255\n255 255 255\n255 255 255\nExtremos (0 ou 255): 9\n"},
+      {"id": "H02-E04-T5", "tipo": "borda", "stdin": "P5\n3 3\n255\n0 0 0\n", "stdout": "Erro ao ler imagem.\n"}
+    ],
+    "H02_E05/main.c": [
+      {"id": "H02-E05-T1", "tipo": "normal", "stdin": "P2\n4 3\n255\n50 100 150 200\n80 97 98 240\n0 120 255 10\n30 128\n", "stdout": "P2\n4 3\n255\n0 255 255 255\n0 0 255 255\n0 255 255 0\n"},
+      {"id": "H02-E05-T2", "tipo": "borda", "stdin": "P2\n4 3\n255\n250 250 100 100\n200 200 50 50\n10 10 0 0\n100 255\n", "stdout": "P2\n4 3\n255\n255 255 0 0\n255 255 0 0\n0 0 0 0\n"},
+      {"id": "H02-E05-T3", "tipo": "borda", "stdin": "P2\n4 3\n255\n50 80 120 200\n10 40 140 250\n0 39 141 255\n-40 100\n", "stdout": "P2\n4 3\n255\n0 0 0 255\n0 0 255 255\n0 0 255 255\n"},
+      {"id": "H02-E05-T4", "tipo": "borda", "stdin": "P2\n4 3\n255\n10 20 30 40\n50 60 70 80\n90 100 110 120\n-200 0\n", "stdout": "P2\n4 3\n255\n255 255 255 255\n255 255 255 255\n255 255 255 255\n"},
+      {"id": "H02-E05-T5", "tipo": "borda", "stdin": "P2\n3 4\n255\n0 0 0\n", "stdout": "Erro ao ler imagem.\n"}
+    ],
+    "H02_C02_corrigido/main.c": [
+      {"id": "H02-C02-T1", "tipo": "normal", "stdin": "P2\n3 3\n255\n99 100 101\n0 100 255\n50 150 99\n100\n", "stdout": "P2\n3 3\n255\n0 255 255\n0 255 255\n0 255 0\n"},
+      {"id": "H02-C02-T2", "tipo": "borda", "stdin": "P2\n3 3\n255\n50 50 50\n50 50 50\n50 50 50\n50\n", "stdout": "P2\n3 3\n255\n255 255 255\n255 255 255\n255 255 255\n"},
+      {"id": "H02-C02-T3", "tipo": "borda", "stdin": "P2\n3 3\n255\n0 0 0\n10 20 30\n254 255 1\n255\n", "stdout": "P2\n3 3\n255\n0 0 0\n0 0 0\n0 255 0\n"},
+      {"id": "H02-C02-T4", "tipo": "normal", "stdin": "P2\n3 3\n255\n0 1 2\n3 4 5\n6 7 8\n0\n", "stdout": "P2\n3 3\n255\n255 255 255\n255 255 255\n255 255 255\n"},
+      {"id": "H02-C02-T5", "tipo": "borda", "stdin": "P2\n3 3\n128\n0 0 0\n", "stdout": "Erro ao ler imagem.\n"}
+    ],
+    "H02_C03/main.c": [
+      {"id": "H02-C03-T1", "tipo": "normal", "stdin": "P2\n3 3\n255\n0 15 220\n40 127 255\n25 190 245\n40\n", "stdout": "P2\n3 3\n255\n40 55 255\n80 167 255\n65 230 255\n"},
+      {"id": "H02-C03-T2", "tipo": "normal", "stdin": "P2\n3 3\n255\n0 15 220\n40 127 255\n25 190 245\n-40\n", "stdout": "P2\n3 3\n255\n0 0 180\n0 87 215\n0 150 205\n"},
+      {"id": "H02-C03-T3", "tipo": "borda", "stdin": "P2\n3 3\n255\n255 255 255\n0 0 0\n128 128 128\n-255\n", "stdout": "P2\n3 3\n255\n0 0 0\n0 0 0\n0 0 0\n"},
+      {"id": "H02-C03-T4", "tipo": "borda", "stdin": "P2\n3 3\n255\n0 0 0\n10 20 30\n200 220 255\n255\n", "stdout": "P2\n3 3\n255\n255 255 255\n255 255 255\n255 255 255\n"},
+      {"id": "H02-C03-T5", "tipo": "borda", "stdin": "P2\n3 3\n255\n0 50 100\n150 200 255\n12 34 56\n0\n", "stdout": "P2\n3 3\n255\n0 50 100\n150 200 255\n12 34 56\n"}
+    ]
+  }
+}

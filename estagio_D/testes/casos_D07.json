@@ -1,0 +1,48 @@
+{
+  "bloco": "D07",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "D07_E03_corrigido.c": [
+      {"id": "D07-E03-T1", "tipo": "normal", "stdin": "Sala 101 bloco B2\n", "stdout": "Palavras: 4\nLimpa: [Sala  bloco B]\n"},
+      {"id": "D07-E03-T2", "tipo": "borda", "stdin": "  teste   123  \n", "stdout": "Palavras: 2\nLimpa: [  teste     ]\n"},
+      {"id": "D07-E03-T3", "tipo": "borda", "stdin": "987654\n", "stdout": "Palavras: 1\nLimpa: []\n"},
+      {"id": "D07-E03-T4", "tipo": "borda", "stdin": "    \n", "stdout": "Palavras: 0\nLimpa: [    ]\n"},
+      {"id": "D07-E03-T5", "tipo": "borda", "stdin": "\n", "stdout": "Palavras: 0\nLimpa: []\n"}
+    ],
+    "D07_E04.c": [
+      {"id": "D07-E04-T1", "tipo": "normal", "stdin": "Algoritmos C99\n", "stdout": "Comprimento: 14\nVogais: 4\nDigitos: 2\nPalavras: 2\n"},
+      {"id": "D07-E04-T2", "tipo": "borda", "stdin": "  AEIOU   01  \n", "stdout": "Comprimento: 14\nVogais: 5\nDigitos: 2\nPalavras: 2\n"},
+      {"id": "D07-E04-T3", "tipo": "borda", "stdin": "     \n", "stdout": "Comprimento: 5\nVogais: 0\nDigitos: 0\nPalavras: 0\n"},
+      {"id": "D07-E04-T4", "tipo": "borda", "stdin": "\n", "stdout": "Comprimento: 0\nVogais: 0\nDigitos: 0\nPalavras: 0\n"},
+      {"id": "D07-E04-T5", "tipo": "normal", "stdin": "bcdf 42!\n", "stdout": "Comprimento: 8\nVogais: 0\nDigitos: 2\nPalavras: 2\n"}
+    ],
+    "D07_E05.c": [
+      {"id": "D07-E05-T1", "tipo": "normal", "stdin": "  ola   mundo   C  \n", "stdout": "[ola mundo C]\n"},
+      {"id": "D07-E05-T2", "tipo": "borda", "stdin": "UTFPR\n", "stdout": "[UTFPR]\n"},
+      {"id": "D07-E05-T3", "tipo": "borda", "stdin": "      \n", "stdout": "[]\n"},
+      {"id": "D07-E05-T4", "tipo": "borda", "stdin": "\n", "stdout": "[]\n"},
+      {"id": "D07-E05-T5", "tipo": "normal", "stdin": "um dois tres\n", "stdout": "[um dois tres]\n"}
+    ],
+    "D07_E06.c": [
+      {"id": "D07-E06-T1", "tipo": "normal", "stdin": "3\nLuz 9!\n", "stdout": "Cifrada: Oxc 9!\n"},
+      {"id": "D07-E06-T2", "tipo": "borda", "stdin": "-3\nAbc Xyz!\n", "stdout": "Cifrada: Xyz Uvw!\n"},
+      {"id": "D07-E06-T3", "tipo": "borda", "stdin": "29\naZ 0\n", "stdout": "Cifrada: dC 0\n"},
+      {"id": "D07-E06-T4", "tipo": "borda", "stdin": "52\nTeste 123\n", "stdout": "Cifrada: Teste 123\n"},
+      {"id": "D07-E06-T5", "tipo": "borda", "stdin": "7\n123 !@#\n", "stdout": "Cifrada: 123 !@#\n"}
+    ],
+    "D07_C02_corrigido.c": [
+      {"id": "D07-C02-T1", "tipo": "normal", "stdin": "ola mundo\n", "stdout": "Maiuscula: OLA MUNDO\nMedia palavra: 4.00\n"},
+      {"id": "D07-C02-T2", "tipo": "borda", "stdin": "  c99   ok! \n", "stdout": "Maiuscula:   C99   OK! \nMedia palavra: 3.00\n"},
+      {"id": "D07-C02-T3", "tipo": "borda", "stdin": "    \n", "stdout": "Maiuscula:     \nMedia palavra: 0.00\n"},
+      {"id": "D07-C02-T4", "tipo": "borda", "stdin": "\n", "stdout": "Maiuscula: \nMedia palavra: 0.00\n"},
+      {"id": "D07-C02-T5", "tipo": "normal", "stdin": "ABC DE\n", "stdout": "Maiuscula: ABC DE\nMedia palavra: 2.50\n"}
+    ],
+    "D07_C03.c": [
+      {"id": "D07-C03-T1", "tipo": "normal", "stdin": "C99: Aula-07!\n", "stdout": "Limpa: [c99aula07]\nRemovidos: 4\n"},
+      {"id": "D07-C03-T2", "tipo": "borda", "stdin": "--- !!!   \n", "stdout": "Limpa: []\nRemovidos: 10\n"},
+      {"id": "D07-C03-T3", "tipo": "borda", "stdin": "AbC123\n", "stdout": "Limpa: [abc123]\nRemovidos: 0\n"},
+      {"id": "D07-C03-T4", "tipo": "borda", "stdin": "\n", "stdout": "Limpa: []\nRemovidos: 0\n"},
+      {"id": "D07-C03-T5", "tipo": "normal", "stdin": "A1, b2; C3.\n", "stdout": "Limpa: [a1b2c3]\nRemovidos: 5\n"}
+    ]
+  }
+}

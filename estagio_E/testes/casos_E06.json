@@ -1,0 +1,48 @@
+{
+  "bloco": "E06",
+  "tolerancia_numerica": 0.01,
+  "casos_por_arquivo": {
+    "E06_E03_corrigido.c": [
+      {"id": "E06-E03-T1", "tipo": "normal", "stdin": "2 3\n1 2 3\n4 5 6\n3 2\n7 8\n9 10\n11 12\n", "stdout": "Produto (2 x 2):\n58 64\n139 154\n"},
+      {"id": "E06-E03-T2", "tipo": "borda", "stdin": "2 3\n1 2 3\n4 5 6\n2 2\n1 0\n0 1\n", "stdout": "Multiplicacao impossivel\n"},
+      {"id": "E06-E03-T3", "tipo": "borda", "stdin": "1 3\n2 -1 4\n3 1\n5\n-2\n3\n", "stdout": "Produto (1 x 1):\n24\n"},
+      {"id": "E06-E03-T4", "tipo": "borda", "stdin": "3 1\n2\n-3\n4\n1 2\n5 -1\n", "stdout": "Produto (3 x 2):\n10 -2\n-15 3\n20 -4\n"},
+      {"id": "E06-E03-T5", "tipo": "normal", "stdin": "2 2\n2 -1\n0 3\n2 2\n4 5\n1 -2\n", "stdout": "Produto (2 x 2):\n7 12\n3 -6\n"}
+    ],
+    "E06_E04.c": [
+      {"id": "E06-E04-T1", "tipo": "normal", "stdin": "2 3\n1 2 3\n4 5 6\n3 2\n7 8\n9 10\n11 12\n", "stdout": "Produto (2 x 2):\n58 64\n139 154\nMaior: 154 em (1, 1)\n"},
+      {"id": "E06-E04-T2", "tipo": "borda", "stdin": "2 2\n-2 -1\n-3 -4\n2 2\n1 2\n3 4\n", "stdout": "Produto (2 x 2):\n-5 -8\n-15 -22\nMaior: -5 em (0, 0)\n"},
+      {"id": "E06-E04-T3", "tipo": "borda", "stdin": "2 2\n1 2\n1 2\n2 2\n3 3\n0 0\n", "stdout": "Produto (2 x 2):\n3 3\n3 3\nMaior: 3 em (0, 0)\n"},
+      {"id": "E06-E04-T4", "tipo": "normal", "stdin": "3 2\n1 0\n0 2\n-1 3\n2 2\n4 -1\n2 5\n", "stdout": "Produto (3 x 2):\n4 -1\n4 10\n2 16\nMaior: 16 em (2, 1)\n"},
+      {"id": "E06-E04-T5", "tipo": "borda", "stdin": "1 1\n-4\n1 1\n5\n", "stdout": "Produto (1 x 1):\n-20\nMaior: -20 em (0, 0)\n"}
+    ],
+    "E06_E05.c": [
+      {"id": "E06-E05-T1", "tipo": "normal", "stdin": "2 3\n1 0 -2\n3 1 4\n3 2\n2 -1\n0 3\n1 2\n", "stdout": "A*B (2 x 2):\n0 -5\n10 8\nB*A (3 x 3):\n-1 -1 -8\n9 3 12\n7 2 6\n"},
+      {"id": "E06-E05-T2", "tipo": "borda", "stdin": "2 3\n1 2 3\n4 5 6\n3 3\n1 0 0\n0 1 0\n0 0 1\n", "stdout": "A*B (2 x 3):\n1 2 3\n4 5 6\nProduto B*A impossivel\n"},
+      {"id": "E06-E05-T3", "tipo": "borda", "stdin": "2 2\n1 2\n3 4\n3 2\n1 0\n0 1\n1 1\n", "stdout": "Produto A*B impossivel\nB*A (3 x 2):\n1 2\n3 4\n4 6\n"},
+      {"id": "E06-E05-T4", "tipo": "normal", "stdin": "2 2\n1 1\n0 0\n2 2\n0 1\n0 0\n", "stdout": "A*B (2 x 2):\n0 1\n0 0\nB*A (2 x 2):\n0 0\n0 0\n"},
+      {"id": "E06-E05-T5", "tipo": "borda", "stdin": "2 3\n1 2 3\n4 5 6\n2 3\n1 2 3\n4 5 6\n", "stdout": "Produto A*B impossivel\nProduto B*A impossivel\n"}
+    ],
+    "E06_E06.c": [
+      {"id": "E06-E06-T1", "tipo": "normal", "stdin": "2\n1 2\n3 4\n", "stdout": "A^2:\n7 10\n15 22\nTraco de A^2: 29\n"},
+      {"id": "E06-E06-T2", "tipo": "borda", "stdin": "3\n1 0 0\n0 1 0\n0 0 1\n", "stdout": "A^2:\n1 0 0\n0 1 0\n0 0 1\nTraco de A^2: 3\n"},
+      {"id": "E06-E06-T3", "tipo": "borda", "stdin": "2\n0 1\n-1 0\n", "stdout": "A^2:\n-1 0\n0 -1\nTraco de A^2: -2\n"},
+      {"id": "E06-E06-T4", "tipo": "normal", "stdin": "3\n2 -1 0\n1 0 3\n-2 1 1\n", "stdout": "A^2:\n3 -2 -3\n-4 2 3\n-5 3 4\nTraco de A^2: 9\n"},
+      {"id": "E06-E06-T5", "tipo": "borda", "stdin": "1\n-3\n", "stdout": "A^2:\n9\nTraco de A^2: 9\n"}
+    ],
+    "E06_C02_corrigido.c": [
+      {"id": "E06-C02-T1", "tipo": "normal", "stdin": "2 3\n1 2 3\n4 5 6\n3 2\n1 0\n0 1\n1 1\n", "stdout": "Resultado (2 x 2):\n4 5\n10 11\n"},
+      {"id": "E06-C02-T2", "tipo": "normal", "stdin": "2 2\n2 3\n1 -1\n2 3\n1 0 2\n-1 4 1\n", "stdout": "Resultado (2 x 3):\n-1 12 7\n2 -4 1\n"},
+      {"id": "E06-C02-T3", "tipo": "borda", "stdin": "1 2\n3 -2\n2 1\n4\n5\n", "stdout": "Resultado (1 x 1):\n2\n"},
+      {"id": "E06-C02-T4", "tipo": "borda", "stdin": "3 1\n2\n0\n-3\n1 3\n1 -2 4\n", "stdout": "Resultado (3 x 3):\n2 -4 8\n0 0 0\n-3 6 -12\n"},
+      {"id": "E06-C02-T5", "tipo": "borda", "stdin": "1 1\n0\n1 1\n9\n", "stdout": "Resultado (1 x 1):\n0\n"}
+    ],
+    "E06_C03.c": [
+      {"id": "E06-C03-T1", "tipo": "normal", "stdin": "2 3\n1 2 3\n4 5 6\n", "stdout": "A * A^T (2 x 2):\n14 32\n32 77\n"},
+      {"id": "E06-C03-T2", "tipo": "borda", "stdin": "2 2\n1 0\n0 1\n", "stdout": "A * A^T (2 x 2):\n1 0\n0 1\n"},
+      {"id": "E06-C03-T3", "tipo": "borda", "stdin": "1 4\n2 -1 0 3\n", "stdout": "A * A^T (1 x 1):\n14\n"},
+      {"id": "E06-C03-T4", "tipo": "borda", "stdin": "3 1\n2\n-1\n3\n", "stdout": "A * A^T (3 x 3):\n4 -2 6\n-2 1 -3\n6 -3 9\n"},
+      {"id": "E06-C03-T5", "tipo": "borda", "stdin": "1 1\n-5\n", "stdout": "A * A^T (1 x 1):\n25\n"}
+    ]
+  }
+}

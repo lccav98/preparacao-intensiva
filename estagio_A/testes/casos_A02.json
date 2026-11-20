@@ -1,0 +1,46 @@
+{
+  "bloco": "A02",
+  "tolerancia_numerica": 0,
+  "casos_por_arquivo": {
+    "A02_E03_corrigido.c": [
+      {
+        "id": "A02-E03-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "UTFPR Ponta Grossa\nLaboratorio GCC\n"
+      }
+    ],
+    "A02_E04.c": [
+      {
+        "id": "A02-E04-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Passo 1: Editar codigo\nPasso 2: Compilar com gcc\nPasso 3: Executar no Linux\n"
+      }
+    ],
+    "A02_E05.c": [
+      {
+        "id": "A02-E05-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Curso: Algoritmos CC61A\nPadrao: C99\nCompilador: GCC Linux\n"
+      }
+    ],
+    "A02_C02_corrigido.c": [
+      {
+        "id": "A02-C02-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Sistema pronto\nStatus: OK\n"
+      }
+    ],
+    "A02_C03.c": [
+      {
+        "id": "A02-C03-T1",
+        "tipo": "normal",
+        "stdin": "",
+        "stdout": "Compilacao limpa\nExecucao concluida\n"
+      }
+    ]
+  }
+}
