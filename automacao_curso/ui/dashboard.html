@@ -1137,9 +1137,10 @@
       document.getElementById("int-imap-port").value = 993;
       document.getElementById("int-email").value = emailPadrao;
       document.getElementById("int-app-pass").value = "";
+      document.getElementById("int-gemini-key").value = "";
       document.getElementById("int-modal-msg").textContent = "";
       document.getElementById("int-modal-status").textContent =
-        `Status atual: SMTP ${auto.smtp_configurado ? "OK" : "nao configurado"} | IMAP ${auto.imap_configurado ? "OK (" + (auto.modo || "ativo") + ")" : "nao configurado"} | OCR local: Ollama (qwen3.5:4b)`;
+        `Status atual: SMTP ${auto.smtp_configurado ? "OK" : "nao configurado"} | IMAP ${auto.imap_configurado ? "OK (" + (auto.modo || "ativo") + ")" : "nao configurado"} | OCR Gemini: ${auto.gemini_configurado ? "OK" : "nao configurado (ollama local)"}`;
       dlgInt.showModal();
     }
 
@@ -1163,6 +1164,7 @@
       e.preventDefault();
       const emailVal = document.getElementById("int-email").value.trim();
       const appPass = document.getElementById("int-app-pass").value.trim();
+      const geminiKey = document.getElementById("int-gemini-key").value.trim();
       const testar = document.getElementById("int-testar").checked;
       const msg = document.getElementById("int-modal-msg");
       msg.textContent = testar ? "Testando conexao SMTP/IMAP..." : "Salvando configuracoes...";
@@ -1180,6 +1182,7 @@
           imap_port: Number(document.getElementById("int-imap-port").value || 993),
           imap_user: emailVal,
           imap_pass: appPass,
+          gemini_api_key: geminiKey,
           testar_conexao: testar,
         }),
       });
@@ -1307,6 +1310,10 @@
       <div class="modal-field">
         <label for="int-app-pass">Senha de App Google (16 caracteres — deixe vazio para manter)</label>
         <input type="password" id="int-app-pass" autocomplete="off" autofocus />
+      </div>
+      <div class="modal-field">
+        <label for="int-gemini-key">Gemini API Key (OCR na nuvem — deixe vazio para manter)</label>
+        <input type="password" id="int-gemini-key" autocomplete="off" placeholder="AIza..." />
       </div>
       <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 8px;">
         <div class="modal-field">
