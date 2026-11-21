@@ -116,9 +116,15 @@ def formatar_resposta_matematica(texto: str, spec: dict) -> str:
     return valores["resultado"]
 
 
-def _consultar_modelo_gemini(mensagem: dict, formato: dict, api_key: str) -> dict:
+def _consultar_modelo_gemini(
+    mensagem: dict, formato: dict, api_key: str, modelo_override: str = ""
+) -> dict:
     """Consulta a API Gemini Vision REST quando executando na nuvem sem Ollama local."""
-    modelo = os.environ.get("PREP_GEMINI_MODEL", "").strip() or "gemini-2.5-flash"
+    modelo = (
+        os.environ.get("PREP_GEMINI_MODEL", "").strip()
+        or modelo_override.strip()
+        or "gemini-2.5-flash"
+    )
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent"
     partes = [{"text": mensagem.get("content", "")}]
     for img_b64 in (mensagem.get("images") or []):
@@ -151,16 +157,21 @@ def _consultar_modelo_gemini(mensagem: dict, formato: dict, api_key: str) -> dic
 
 def _consultar_modelo(mensagem: dict, formato: dict) -> dict:
     provider = os.environ.get("PREP_OCR_PROVIDER", "").strip().lower()
+    cfg_int = config.obter_integracoes()
     gemini_key = (
         os.environ.get("GEMINI_API_KEY", "").strip()
         or os.environ.get("PREP_GEMINI_API_KEY", "").strip()
+        or str(cfg_int.get("gemini_api_key", "") or "").strip()
     )
+    gemini_model = str(cfg_int.get("gemini_model", "") or "").strip()
     if provider == "gemini" or (not provider and gemini_key):
         if not gemini_key:
             raise ValueError(
                 "PREP_OCR_PROVIDER=gemini configurado, mas GEMINI_API_KEY nao foi definida."
             )
-        return _consultar_modelo_gemini(mensagem, formato, gemini_key)
+        return _consultar_modelo_gemini(
+            mensagem, formato, gemini_key, modelo_override=gemini_model
+        )
 
     ollama_url = (
         os.environ.get("PREP_OLLAMA_URL", "").strip()

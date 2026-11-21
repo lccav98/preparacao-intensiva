@@ -23,6 +23,7 @@ from typing import Any, Dict, Optional
 
 import banco_dados
 import config
+import gerador_folha
 import servico_email
 from catalogo_curricular import CatalogoCurricular
 from corretor_automatico import OrquestradorCurso
@@ -605,6 +606,26 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._enviar_json({"erro": "Acesso negado a folha de outro aluno."}, status=403)
                 return
             folha_path = os.path.join(config.FOLHAS_DIR, f"{prot_safe}.html")
+            if not os.path.isfile(folha_path):
+                try:
+                    al_f = banco_dados.obter_aluno_por_id(int(prova["aluno_id"]), incluir_pin=False)
+                    disc_p = config.normalizar_disciplina_id(
+                        prova.get("disciplina") or config.disciplina_por_protocolo(prot_safe)
+                    )
+                    bloco_f = obter_orquestrador().obter_catalogo(disc_p).obter(prova["bloco"])
+                    if al_f and bloco_f:
+                        folha_gerada = gerador_folha.gerar_folha_prova(
+                            aluno=al_f,
+                            bloco=bloco_f,
+                            variante=prova["variante"],
+                            tentativa=int(prova["tentativa"]),
+                            modo=prova["modo"],
+                            protocolo=prot_safe,
+                            disciplina=disc_p,
+                        )
+                        folha_path = folha_gerada.get("caminho_folha_html") or folha_path
+                except Exception:
+                    pass
             if os.path.isfile(folha_path):
                 with open(folha_path, "r", encoding="utf-8") as f:
                     self._enviar_html(f.read())
