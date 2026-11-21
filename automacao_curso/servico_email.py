@@ -6,6 +6,7 @@ Suporta envio/recebimento SMTP/IMAP real quando configurado e opera com
 spool MIME (.eml) deterministico local em spool_email/enviados e spool_email/recebidos.
 """
 
+import base64
 import email
 import email.utils
 import hashlib
@@ -23,6 +24,8 @@ import time
 from email.message import EmailMessage
 from email.policy import default as email_policy
 from typing import Any, Callable, Dict, List, Optional
+
+import requests
 
 import banco_dados
 import config
@@ -110,6 +113,62 @@ def _anexar_folha_prova(msg: EmailMessage, caminho_html: str, protocolo: str) ->
     return f"{protocolo}.html"
 
 
+def _enviar_via_brevo_https(msg: EmailMessage, api_key: str, remetente_padrao: str) -> None:
+    """Envia EmailMessage pela API HTTPS da Brevo (porta 443, sem precisar de porta SMTP)."""
+    remetente_nome, remetente_addr = email.utils.parseaddr(msg["From"] or remetente_padrao)
+    remetente_addr = (remetente_addr or remetente_padrao or config.ADMIN_EMAIL).strip()
+    dest_nome, dest_addr = email.utils.parseaddr(msg["To"] or "")
+    dest_addr = (dest_addr or str(msg["To"] or "")).strip()
+    if not dest_addr:
+        raise ValueError("Destinatario ausente.")
+
+    texto_partes: List[str] = []
+    html_partes: List[str] = []
+    anexos: List[Dict[str, str]] = []
+
+    for part in msg.walk():
+        if part.is_multipart():
+            continue
+        disp = (part.get_content_disposition() or "").lower()
+        fname = part.get_filename()
+        raw = part.get_payload(decode=True) or b""
+        if disp == "attachment" or fname:
+            anexos.append(
+                {
+                    "name": fname or "anexo.bin",
+                    "content": base64.b64encode(raw).decode("ascii"),
+                }
+            )
+        elif part.get_content_type() == "text/html":
+            html_partes.append(raw.decode(part.get_content_charset() or "utf-8", errors="replace"))
+        elif part.get_content_type() == "text/plain":
+            texto_partes.append(raw.decode(part.get_content_charset() or "utf-8", errors="replace"))
+
+    payload: Dict[str, Any] = {
+        "sender": {"email": remetente_addr, "name": remetente_nome or "Preparacao Intensiva"},
+        "to": [{"email": dest_addr, "name": dest_nome or dest_addr}],
+        "subject": str(msg["Subject"] or "Preparacao Intensiva"),
+    }
+    if html_partes:
+        payload["htmlContent"] = "\n".join(html_partes)
+    if texto_partes:
+        payload["textContent"] = "\n".join(texto_partes)
+    if anexos:
+        payload["attachment"] = anexos
+
+    resp = requests.post(
+        "https://api.brevo.com/v3/smtp/email",
+        headers={
+            "api-key": api_key,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        json=payload,
+        timeout=20,
+    )
+    resp.raise_for_status()
+
+
 def _despachar_mime(msg: EmailMessage, nome_arquivo_eml: str) -> Dict[str, Any]:
     config.garantir_diretorios()
     if "X-Prep-Origem" not in msg:
@@ -120,6 +179,7 @@ def _despachar_mime(msg: EmailMessage, nome_arquivo_eml: str) -> Dict[str, Any]:
     smtp_port = int(cfg["smtp_port"])
     smtp_user = cfg["smtp_user"]
     smtp_pass = cfg["smtp_pass"]
+    brevo_key = str(cfg.get("brevo_api_key", "") or "").strip()
     if cfg["smtp_from"] and (not msg["From"] or msg["From"] == config.SMTP_FROM):
         del msg["From"]
         msg["From"] = cfg["smtp_from"]
@@ -129,8 +189,17 @@ def _despachar_mime(msg: EmailMessage, nome_arquivo_eml: str) -> Dict[str, Any]:
         f.write(msg.as_bytes())
 
     envio_real = False
+    modo_entrega = "SPOOL_LOCAL"
     erro_smtp = ""
-    if smtp_host and smtp_user and smtp_pass:
+    if brevo_key:
+        try:
+            _enviar_via_brevo_https(msg, brevo_key, cfg["smtp_from"] or smtp_user)
+            envio_real = True
+            modo_entrega = "HTTPS_BREVO"
+        except Exception as exc:
+            erro_smtp = f"Brevo HTTPS: {exc}"
+
+    if not envio_real and smtp_host and smtp_user and smtp_pass:
         try:
             if smtp_port == 465:
                 with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=12) as srv:
@@ -142,13 +211,15 @@ def _despachar_mime(msg: EmailMessage, nome_arquivo_eml: str) -> Dict[str, Any]:
                     srv.login(smtp_user, smtp_pass)
                     srv.send_message(msg)
             envio_real = True
+            modo_entrega = "SMTP_REAL"
+            erro_smtp = ""
         except Exception as exc:
-            erro_smtp = str(exc)
+            erro_smtp = f"{erro_smtp} | SMTP: {exc}".strip(" |") if erro_smtp else str(exc)
 
     return {
         "caminho_eml": caminho_eml,
         "enviado_smtp": envio_real,
-        "modo_entrega": "SMTP_REAL" if envio_real else "SPOOL_LOCAL",
+        "modo_entrega": modo_entrega,
         "erro_smtp": erro_smtp,
     }
 
@@ -506,9 +577,22 @@ def coletar_respostas_por_email() -> List[Dict[str, str]]:
 
 
 def testar_conexao_email(cfg: Dict[str, Any]) -> Dict[str, Any]:
-    """Testa credenciais SMTP e IMAP com timeout curto antes de salvar/ativar."""
-    res = {"smtp_ok": False, "smtp_erro": "", "imap_ok": False, "imap_erro": ""}
-    if cfg.get("smtp_host") and cfg.get("smtp_user") and cfg.get("smtp_pass"):
+    """Testa credenciais de envio (Brevo HTTPS ou SMTP) e IMAP antes de salvar/ativar."""
+    res = {"smtp_ok": False, "smtp_erro": "", "imap_ok": False, "imap_erro": "", "envio_modo": "SMTP"}
+    brevo_key = str(cfg.get("brevo_api_key", "") or "").strip()
+    if brevo_key:
+        try:
+            r_b = requests.get(
+                "https://api.brevo.com/v3/account",
+                headers={"api-key": brevo_key, "Accept": "application/json"},
+                timeout=12,
+            )
+            r_b.raise_for_status()
+            res["smtp_ok"] = True
+            res["envio_modo"] = "HTTPS_BREVO"
+        except Exception as exc:
+            res["smtp_erro"] = f"Brevo HTTPS: {exc}"
+    elif cfg.get("smtp_host") and cfg.get("smtp_user") and cfg.get("smtp_pass"):
         try:
             port = int(cfg.get("smtp_port") or 587)
             if port == 465:
@@ -522,7 +606,7 @@ def testar_conexao_email(cfg: Dict[str, Any]) -> Dict[str, Any]:
         except Exception as exc:
             res["smtp_erro"] = str(exc)
     else:
-        res["smtp_erro"] = "Credenciais SMTP incompletas."
+        res["smtp_erro"] = "Credenciais de envio (Brevo API Key ou SMTP) incompletas."
 
     if cfg.get("imap_host") and cfg.get("imap_user") and cfg.get("imap_pass"):
         try:
@@ -606,12 +690,17 @@ class EmailAutoWatcher:
     def obter_status(self) -> Dict[str, Any]:
         cfg = config.obter_integracoes()
         imap_cfg = bool(cfg["imap_host"] and cfg["imap_user"] and cfg["imap_pass"])
-        smtp_cfg = bool(cfg["smtp_host"] and cfg["smtp_user"] and cfg["smtp_pass"])
+        smtp_cfg = bool(
+            cfg.get("brevo_api_key")
+            or (cfg["smtp_host"] and cfg["smtp_user"] and cfg["smtp_pass"])
+        )
         gemini_cfg = bool(cfg["gemini_api_key"])
+        brevo_cfg = bool(cfg.get("brevo_api_key"))
         with self._status_lock:
             st = dict(self._status)
         st["imap_configurado"] = imap_cfg
         st["smtp_configurado"] = smtp_cfg
+        st["brevo_configurado"] = brevo_cfg
         st["gemini_configurado"] = gemini_cfg
         st["imap_user"] = cfg["imap_user"]
         st["smtp_user"] = cfg["smtp_user"]

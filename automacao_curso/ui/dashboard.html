@@ -1138,9 +1138,10 @@
       document.getElementById("int-email").value = emailPadrao;
       document.getElementById("int-app-pass").value = "";
       document.getElementById("int-gemini-key").value = "";
+      document.getElementById("int-brevo-key").value = "";
       document.getElementById("int-modal-msg").textContent = "";
       document.getElementById("int-modal-status").textContent =
-        `Status atual: SMTP ${auto.smtp_configurado ? "OK" : "nao configurado"} | IMAP ${auto.imap_configurado ? "OK (" + (auto.modo || "ativo") + ")" : "nao configurado"} | OCR Gemini: ${auto.gemini_configurado ? "OK" : "nao configurado (ollama local)"}`;
+        `Status atual: SMTP ${auto.smtp_configurado ? "OK" : "nao configurado"} | Envio HTTPS (Brevo): ${auto.brevo_configurado ? "OK" : "nao configurado"} | IMAP ${auto.imap_configurado ? "OK (" + (auto.modo || "ativo") + ")" : "nao configurado"} | OCR Gemini: ${auto.gemini_configurado ? "OK" : "nao configurado (ollama local)"}`;
       dlgInt.showModal();
     }
 
@@ -1165,9 +1166,10 @@
       const emailVal = document.getElementById("int-email").value.trim();
       const appPass = document.getElementById("int-app-pass").value.trim();
       const geminiKey = document.getElementById("int-gemini-key").value.trim();
+      const brevoKey = document.getElementById("int-brevo-key").value.trim();
       const testar = document.getElementById("int-testar").checked;
       const msg = document.getElementById("int-modal-msg");
-      msg.textContent = testar ? "Testando conexao SMTP/IMAP..." : "Salvando configuracoes...";
+      msg.textContent = testar ? "Testando conexao SMTP/IMAP/HTTPS..." : "Salvando configuracoes...";
 
       const r = await fetch("/api/admin/config-integracoes", {
         method: "POST",
@@ -1183,6 +1185,7 @@
           imap_user: emailVal,
           imap_pass: appPass,
           gemini_api_key: geminiKey,
+          brevo_api_key: brevoKey,
           testar_conexao: testar,
         }),
       });
@@ -1314,6 +1317,10 @@
       <div class="modal-field">
         <label for="int-gemini-key">Gemini API Key (OCR na nuvem — deixe vazio para manter)</label>
         <input type="password" id="int-gemini-key" autocomplete="off" placeholder="AIza..." />
+      </div>
+      <div class="modal-field">
+        <label for="int-brevo-key">Brevo API Key (Envio de E-mail via HTTPS — 300/dia gratis, deixe vazio para manter)</label>
+        <input type="password" id="int-brevo-key" autocomplete="off" placeholder="xkeysib-..." />
       </div>
       <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 8px;">
         <div class="modal-field">

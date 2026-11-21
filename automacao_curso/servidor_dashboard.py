@@ -1086,12 +1086,13 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     "imap_poll_sec",
                     "gemini_api_key",
                     "gemini_model",
+                    "brevo_api_key",
                     "webhook_token",
                 }
                 filtrados = {k: v for k, v in body.items() if k in campos_permitidos}
                 preview_cfg = dict(cfg_atual)
                 for k, v in filtrados.items():
-                    if k in ("smtp_pass", "imap_pass", "gemini_api_key", "webhook_token"):
+                    if k in ("smtp_pass", "imap_pass", "gemini_api_key", "brevo_api_key", "webhook_token"):
                         if str(v or "").strip():
                             preview_cfg[k] = str(v).strip()
                     elif v is not None and str(v).strip() != "":

@@ -325,6 +325,11 @@ def obter_integracoes() -> Dict[str, Any]:
     gemini_model = (
         os.environ.get("PREP_GEMINI_MODEL") or str(arquivo_cfg.get("gemini_model", "")) or GEMINI_MODEL
     ).strip()
+    brevo_key = (
+        os.environ.get("BREVO_API_KEY")
+        or os.environ.get("PREP_BREVO_API_KEY")
+        or str(arquivo_cfg.get("brevo_api_key", ""))
+    ).strip()
     webhook_token = (
         os.environ.get("PREP_WEBHOOK_TOKEN") or str(arquivo_cfg.get("webhook_token", ""))
     ).strip()
@@ -342,6 +347,7 @@ def obter_integracoes() -> Dict[str, Any]:
         "imap_poll_sec": imap_poll_sec,
         "gemini_api_key": gemini_key,
         "gemini_model": gemini_model,
+        "brevo_api_key": brevo_key,
         "webhook_token": webhook_token,
     }
 
@@ -376,7 +382,7 @@ def salvar_integracoes(novos_dados: Dict[str, Any]) -> Dict[str, Any]:
         if cp in novos_dados and str(novos_dados[cp]).strip():
             merged[cp] = int(novos_dados[cp])
 
-    for cs in ("smtp_pass", "imap_pass", "gemini_api_key", "webhook_token"):
+    for cs in ("smtp_pass", "imap_pass", "gemini_api_key", "brevo_api_key", "webhook_token"):
         if cs in novos_dados:
             val = str(novos_dados[cs] or "").strip()
             if val:
