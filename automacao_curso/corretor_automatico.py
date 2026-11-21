@@ -959,6 +959,15 @@ class OrquestradorCurso:
 
         questoes = bloco.obter_questoes(modo=modo, incluir_opcionais=False)
         respostas_ocr = ocr["respostas"]
+        esperadas = {q.questao_id for q in questoes}
+        reconhecidas = esperadas.intersection(respostas_ocr)
+        if not any(respostas_ocr[qid].strip() for qid in reconhecidas):
+            raise ValueError("Nenhuma resposta da prova foi reconhecida. Revise a digitalização antes de corrigir.")
+        if ocr["imagem_info"]["fonte_ocr"] == "gemini_vision_api":
+            revisar = esperadas - reconhecidas
+            revisar.update(qid for qid in reconhecidas if "[ILEGIVEL]" in respostas_ocr[qid].upper())
+            if revisar:
+                raise ValueError("Confira a transcrição das questões antes de corrigir: " + ", ".join(sorted(revisar)))
 
         itens_corrigidos: List[Dict[str, Any]] = []
         erros_cats: List[str] = []
