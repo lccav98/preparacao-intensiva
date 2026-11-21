@@ -1219,6 +1219,7 @@ def obter_estado_portal_aluno(
 
     return {
         "aluno": aluno,
+        "servidor_agora_iso": _agora_iso(),
         "disciplina_ativa": _disciplina_publica(disc_id),
         "disciplinas_disponiveis": disciplinas_disponiveis,
         "prova_atual": provas[0] if provas else None,

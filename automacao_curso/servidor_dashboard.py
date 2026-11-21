@@ -16,6 +16,7 @@ import re
 import secrets
 import sqlite3
 import sys
+import threading
 import time
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -34,6 +35,24 @@ SESSION_TTL_SEC = 7 * 24 * 3600
 _ORQUESTRADOR: Optional[OrquestradorCurso] = None
 _WATCHER: Optional[servico_email.EmailAutoWatcher] = None
 _SECRET_BYTES: Optional[bytes] = None
+_JOBS_LOCK = threading.Lock()
+_JOBS_CORRECAO: Dict[str, Dict[str, Any]] = {}
+
+
+def _registrar_job_correcao(job_id: str, dados: Dict[str, Any]) -> None:
+    with _JOBS_LOCK:
+        _JOBS_CORRECAO[job_id] = dados
+        if len(_JOBS_CORRECAO) > 100:
+            chaves_antigas = list(_JOBS_CORRECAO.keys())[:-100]
+            for k in chaves_antigas:
+                _JOBS_CORRECAO.pop(k, None)
+
+
+def _atualizar_job_correcao(job_id: str, **campos: Any) -> None:
+    with _JOBS_LOCK:
+        if job_id in _JOBS_CORRECAO:
+            _JOBS_CORRECAO[job_id].update(campos)
+            _JOBS_CORRECAO[job_id]["atualizado_em"] = time.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def _garantir_csv_inicial() -> None:
@@ -585,6 +604,22 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(data)
             return
 
+        if path.startswith("/api/submissoes/status/"):
+            sess_st = self._exigir_sessao_api()
+            if not sess_st:
+                return
+            job_id = path[len("/api/submissoes/status/"):].strip()
+            with _JOBS_LOCK:
+                job = dict(_JOBS_CORRECAO.get(job_id) or {})
+            if not job:
+                self._enviar_json({"erro": "Processamento nao encontrado."}, status=404)
+                return
+            if sess_st.get("role") == "aluno" and job.get("aluno_id") != int(sess_st["aluno_id"]):
+                self._enviar_json({"erro": "Acesso negado a este processamento."}, status=403)
+                return
+            self._enviar_json(job)
+            return
+
         if path.startswith("/folha/"):
             if not sess:
                 accept = (self.headers.get("Accept") or "").lower()
@@ -635,10 +670,128 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         self._enviar_json({"erro": "Rota nao encontrada."}, status=404)
 
+    def _tratar_submissao_binaria(self, orq: OrquestradorCurso) -> None:
+        sess = self._exigir_sessao_api()
+        if not sess:
+            return
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            length = 0
+        if length <= 0:
+            self._enviar_json({"erro": "Arquivo vazio ou Content-Length ausente."}, status=400)
+            return
+        if length > 25 * 1024 * 1024:
+            self._enviar_json({"erro": "Arquivo excede o limite de 25 MB."}, status=413)
+            return
+
+        raw_bytes = self.rfile.read(length)
+        nome_raw = urllib.parse.unquote(self.headers.get("X-Prep-Filename", "prova.png") or "prova.png")
+        prot = urllib.parse.unquote(self.headers.get("X-Prep-Protocolo", "") or "").strip()
+        disc_hdr = urllib.parse.unquote(self.headers.get("X-Prep-Disciplina", "") or "").strip() or None
+
+        aid_sess = sess.get("aluno_id")
+        if sess["role"] == "aluno":
+            aid_int = int(aid_sess)
+            if prot:
+                prova = banco_dados.obter_prova(prot)
+                if not prova:
+                    self._enviar_json({"erro": "Protocolo nao encontrado."}, status=404)
+                    return
+                if int(prova["aluno_id"]) != aid_int:
+                    self._enviar_json(
+                        {"erro": "Voce so pode enviar respostas das suas proprias provas."},
+                        status=403,
+                    )
+                    return
+            else:
+                estado_al = banco_dados.obter_estado_portal_aluno(aid_int, disciplina=disc_hdr)
+                if not estado_al or not estado_al.get("prova_atual"):
+                    self._enviar_json(
+                        {"erro": "Nenhuma folha ativa encontrada para sua conta."},
+                        status=400,
+                    )
+                    return
+                prot = estado_al["prova_atual"]["protocolo"]
+        elif prot:
+            prova = banco_dados.obter_prova(prot)
+            if prova:
+                aid_sess = int(prova["aluno_id"])
+
+        config.garantir_diretorios()
+        fname = re.sub(r"[^a-zA-Z0-9._-]", "_", os.path.basename(nome_raw)) or "prova.png"
+        prefix = f"al{aid_sess or 'adm'}_{int(time.time())}_"
+        destino = os.path.join(config.UPLOADS_DIR, prefix + fname)
+        with open(destino, "wb") as f:
+            f.write(raw_bytes)
+
+        job_id = secrets.token_hex(10)
+        agora = time.strftime("%Y-%m-%d %H:%M:%S")
+        eh_aluno = sess.get("role") == "aluno"
+        _registrar_job_correcao(
+            job_id,
+            {
+                "ok": True,
+                "job_id": job_id,
+                "aluno_id": int(aid_sess) if aid_sess is not None else None,
+                "protocolo": prot,
+                "arquivo": fname,
+                "tamanho_bytes": len(raw_bytes),
+                "etapa": "arquivo_recebido",
+                "mensagem": "Arquivo recebido pelo servidor.",
+                "atualizado_em": agora,
+                "erro": "",
+                "resultado": None,
+            },
+        )
+
+        def _worker() -> None:
+            try:
+                _atualizar_job_correcao(
+                    job_id,
+                    etapa="lendo_e_corrigindo",
+                    mensagem="Lendo respostas manuscritas e corrigindo...",
+                )
+                res = orq.processar_submissao_imagem(
+                    caminho_imagem=destino,
+                    protocolo_override=prot,
+                )
+                gerar_snapshot_dashboard(disciplina=res.get("disciplina", config.DISCIPLINA_PADRAO))
+                out_res = _sanitizar_resumo_correcao_aluno(res) if eh_aluno else res
+                _atualizar_job_correcao(
+                    job_id,
+                    etapa="concluido",
+                    mensagem="Correcao concluida.",
+                    resultado=out_res,
+                )
+            except Exception as exc:
+                _atualizar_job_correcao(
+                    job_id,
+                    ok=False,
+                    etapa="erro",
+                    erro=str(exc),
+                    mensagem="Falha ao processar o arquivo enviado.",
+                )
+
+        threading.Thread(target=_worker, name=f"JobCorr-{job_id[:6]}", daemon=True).start()
+        self._enviar_json(
+            {
+                "ok": True,
+                "job_id": job_id,
+                "protocolo": prot,
+                "etapa": "arquivo_recebido",
+                "mensagem": "Arquivo recebido pelo servidor.",
+            },
+            status=202,
+        )
+
     def do_POST(self) -> None:
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         orq = obter_orquestrador()
+        if path == "/api/submeter-foto-binario":
+            self._tratar_submissao_binaria(orq)
+            return
         ctype = (self.headers.get("Content-Type") or "").lower()
         eh_form = "application/x-www-form-urlencoded" in ctype
 
