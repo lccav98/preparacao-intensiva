@@ -442,13 +442,19 @@ def _avaliar_conceitual_portugues(questao: Questao, resp: str, bloco: BlocoCurri
         )
 
     if qid == "A01-C01":
-        tem_ent = ("v" in low or "ingresso" in low or "preco" in low or "preço" in low) and "estudante" in low
-        tem_sai = "saida" in low or "saída" in low or "valor final" in low or "pagar" in low
-        tem_abstr = (
-            "abstra" in low or "irrelevant" in low or "omit" in low
-        ) and any(
-            k in low
-            for k in ["poltrona", "filme", "horario", "horário", "nome", "atendente", "pagamento", "sala", "sessao", "sessão"]
+        tem_ent = (
+            ("v" in low or "ingresso" in low or "preco" in low or "preço" in low)
+            and ("estudante" in low or "condic" in low or "condiç" in low or "meia" in low or "cliente" in low)
+        )
+        tem_sai = "saida" in low or "saída" in low or "valor final" in low or "pagar" in low or "pago" in low
+        itens_abstr = [
+            "poltrona", "filme", "horario", "horário", "nome", "atendente",
+            "pagamento", "sala", "sessao", "sessão", "genero", "gênero",
+            "idade", "cadeira", "pipoca",
+        ]
+        qtd_abstr = sum(1 for k in itens_abstr if k in low)
+        tem_abstr = (qtd_abstr >= 2) or (
+            ("abstra" in low or "irrelevant" in low or "omit" in low) and qtd_abstr >= 1
         )
         tem_comp = (
             ("alto nivel" in low or "alto nível" in low)
@@ -460,7 +466,7 @@ def _avaliar_conceitual_portugues(questao: Questao, resp: str, bloco: BlocoCurri
             return _ret(
                 "correto",
                 "sem_erro",
-                f"[{qid}] Excelente! Entradas/saída (V, estudante -> valor final), detalhes abstraídos e cadeia alto nível -> compilador -> linguagem de máquina corretos.",
+                f"[{qid}] Excelente! Entradas/saída (V, condição estudante -> valor final), detalhes abstraídos e cadeia alto nível -> compilador -> linguagem de máquina corretos.",
             )
         faltas = []
         if not (tem_ent and tem_sai):
@@ -482,14 +488,16 @@ def _avaliar_conceitual_portugues(questao: Questao, resp: str, bloco: BlocoCurri
             or "ambigu" in low
             or "ambígu" in low
             or "vago" in low
+            or "vaga" in low
             or "executavel" in low
             or "executável" in low
         )
-        tem_fin = "finit" in low or "infinit" in low or "nunca termina" in low
-        m_cor = re.search(r"(?:vers[aã]o\s+corrigida|algoritmo\s+corrigido)(.*)$", low)
+        tem_fin = "finit" in low or "infinit" in low or "nunca termina" in low or "sem parar" in low
+        m_cor = re.search(r"(?:vers[aã]o\s+corrigida|algoritmo\s+corrigido)(.*)$", low, re.S)
         cor_low = m_cor.group(1) if m_cor else low
+        cor_compact = re.sub(r"\s+", "", cor_low)
         tem_leia_lh = ("leia" in cor_low or "ler" in cor_low) and "l" in cor_low and "h" in cor_low
-        tem_calc = ("perimetro" in cor_low or "perímetro" in cor_low) and "2" in cor_low and ("l+h" in cor_low or "l + h" in cor_low)
+        tem_calc = ("perimetro" in cor_low or "perímetro" in cor_low) and "2" in cor_low and "l+h" in cor_compact
         tem_exib = "exib" in cor_low or "mostr" in cor_low or "imprim" in cor_low
         tem_encerr = "fim" in cor_low or "encerr" in cor_low
         if tem_seq and tem_elem and tem_fin and tem_leia_lh and tem_calc and tem_exib and tem_encerr:

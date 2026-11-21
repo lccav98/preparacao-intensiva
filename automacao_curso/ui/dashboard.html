@@ -1658,8 +1658,10 @@
         return;
       }
       const tc = d.teste_conexao || {};
-      if (testar && ((!tc.smtp_ok && document.getElementById("int-smtp-host").value) || (!tc.imap_ok && document.getElementById("int-imap-host").value))) {
-        msg.textContent = `Salvo, mas atenção no teste -> Envio: ${tc.smtp_ok ? "OK" : tc.smtp_erro} | IMAP: ${tc.imap_ok ? "OK" : tc.imap_erro}`;
+      const gemFalhou = testar && tc.gemini_ok === false;
+      if (testar && (gemFalhou || (!tc.smtp_ok && document.getElementById("int-smtp-host").value) || (!tc.imap_ok && document.getElementById("int-imap-host").value))) {
+        const gemTxt = tc.gemini_ok === undefined ? "" : ` | Gemini: ${tc.gemini_ok ? "OK" : tc.gemini_erro}`;
+        msg.textContent = `Salvo, mas atenção no teste -> Envio: ${tc.smtp_ok ? "OK" : tc.smtp_erro} | IMAP: ${tc.imap_ok ? "OK" : tc.imap_erro}${gemTxt}`;
       } else {
         fecharModalIntegracoes();
         const txt = "Integrações salvas e coleta automática ativa!";

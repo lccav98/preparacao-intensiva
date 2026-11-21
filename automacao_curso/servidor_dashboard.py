@@ -1243,6 +1243,15 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     "webhook_token",
                 }
                 filtrados = {k: v for k, v in body.items() if k in campos_permitidos}
+                gem_raw = str(filtrados.get("gemini_api_key", "") or "").strip()
+                if gem_raw and not re.fullmatch(r"AIza[0-9A-Za-z_-]{20,}", gem_raw):
+                    self._enviar_json(
+                        {
+                            "erro": "Gemini API Key invalida. Cole apenas a chave gerada no Google AI Studio (comeca com AIza..., sem espacos)."
+                        },
+                        status=400,
+                    )
+                    return
                 preview_cfg = dict(cfg_atual)
                 for k, v in filtrados.items():
                     if k in ("smtp_pass", "imap_pass", "gemini_api_key", "brevo_api_key", "webhook_token"):

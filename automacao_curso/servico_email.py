@@ -620,6 +620,29 @@ def testar_conexao_email(cfg: Dict[str, Any]) -> Dict[str, Any]:
     else:
         res["imap_erro"] = "Credenciais IMAP incompletas."
 
+    gem_key = str(cfg.get("gemini_api_key", "") or "").strip()
+    if gem_key:
+        if not re.fullmatch(r"AIza[0-9A-Za-z_-]{20,}", gem_key):
+            res["gemini_ok"] = False
+            res["gemini_erro"] = "Formato invalido (deve comecar com AIza...)."
+        else:
+            try:
+                r_g = requests.get(
+                    "https://generativelanguage.googleapis.com/v1beta/models",
+                    headers={"x-goog-api-key": gem_key},
+                    timeout=10,
+                )
+                r_g.raise_for_status()
+                res["gemini_ok"] = True
+                res["gemini_erro"] = ""
+            except requests.HTTPError as exc:
+                st_g = exc.response.status_code if exc.response is not None else "HTTP"
+                res["gemini_ok"] = False
+                res["gemini_erro"] = f"Erro {st_g} na API Gemini."
+            except Exception as exc:
+                res["gemini_ok"] = False
+                res["gemini_erro"] = str(exc)
+
     return res
 
 

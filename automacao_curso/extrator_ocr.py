@@ -120,6 +120,11 @@ def _consultar_modelo_gemini(
     mensagem: dict, formato: dict, api_key: str, modelo_override: str = ""
 ) -> dict:
     """Consulta a API Gemini Vision REST quando executando na nuvem sem Ollama local."""
+    key_limpa = (api_key or "").strip()
+    if not re.fullmatch(r"AIza[0-9A-Za-z_-]{20,}", key_limpa):
+        raise ValueError(
+            "Chave da API Gemini invalida no servidor. Atualize o campo 'Gemini API Key' (formato AIza...) em Configurar E-mail & IA no Painel Gerencial."
+        )
     modelo = (
         os.environ.get("PREP_GEMINI_MODEL", "").strip()
         or modelo_override.strip()
@@ -140,7 +145,10 @@ def _consultar_modelo_gemini(
     try:
         resp = requests.post(
             url,
-            params={"key": api_key},
+            headers={
+                "x-goog-api-key": key_limpa,
+                "Content-Type": "application/json",
+            },
             json=payload,
             timeout=(10, 120),
         )
@@ -151,8 +159,19 @@ def _consultar_modelo_gemini(
         if not texto:
             raise ValueError("Resposta vazia da API Gemini.")
         return json.loads(texto)
+    except requests.HTTPError as exc:
+        status = exc.response.status_code if exc.response is not None else "HTTP"
+        detalhe = ""
+        if exc.response is not None:
+            try:
+                err_json = exc.response.json().get("error") or {}
+                detalhe = str(err_json.get("message") or "").strip()
+            except Exception:
+                detalhe = ""
+        msg_limpa = f"Erro {status}" + (f": {detalhe}" if detalhe else "")
+        raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {msg_limpa}") from exc
     except (requests.RequestException, KeyError, IndexError, ValueError) as exc:
-        raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {exc}") from exc
+        raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {exc.__class__.__name__}") from exc
 
 
 def _consultar_modelo(mensagem: dict, formato: dict) -> dict:
