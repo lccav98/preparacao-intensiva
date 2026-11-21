@@ -1,0 +1,200 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "A08",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "A08-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [3, -6],
+            [1, -2]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "idempotente",
+          "sinonimos": ["matriz idempotente"]
+        }
+      },
+      "exemplo_correto": "(a) [[3, -6], [1, -2]] (b) idempotente",
+      "exemplo_incorreto": "(a) [[9, 36], [1, 4]] (b) idempotente",
+      "dica_erro": "Potência de matriz usa produto matricial J * J, nunca o quadrado entrada por entrada."
+    },
+    "A08-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 0],
+            [0, 0]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nilpotente",
+          "sinonimos": ["matriz nilpotente"]
+        }
+      },
+      "exemplo_correto": "(a) [[0, 0], [0, 0]] (b) nilpotente",
+      "exemplo_incorreto": "(a) [[0, 0], [0, 0]] (b) idempotente",
+      "dica_erro": "Quando H != O e H^p = O, a matriz é classificada como nilpotente."
+    },
+    "A08-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 0, 6],
+            [0, 0, 0],
+            [0, 0, 0]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+          ]
+        },
+        "c": {
+          "tipo_resposta": "numero",
+          "esperado": 3
+        }
+      },
+      "exemplo_correto": "(a) [[0, 0, 6], [0, 0, 0], [0, 0, 0]] (b) [[0, 0, 0], [0, 0, 0], [0, 0, 0]] (c) 3",
+      "exemplo_incorreto": "(a) [[0, 0, 6], [0, 0, 0], [0, 0, 0]] (b) [[0, 0, 0], [0, 0, 0], [0, 0, 0]] (c) 2",
+      "dica_erro": "O índice de nilpotência é o menor p tal que N^p = O; como N^2 != O e N^3 = O, p = 3."
+    },
+    "A08-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, 0, -1],
+            [0, 1, -1],
+            [0, 0, 0]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 1, -1],
+            [1, 0, -1],
+            [0, 0, 0]
+          ]
+        },
+        "c": {
+          "tipo_resposta": "numero",
+          "esperado": 2
+        }
+      },
+      "exemplo_correto": "(a) [[1, 0, -1], [0, 1, -1], [0, 0, 0]] (b) [[0, 1, -1], [1, 0, -1], [0, 0, 0]] (c) 2",
+      "exemplo_incorreto": "(a) [[1, 0, -1], [0, 1, -1], [0, 0, 0]] (b) [[0, 1, -1], [1, 0, -1], [0, 0, 0]] (c) 3",
+      "dica_erro": "Na definição L^(k+1) = L, como L^3 = L, o período é k = 3 - 1 = 2."
+    },
+    "A08-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [2, 0, 0],
+            [5, -6, 0],
+            [-3, 5, 5]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "triangular inferior",
+          "sinonimos": ["matriz triangular inferior"]
+        }
+      },
+      "exemplo_correto": "(a) [[2, 0, 0], [5, -6, 0], [-3, 5, 5]] (b) triangular inferior",
+      "exemplo_incorreto": "(a) [[2, 0, 0], [5, -6, 0], [-3, 5, 5]] (b) triangular superior",
+      "dica_erro": "O produto de duas matrizes triangulares inferiores resulta em outra triangular inferior."
+    },
+    "A08-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [2, -2],
+            [1, -1]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "idempotente",
+          "sinonimos": ["matriz idempotente"]
+        }
+      },
+      "exemplo_correto": "(a) [[2, -2], [1, -1]] (b) idempotente",
+      "exemplo_incorreto": "(a) [[2, -2], [1, -1]] (b) nilpotente",
+      "dica_erro": "Como A^2 = A, a matriz A é idempotente."
+    },
+    "A08-C02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 0, -3],
+            [0, 0, 0],
+            [0, 0, 0]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+          ]
+        },
+        "c": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nilpotente",
+          "sinonimos": ["matriz nilpotente"]
+        }
+      },
+      "exemplo_correto": "(a) [[0, 0, -3], [0, 0, 0], [0, 0, 0]] (b) [[0, 0, 0], [0, 0, 0], [0, 0, 0]] (c) nilpotente",
+      "exemplo_incorreto": "(a) [[0, 0, -3], [0, 0, 0], [0, 0, 0]] (b) [[0, 0, 0], [0, 0, 0], [0, 0, 0]] (c) periodica",
+      "dica_erro": "Como B^3 = [O], trata-se de matriz nilpotente."
+    },
+    "A08-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, 0],
+            [0, 1]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [2, 3],
+            [-1, -2]
+          ]
+        },
+        "c": {
+          "tipo_resposta": "classificacao",
+          "esperado": "periodica",
+          "sinonimos": ["matriz periodica", "periodica de periodo 2"]
+        }
+      },
+      "exemplo_correto": "(a) [[1, 0], [0, 1]] (b) [[2, 3], [-1, -2]] (c) periodica",
+      "exemplo_incorreto": "(a) [[1, 0], [0, 1]] (b) [[2, 3], [-1, -2]] (c) idempotente",
+      "dica_erro": "Como M^2 = I != M e M^3 = M, M é periódica de período 2 (não idempotente)."
+    }
+  }
+}

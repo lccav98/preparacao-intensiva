@@ -1,0 +1,63 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "F07",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "F07-E01": {
+      "tipo_resposta": "texto",
+      "esperado": "elipsoide",
+      "exemplo_correto": "elipsoide",
+      "exemplo_incorreto": "hiperboloide de 1 folha",
+      "dica_erro": "Todos os coeficientes positivos, lado direito 1 → elipsoide."
+    },
+    "F07-E02": {
+      "tipo_resposta": "texto",
+      "esperado": "hiperboloide de 1 folha, eixo z",
+      "exemplo_correto": "hiperboloide de 1 folha, eixo z",
+      "exemplo_incorreto": "hiperboloide de 2 folhas, eixo z",
+      "dica_erro": "Sinais + + -, lado direito 1 → hiperboloide de 1 folha. Eixo do sinal diferente: z."
+    },
+    "F07-E03": {
+      "tipo_resposta": "texto",
+      "esperado": "hiperboloide de 2 folhas",
+      "exemplo_correto": "hiperboloide de 2 folhas",
+      "exemplo_incorreto": "hiperboloide de 1 folha",
+      "dica_erro": "Sinais + + -, lado direito -1 → hiperboloide de 2 folhas."
+    },
+    "F07-E04": {
+      "tipo_resposta": "texto",
+      "esperado": "paraboloide eliptico",
+      "exemplo_correto": "paraboloide eliptico",
+      "exemplo_incorreto": "paraboloide hiperbolico",
+      "dica_erro": "z = x² + y² (soma de quadrados) → paraboloide elíptico."
+    },
+    "F07-E05": {
+      "tipo_resposta": "texto",
+      "esperado": "cone",
+      "exemplo_correto": "cone",
+      "exemplo_incorreto": "cilindro",
+      "dica_erro": "Lado direito 0, sinais + + - → cone."
+    },
+    "F07-C01": {
+      "tipo_resposta": "texto",
+      "esperado": "elipse",
+      "exemplo_correto": "elipse",
+      "exemplo_incorreto": "hipérbole",
+      "dica_erro": "Em z=0: x²/4 + y²/9 = 1 → elipse."
+    },
+    "F07-C02": {
+      "tipo_resposta": "texto",
+      "esperado": "paraboloide hiperbolico",
+      "exemplo_correto": "paraboloide hiperbolico",
+      "exemplo_incorreto": "paraboloide eliptico",
+      "dica_erro": "z = x²/4 - y²/9 (subtração) → paraboloide hiperbólico."
+    },
+    "F07-C03": {
+      "tipo_resposta": "texto",
+      "esperado": "cilindro eliptico sobre o eixo z",
+      "exemplo_correto": "cilindro eliptico sobre o eixo z",
+      "exemplo_incorreto": "cilindro eliptico sobre o eixo x",
+      "dica_erro": "Variável z ausente → cilindro sobre o eixo z."
+    }
+  }
+}

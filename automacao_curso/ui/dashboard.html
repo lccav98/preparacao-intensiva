@@ -53,6 +53,8 @@
     .btn-primary { background: #0284c7; border-color: #0369a1; }
     .btn-ok { background: #059669; border-color: #047857; }
     .btn-warn { background: #d97706; border-color: #b45309; }
+    .btn-danger { background: #dc2626; border-color: #b91c1c; color: #ffffff; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
     .kpis {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -532,6 +534,7 @@
               <td>
                 <button onclick="carregarEstado(${t.id}, '${escapeHtml(DISCIPLINA_ATIVA)}')">Selecionar</button>
                 <button class="btn-primary" onclick="window.open('/aluno?aluno_id=${t.id}&disciplina=${encodeURIComponent(DISCIPLINA_ATIVA)}', '_blank')">Portal</button>
+                <button class="btn-danger" onclick="abrirModalExcluirAluno(${t.id})">Excluir</button>
               </td>
             </tr>
           `).join("");
@@ -910,14 +913,116 @@
     }
 
     // Chamado no fim do <body> (apos os <dialog> existirem no DOM).
+    let dlgExcluir = null;
+    let alunoParaExcluir = null;
+
     function religarDialogos() {
       dlgAuth = document.getElementById("dlg-auth");
       dlgInt = document.getElementById("dlg-integracoes");
       dlgMat = document.getElementById("dlg-matricula");
+      dlgExcluir = document.getElementById("dlg-excluir-aluno");
       configurarDialogNativo(dlgAuth);
       configurarDialogNativo(dlgInt);
       configurarDialogNativo(dlgMat);
+      configurarDialogNativo(dlgExcluir);
       religarFormMatricula();
+    }
+
+    function abrirModalExcluirAluno(alunoId) {
+      if (!MODO_SERVIDOR || !dlgExcluir || !ESTADO) return;
+      const lista = (ESTADO.todos_alunos && ESTADO.todos_alunos.length)
+        ? ESTADO.todos_alunos
+        : (ESTADO.resumo_turma || []);
+      const al = lista.find(a => Number(a.id) === Number(alunoId));
+      if (!al) return;
+      alunoParaExcluir = { id: Number(al.id), nome: al.nome, email: String(al.email || "").trim() };
+
+      document.getElementById("exc-aluno-nome").textContent = alunoParaExcluir.nome;
+      document.getElementById("exc-aluno-email").textContent = alunoParaExcluir.email;
+      document.getElementById("exc-passo1").hidden = false;
+      document.getElementById("exc-passo2").hidden = true;
+      document.getElementById("exc-check-entendi").checked = false;
+      document.getElementById("btn-exc-avancar").disabled = true;
+      document.getElementById("exc-confirm-email").value = "";
+      document.getElementById("exc-email-esperado").textContent = alunoParaExcluir.email;
+      document.getElementById("btn-exc-final").disabled = true;
+      document.getElementById("exc-modal-msg").textContent = "";
+      dlgExcluir.showModal();
+    }
+
+    function fecharModalExcluirAluno() {
+      alunoParaExcluir = null;
+      if (dlgExcluir && dlgExcluir.open) dlgExcluir.close("cancel");
+    }
+
+    function atualizarPasso1Excluir() {
+      const ok = document.getElementById("exc-check-entendi").checked;
+      document.getElementById("btn-exc-avancar").disabled = !ok;
+    }
+
+    function avancarPassoExcluir() {
+      if (!document.getElementById("exc-check-entendi").checked) return;
+      document.getElementById("exc-passo1").hidden = true;
+      document.getElementById("exc-passo2").hidden = false;
+      const inp = document.getElementById("exc-confirm-email");
+      inp.value = "";
+      document.getElementById("btn-exc-final").disabled = true;
+      document.getElementById("exc-modal-msg").textContent = "";
+      inp.focus();
+    }
+
+    function voltarPasso1Excluir() {
+      document.getElementById("exc-passo2").hidden = true;
+      document.getElementById("exc-passo1").hidden = false;
+      document.getElementById("exc-modal-msg").textContent = "";
+    }
+
+    function atualizarBotaoExcluirFinal() {
+      if (!alunoParaExcluir) return;
+      const digitado = document.getElementById("exc-confirm-email").value.trim().toLowerCase();
+      const esperado = alunoParaExcluir.email.toLowerCase();
+      document.getElementById("btn-exc-final").disabled = (digitado !== esperado);
+    }
+
+    async function confirmarExclusaoAluno(ev) {
+      ev.preventDefault();
+      if (!alunoParaExcluir) return;
+      const msg = document.getElementById("exc-modal-msg");
+      const digitado = document.getElementById("exc-confirm-email").value.trim().toLowerCase();
+      if (digitado !== alunoParaExcluir.email.toLowerCase()) {
+        msg.textContent = "O e-mail digitado nao confere com o aluno selecionado.";
+        return;
+      }
+      const btn = document.getElementById("btn-exc-final");
+      btn.disabled = true;
+      msg.textContent = "Excluindo aluno e registros vinculados...";
+      try {
+        const r = await fetch("/api/alunos/excluir", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            aluno_id: alunoParaExcluir.id,
+            confirmar_email: digitado,
+            confirmacao_dupla: true,
+            disciplina: DISCIPLINA_ATIVA,
+          }),
+        });
+        const d = await r.json();
+        if (!r.ok || d.erro) {
+          msg.textContent = "Erro: " + (d.erro || r.status);
+          btn.disabled = false;
+          return;
+        }
+        const nomeRem = alunoParaExcluir.nome;
+        if (dlgExcluir && dlgExcluir.open) dlgExcluir.close("confirm");
+        alunoParaExcluir = null;
+        document.getElementById("msg-emissao").textContent =
+          `Aluno ${nomeRem} excluido definitivamente.`;
+        await carregarEstado(null, DISCIPLINA_ATIVA);
+      } catch (_err) {
+        msg.textContent = "Falha de comunicacao ao excluir o aluno.";
+        btn.disabled = false;
+      }
     }
 
     const linkErrMat = (el, shown) => {
@@ -1264,6 +1369,58 @@
       <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
         <button type="button" onclick="fecharModalMatricula()">Cancelar</button>
         <button type="submit" class="btn-ok">Confirmar Matricula</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-excluir-aluno" class="auth-modal" closedby="any" aria-labelledby="dlg-exc-title">
+    <h2 id="dlg-exc-title" style="margin-top: 0; font-size: 1.1rem; color: #fca5a5;">
+      Excluir Aluno (Confirmacao Dupla)
+    </h2>
+    <p style="font-size: 0.86rem; margin-top: 0;">
+      Aluno selecionado: <strong id="exc-aluno-nome">--</strong> (<code id="exc-aluno-email">--</code>)
+    </p>
+
+    <div id="exc-passo1">
+      <p style="font-size: 0.84rem; color: var(--muted); background: rgba(220, 38, 38, 0.12); border: 1px solid rgba(248, 113, 113, 0.4); border-radius: 8px; padding: 10px 12px;">
+        <strong>Atencao (Etapa 1 de 2):</strong> esta acao remove permanentemente o cadastro do aluno, suas matriculas em todas as disciplinas, provas emitidas e historico de submissoes. Nao e possivel desfazer.
+      </p>
+      <label style="display:flex; align-items:flex-start; gap:8px; font-size:0.85rem; margin: 12px 0; cursor: pointer;">
+        <input type="checkbox" id="exc-check-entendi" onchange="atualizarPasso1Excluir()" style="margin-top: 3px;" />
+        <span>Confirmo que desejo excluir este aluno permanentemente.</span>
+      </label>
+      <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
+        <button type="button" onclick="fecharModalExcluirAluno()">Cancelar</button>
+        <button type="button" id="btn-exc-avancar" class="btn-danger" disabled onclick="avancarPassoExcluir()">
+          Continuar (Etapa 2 de 2)
+        </button>
+      </div>
+    </div>
+
+    <form id="exc-passo2" hidden onsubmit="confirmarExclusaoAluno(event)">
+      <p style="font-size: 0.84rem; color: var(--muted); margin-top: 0;">
+        <strong>Confirmacao final (Etapa 2 de 2):</strong> para evitar exclusao por engano, digite exatamente o e-mail do aluno abaixo:
+        <br /><code id="exc-email-esperado" style="color: #fca5a5;"></code>
+      </p>
+      <div class="modal-field">
+        <label for="exc-confirm-email">Digite o e-mail do aluno para confirmar</label>
+        <input
+          type="email"
+          id="exc-confirm-email"
+          name="confirmar_email"
+          autocomplete="off"
+          spellcheck="false"
+          required
+          oninput="atualizarBotaoExcluirFinal()"
+        />
+      </div>
+      <div class="status-msg" id="exc-modal-msg" aria-live="polite" style="color: #fca5a5;"></div>
+      <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
+        <button type="button" onclick="voltarPasso1Excluir()">Voltar</button>
+        <button type="button" onclick="fecharModalExcluirAluno()">Cancelar</button>
+        <button type="submit" id="btn-exc-final" class="btn-danger" disabled>
+          Excluir Aluno Definitivamente
+        </button>
       </div>
     </form>
   </dialog>

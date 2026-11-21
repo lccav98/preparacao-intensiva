@@ -1,0 +1,117 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "G01",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "G01-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-2", "2"]
+        },
+        "b": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-3", "3"]
+        },
+        "c": {
+          "tipo_resposta": "matriz",
+          "esperado": [[1, 7], [-1, 3]]
+        }
+      },
+      "exemplo_correto": "(a) x = +-2 (b) y = +-3 (c) [[1, 7], [-1, 3]]",
+      "exemplo_incorreto": "(a) x = 2 (b) y = 3 (c) [[1, -1], [7, 3]]",
+      "dica_erro": "Construa A = [[1, 0], [3, 2]], mantenha os dois sinais (+-) em x^2=4 e y^2=9 e transponha AC."
+    },
+    "G01-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [[0, 3], [-3, 0]]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [[3, -6], [1, -2]]
+        },
+        "c": {
+          "tipo_resposta": "classificacao",
+          "esperado": "idempotente",
+          "sinonimos": ["matriz idempotente"]
+        }
+      },
+      "exemplo_correto": "(a) [[0, 3], [-3, 0]] (b) [[3, -6], [1, -2]] (c) idempotente",
+      "exemplo_incorreto": "(a) [[0, -3], [3, 0]] (b) [[3, -6], [1, -2]] (c) nilpotente",
+      "dica_erro": "Em K = (M - M^T)/2, k12 = (4 - (-2))/2 = 3; como N^2 = N, N e idempotente."
+    },
+    "G01-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": -6
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "-16/3"
+        }
+      },
+      "exemplo_correto": "(a) -6 (b) -16/3",
+      "exemplo_incorreto": "(a) 6 (b) -4/3",
+      "dica_erro": "Na triangulacao de D a diagonal fica (1, 1, -2, 3); para ordem 3, det(2*P^T*Q^{-1}) = 2^3 * det(P) / det(Q)."
+    },
+    "G01-E04": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-1", "0", "3"],
+      "exemplo_correto": "-1, 0, 3",
+      "exemplo_incorreto": "-1, 3",
+      "dica_erro": "Desenvolvendo pela 2a coluna obtem-se k(k^2 - 2k - 3) = 0; nao descarte a raiz k = 0."
+    },
+    "G01-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [[3, 1, -2], [1, 1, -1], [-2, -1, 2]]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [[2, 1, 0], [2, 1, 0], [0, 0, 2]]
+        }
+      },
+      "exemplo_correto": "(a) [[3, 1, -2], [1, 1, -1], [-2, -1, 2]] (b) [[2, 1, 0], [2, 1, 0], [0, 0, 2]]",
+      "exemplo_incorreto": "(a) [[3, 1, -2], [1, 1, -1], [-2, -1, 2]] (b) [[2, 2, 0], [1, 1, 0], [0, 0, 2]]",
+      "dica_erro": "Calcule X^T = A^{-1}(C - B) e lembre-se de transpor o resultado para obter X."
+    },
+    "G01-C01": {
+      "tipo_resposta": "numero",
+      "esperado": -33,
+      "exemplo_correto": "-33",
+      "exemplo_incorreto": "33",
+      "dica_erro": "A troca inicial L1 <-> L2 multiplica o determinante por -1, levando a -(1 * 1 * 3 * 11) = -33."
+    },
+    "G01-C02": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-1", "0", "3/2"],
+      "exemplo_correto": "-1, 0, 3/2",
+      "exemplo_incorreto": "-1, 3/2",
+      "dica_erro": "Expandindo pela 3a coluna obtem-se m(2m^2 - m - 3) = 0, com raizes -1, 0 e 3/2."
+    },
+    "G01-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [["-1/3", "-4/3", "2/3"], ["2/3", "2/3", "-1/3"], ["-2/3", "1/3", "1/3"]]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [["5/3", "-1/3", "2/3"], [-1, 2, 0]]
+        }
+      },
+      "exemplo_correto": "(a) [[-1/3, -4/3, 2/3], [2/3, 2/3, -1/3], [-2/3, 1/3, 1/3]] (b) [[5/3, -1/3, 2/3], [-1, 2, 0]]",
+      "exemplo_incorreto": "(a) [[-1/3, -4/3, 2/3], [2/3, 2/3, -1/3], [-2/3, 1/3, 1/3]] (b) [[5/3, -1], [-1/3, 2], [2/3, 0]]",
+      "dica_erro": "Como XA = B, isole X multiplicando por A^{-1} a direita: X = B * A^{-1}."
+    }
+  }
+}

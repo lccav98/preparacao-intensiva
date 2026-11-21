@@ -1,0 +1,146 @@
+{
+  "bloco": "C06",
+  "titulo": "Grau de Liberdade (g = n - C) e Sistemas Homogeneos",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "questoes": [
+    {
+      "questao_id": "C06-E01",
+      "secao": "pratica",
+      "titulo": "Homogeneo 3x3 determinado (Lista 5 Ex. 4)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 3 },
+        "cv": { "tipo_resposta": "numero", "esperado": 3 },
+        "g": { "tipo_resposta": "numero", "esperado": 0 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [0, 0, 0] }
+      },
+      "dica_erro": "Como C = 3 = n, g = 0 e o sistema admite exclusivamente a solucao trivial (0, 0, 0).",
+      "exemplo_correto": "ca: 3; cv: 3; g: 0; classificacao: SPD; solucao: (0, 0, 0)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (0, 0, 0)"
+    },
+    {
+      "questao_id": "C06-E02",
+      "secao": "pratica",
+      "titulo": "Homogeneo 2x3 com g = 2 (Lista 5 Ex. 7)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 1 },
+        "cv": { "tipo_resposta": "numero", "esperado": 1 },
+        "g": { "tipo_resposta": "numero", "esperado": 2 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [-1, 3, 0] }
+      },
+      "dica_erro": "A 2a equacao e multipla da 1a; logo C = 1, g = 3 - 1 = 2 e x = (-y - 2z)/3.",
+      "exemplo_correto": "ca: 1; cv: 1; g: 2; classificacao: SPI; solucao: (-1, 3, 0)",
+      "exemplo_incorreto": "ca: 1; cv: 1; g: 1; classificacao: SPI; solucao: (1, 3, 0)"
+    },
+    {
+      "questao_id": "C06-E03",
+      "secao": "pratica",
+      "titulo": "Homogeneo 4x2 com solucao propria (Lista 5 Ex. 8)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 1 },
+        "cv": { "tipo_resposta": "numero", "esperado": 1 },
+        "g": { "tipo_resposta": "numero", "esperado": 1 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao": {
+          "tipo_resposta": "vetor",
+          "esperado": [-2, 1],
+          "aceitar_multiplo_nao_nulo": true
+        }
+      },
+      "dica_erro": "Todas as 4 equacoes reduzem para x + 2y = 0, ou seja, x = -2y com solucao propria nao nula.",
+      "exemplo_correto": "ca: 1; cv: 1; g: 1; classificacao: SPI; solucao: (-2, 1)",
+      "exemplo_incorreto": "ca: 1; cv: 1; g: 1; classificacao: SPI; solucao: (0, 0)"
+    },
+    {
+      "questao_id": "C06-E04",
+      "secao": "pratica",
+      "titulo": "Parametro k para solucao nao-trivial (Lista 5 Ex. 19)",
+      "tipo_resposta": "numero",
+      "esperado": 1,
+      "dica_erro": "Escalone ate a 3a linha [0, 0, 1-k | 0] e iguale o ultimo pivo a zero.",
+      "exemplo_correto": "k = 1",
+      "exemplo_incorreto": "k = -1"
+    },
+    {
+      "questao_id": "C06-E05",
+      "secao": "pratica",
+      "titulo": "Caca ao bug: parametro k quadratico sem perder raizes",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-2", "2"],
+      "dica_erro": "k^2 - 4 = 0 possui duas raizes reais simetricas: k = -2 e k = 2.",
+      "exemplo_correto": "k = -2 ou k = 2",
+      "exemplo_incorreto": "k = 2"
+    },
+    {
+      "questao_id": "C06-C01",
+      "secao": "checagem",
+      "titulo": "Classificacao de homogeneo 3x3 (Lista 5 Ex. 6)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 3 },
+        "cv": { "tipo_resposta": "numero", "esperado": 3 },
+        "g": { "tipo_resposta": "numero", "esperado": 0 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [0, 0, 0] }
+      },
+      "dica_erro": "O ultimo pivo resulta -4 != 0, logo C = 3 = n e so existe a solucao trivial.",
+      "exemplo_correto": "ca: 3; cv: 3; g: 0; classificacao: SPD; solucao: (0, 0, 0)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (1, -5, 1)"
+    },
+    {
+      "questao_id": "C06-C02",
+      "secao": "checagem",
+      "titulo": "Homogeneo 3x3 com g = 1 e solucao propria",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 1 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao": {
+          "tipo_resposta": "vetor",
+          "esperado": [-3, -1, 1],
+          "aceitar_multiplo_nao_nulo": true
+        }
+      },
+      "dica_erro": "Reduzindo obtem-se x + 3z = 0 e y + z = 0; escolha um z nao nulo (ex.: z = 1).",
+      "exemplo_correto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (-3, -1, 1)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (0, 0, 0)"
+    },
+    {
+      "questao_id": "C06-C03",
+      "secao": "checagem",
+      "titulo": "Parametro k para solucao propria independente",
+      "tipo_resposta": "numero",
+      "esperado": 3,
+      "dica_erro": "Escalone ate [0, 0, k - 3 | 0]; o sistema admite solucao propria quando k - 3 = 0.",
+      "exemplo_correto": "k = 3",
+      "exemplo_incorreto": "k = -3"
+    }
+  ]
+}

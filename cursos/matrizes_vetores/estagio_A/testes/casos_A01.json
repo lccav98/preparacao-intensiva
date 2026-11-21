@@ -1,0 +1,135 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "A01",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "A01-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [3, 4]
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": 6
+        }
+      },
+      "exemplo_correto": "(a) (3, 4) (b) 6",
+      "exemplo_incorreto": "(a) (4, 3) (b) 6",
+      "dica_erro": "Confira sempre a ordem (linhas x colunas) e lembre que a_{ij} indica linha i e coluna j."
+    },
+    "A01-E02": {
+      "tipo_resposta": "matriz",
+      "esperado": [
+        [2, 0, -1],
+        [3, 6, 1]
+      ],
+      "exemplo_correto": "[[2, 0, -1], [3, 6, 1]]",
+      "exemplo_incorreto": "[[2, 1, -1], [3, 6, 1]]",
+      "dica_erro": "Aplique i^2 + j apenas quando i = j e 2i - j nos demais casos."
+    },
+    "A01-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            ["0", "-1/2", "-1"],
+            ["7", "0", "-1/2"],
+            ["10", "11", "0"]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": 9
+        }
+      },
+      "exemplo_correto": "(a) [[0, -1/2, -1], [7, 0, -1/2], [10, 11, 0]] (b) 9",
+      "exemplo_incorreto": "(a) [[0, 1/2, 1], [7, 0, 1/2], [10, 11, 0]] (b) 9",
+      "dica_erro": "Para i < j (acima da diagonal principal), calcule (i - j)/2 mantendo o sinal negativo; a diagonal secundária soma c13 + c22 + c31."
+    },
+    "A01-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": 5
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": 16
+        }
+      },
+      "exemplo_correto": "(a) 5 (b) 16",
+      "exemplo_incorreto": "(a) 16 (b) 5",
+      "dica_erro": "A diagonal principal tem i = j (3, 4, -2); a diagonal secundária tem i + j = 4 (5, 4, 7)."
+    },
+    "A01-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [3, 0, 0],
+            [4, 6, 0],
+            [5, 7, 9]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "escalar",
+          "sinonimos": ["matriz escalar"]
+        }
+      },
+      "exemplo_correto": "(a) [[3, 0, 0], [4, 6, 0], [5, 7, 9]] (b) escalar",
+      "exemplo_incorreto": "(a) [[3, 0, 0], [4, 6, 0], [5, 7, 9]] (b) identidade",
+      "dica_erro": "Triangular inferior zera i < j (acima da diagonal); matriz diagonal com todos os termos da diagonal iguais a 4 (diferente de 1) é escalar."
+    },
+    "A01-C01": {
+      "tipo_resposta": "matriz",
+      "esperado": [
+        [1, 0],
+        [-3, 2],
+        [5, -4]
+      ],
+      "exemplo_correto": "[[1, 0], [-3, 2], [5, -4]]",
+      "exemplo_incorreto": "[[1, 0], [3, 2], [5, 4]]",
+      "dica_erro": "Atente para o fator (-1)^(i+j): quando i + j é ímpar, o sinal do termo se inverte."
+    },
+    "A01-C02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": -1
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": 11
+        }
+      },
+      "exemplo_correto": "(a) -1 (b) 11",
+      "exemplo_incorreto": "(a) 3 (b) 8",
+      "dica_erro": "Em ordem 4, q24 é linha 2 coluna 4 (-3), q42 é linha 4 coluna 2 (2), e a diagonal secundária é q14 + q23 + q32 + q41."
+    },
+    "A01-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "triangular superior",
+          "sinonimos": ["matriz triangular superior"]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nula",
+          "sinonimos": ["matriz nula", "zero"]
+        }
+      },
+      "exemplo_correto": "(a) triangular superior (b) nula",
+      "exemplo_incorreto": "(a) triangular inferior (b) nula",
+      "dica_erro": "Zeros abaixo da diagonal principal (i > j) caracterizam matriz triangular superior."
+    }
+  }
+}

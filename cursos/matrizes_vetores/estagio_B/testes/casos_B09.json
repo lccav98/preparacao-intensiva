@@ -1,0 +1,81 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "B09",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "B09-E01": {
+      "tipo_resposta": "numero",
+      "esperado": -12,
+      "exemplo_correto": "-12",
+      "exemplo_incorreto": "12",
+      "dica_erro": "A troca L3 <-> L4 usada para evitar pivo nulo na 3a coluna introduz um sinal -1."
+    },
+    "B09-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": -12
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": -6
+        }
+      },
+      "exemplo_correto": "(a) -12 (b) -6",
+      "exemplo_incorreto": "(a) -3 (b) -6",
+      "dica_erro": "Como A e B tem ordem 3, det(2 * A^T * B^{-1}) = 2^3 * det(A) * (1/det(B)) = 8 * 3 * (-1/2) = -12."
+    },
+    "B09-E03": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-2", "0", "4"],
+      "exemplo_correto": "-2, 0, 4",
+      "exemplo_incorreto": "-2, 4",
+      "dica_erro": "Expandindo pela 2a coluna obtem-se k(k^2 - 2k - 8) = 0; nao descarte k = 0 ao fatorar."
+    },
+    "B09-E04": {
+      "tipo_resposta": "matriz",
+      "esperado": [["3/4", "-1/2", "1/4"], ["-1/2", 1, "-1/2"], ["1/4", "-1/2", "3/4"]],
+      "exemplo_correto": "[[3/4, -1/2, 1/4], [-1/2, 1, -1/2], [1/4, -1/2, 3/4]]",
+      "exemplo_incorreto": "[[3/4, 1/2, 1/4], [1/2, 1, 1/2], [1/4, 1/2, 3/4]]",
+      "dica_erro": "Confira os sinais alternados fora da diagonal principal em A^{-1} verificando A * A^{-1} = I3."
+    },
+    "B09-E05": {
+      "tipo_resposta": "matriz",
+      "esperado": [[2, 0], [-2, 2]],
+      "exemplo_correto": "[[2, 0], [-2, 2]]",
+      "exemplo_incorreto": "[[2, -2], [0, 2]]",
+      "dica_erro": "A^{-1}(C - B) fornece X^T = [[2, -2], [0, 2]]; lembre-se de transpor no passo final para obter X."
+    },
+    "B09-C01": {
+      "tipo_resposta": "numero",
+      "esperado": -64,
+      "exemplo_correto": "-64",
+      "exemplo_incorreto": "64",
+      "dica_erro": "A troca inicial L1 <-> L2 muda o sinal uma vez (-1), multiplicando o produto da diagonal 1*2*(-4)*(-8) = 64."
+    },
+    "B09-C02": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-2", "0", "3/2"],
+      "exemplo_correto": "-2, 0, 3/2",
+      "exemplo_incorreto": "-2, 3/2",
+      "dica_erro": "Expandindo pela 2a coluna resulta x(2x^2 + x - 6) = 0, cujas tres raizes reais sao -2, 0 e 3/2."
+    },
+    "B09-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [["4/5", "-2/5", "1/5"], ["1/5", "2/5", "-1/5"], ["-2/5", "1/5", "2/5"]]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [["12/5", "12/5"], ["3/5", "-7/5"], ["-1/5", "4/5"]]
+        }
+      },
+      "exemplo_correto": "(a) [[4/5, -2/5, 1/5], [1/5, 2/5, -1/5], [-2/5, 1/5, 2/5]] (b) [[12/5, 12/5], [3/5, -7/5], [-1/5, 4/5]]",
+      "exemplo_incorreto": "(a) [[4/5, -2/5, 1/5], [1/5, 2/5, -1/5], [-2/5, 1/5, 2/5]] (b) [[3, 1], [1, -2], [2, 4]]",
+      "dica_erro": "Multiplique A^{-1} pela matriz B a direita (X = A^{-1}*B) mantendo todas as entradas em fracoes exatas."
+    }
+  }
+}

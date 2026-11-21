@@ -1,0 +1,204 @@
+{
+  "bloco": "D10",
+  "estagio": "D",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "casos_por_questao": {
+    "D10-E01": {
+      "questao_id": "D10-E01",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "3",
+            "-2"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "5",
+            "-2"
+          ]
+        }
+      },
+      "dica_erro": "Escalone o sistema em (a); em (b), use AC = k*AB.",
+      "exemplo_correto": "(a) (3, -2) (b) (5, -2)",
+      "exemplo_incorreto": "(a) (-3, 2) (b) (4, -2)"
+    },
+    "D10-E02": {
+      "questao_id": "D10-E02",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "conjunto_vetores",
+          "esperado": [
+            [
+              "5",
+              "-1",
+              "-2"
+            ],
+            [
+              "-3",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "3",
+              "4"
+            ]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "2/3",
+            "1/3",
+            "2/3"
+          ]
+        }
+      },
+      "dica_erro": "Os 3 vertices possiveis sao P+Q-R, P+R-Q, Q+R-P; o versor de PQ e PQ / |PQ|.",
+      "exemplo_correto": "(a) (5, -1, -2), (-3, 1, 0), (1, 3, 4) (b) (2/3, 1/3, 2/3)",
+      "exemplo_incorreto": "(a) (5, -1, -2) (b) (2, 1, 2)"
+    },
+    "D10-E03": {
+      "questao_id": "D10-E03",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "60"
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "1",
+            "0",
+            "1"
+          ]
+        }
+      },
+      "dica_erro": "No vertice A, use AB = (2, 0, 2) e AC = (2, 2, 0).",
+      "exemplo_correto": "(a) 60° (b) (1, 0, 1)",
+      "exemplo_incorreto": "(a) 120° (b) (1, 1, 0)"
+    },
+    "D10-E04": {
+      "questao_id": "D10-E04",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "3",
+            "5",
+            "4"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "5*sqrt(2)/2"
+        }
+      },
+      "dica_erro": "Area do triangulo = (1/2) * |AB x AC|.",
+      "exemplo_correto": "(a) (3, 5, 4) (b) 5*sqrt(2)/2",
+      "exemplo_incorreto": "(a) (3, -5, 4) (b) 5*sqrt(2)"
+    },
+    "D10-E05": {
+      "questao_id": "D10-E05",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "5/3"
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nao coplanares",
+          "sinonimos": [
+            "nao sao coplanares",
+            "nao"
+          ]
+        }
+      },
+      "dica_erro": "V_tetra = (1/6)*|(AB, AC, AD)| = 10/6 = 5/3 != 0 => nao coplanares.",
+      "exemplo_correto": "(a) 5/3 (b) Nao sao coplanares",
+      "exemplo_incorreto": "(a) 10 (b) Sao coplanares"
+    },
+    "D10-E06": {
+      "questao_id": "D10-E06",
+      "modo": "pratica",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": [
+        "-2",
+        "11/2"
+      ],
+      "dica_erro": "De |(u, v, w)| = |7 - 4m| = 15 obtem-se m = -2 e m = 11/2.",
+      "exemplo_correto": "m = -2 ou m = 11/2",
+      "exemplo_incorreto": "m = -2"
+    },
+    "D10-C01": {
+      "questao_id": "D10-C01",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "60"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "2*sqrt(3)"
+        }
+      },
+      "dica_erro": "Use AB = (2, 2, 0) e AC = (2, 0, 2); area = (1/2)|AB x AC| = 2*sqrt(3).",
+      "exemplo_correto": "(a) 60° (b) 2*sqrt(3)",
+      "exemplo_incorreto": "(a) 120° (b) 4*sqrt(3)"
+    },
+    "D10-C02": {
+      "questao_id": "D10-C02",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "-2/3",
+            "1/3",
+            "-2/3"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "5/3",
+            "8/3",
+            "-1/3"
+          ]
+        }
+      },
+      "dica_erro": "Projete v sobre u (divisor |u|^2 = 9) e obtenha v_perp = v - proj_u(v).",
+      "exemplo_correto": "(a) (-2/3, 1/3, -2/3) (b) (5/3, 8/3, -1/3)",
+      "exemplo_incorreto": "(a) (-2, 1, -2) (b) (3, 2, 1)"
+    },
+    "D10-C03": {
+      "questao_id": "D10-C03",
+      "modo": "checagem",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": [
+        "1/4",
+        "9/4"
+      ],
+      "dica_erro": "V_tetra = (1/6)|4t - 5| = 2/3 => |4t - 5| = 4 => t = 9/4 ou t = 1/4.",
+      "exemplo_correto": "t = 1/4 ou t = 9/4",
+      "exemplo_incorreto": "t = 9/4"
+    }
+  }
+}

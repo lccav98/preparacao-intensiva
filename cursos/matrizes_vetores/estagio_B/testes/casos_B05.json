@@ -1,0 +1,63 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "B05",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "B05-E01": {
+      "tipo_resposta": "numero",
+      "esperado": "-7/3",
+      "exemplo_correto": "-7/3",
+      "exemplo_incorreto": "7/3",
+      "dica_erro": "Na expansao pela 1a linha, o terceiro termo vale -1*(-3 - 2k) = +3 + 2k, somando 3k + 7 = 0."
+    },
+    "B05-E02": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["0", "3"],
+      "exemplo_correto": "0, 3",
+      "exemplo_incorreto": "3",
+      "dica_erro": "Nao divida a equacao 2r^2 - 6r = 0 por r; coloque r em evidencia: r(2r - 6) = 0 para nao perder a raiz r = 0."
+    },
+    "B05-E03": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-1", "3"],
+      "exemplo_correto": "-1, 3",
+      "exemplo_incorreto": "3",
+      "dica_erro": "A equacao det(C) = -6 reduz-se a x^2 - 2x - 3 = 0, que possui duas raizes reais: -1 e 3."
+    },
+    "B05-E04": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-3", "0", "2"],
+      "exemplo_correto": "-3, 0, 2",
+      "exemplo_incorreto": "-3, 2",
+      "dica_erro": "Ao expandir pela 3a coluna obtem-se x(x^2 + x - 6) = 0; o fator x externo fornece a raiz x = 0 alem de -3 e 2."
+    },
+    "B05-E05": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["0", "1"],
+      "exemplo_correto": "0, 1",
+      "exemplo_incorreto": "1",
+      "dica_erro": "De x^2 - 2 = x - 2 vem x^2 - x = 0; fatore x(x - 1) = 0 sem cortar x."
+    },
+    "B05-C01": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["0", "5/2"],
+      "exemplo_correto": "0, 5/2",
+      "exemplo_incorreto": "5/2",
+      "dica_erro": "Expandindo pela 2a coluna obtem-se r(2r - 5) = 0; ambas as raizes r = 0 e r = 5/2 tornam a matriz singular."
+    },
+    "B05-C02": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-1/3", "2"],
+      "exemplo_correto": "-1/3, 2",
+      "exemplo_incorreto": "2",
+      "dica_erro": "A equacao 3x^2 - 5x - 2 = 0 tem discriminante 49 e duas raizes: -1/3 e 2."
+    },
+    "B05-C03": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-2", "0", "3"],
+      "exemplo_correto": "-2, 0, 3",
+      "exemplo_incorreto": "-2, 3",
+      "dica_erro": "Nao cancele o fator x ao expandir pela 3a coluna: x(x - 3)(x + 2) = 0 tem tres raizes reais."
+    }
+  }
+}

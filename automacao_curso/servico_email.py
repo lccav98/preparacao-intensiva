@@ -12,9 +12,12 @@ import hashlib
 import html
 import imaplib
 import os
+import pathlib
 import re
 import select
+import shutil
 import smtplib
+import subprocess
 import threading
 import time
 from email.message import EmailMessage
@@ -24,6 +27,87 @@ from typing import Any, Callable, Dict, List, Optional
 import banco_dados
 import config
 from catalogo_curricular import BlocoCurricular
+
+
+def _encontrar_navegador_pdf() -> Optional[str]:
+    candidatos = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+        shutil.which("google-chrome"),
+        shutil.which("chromium"),
+        shutil.which("chromium-browser"),
+        shutil.which("msedge"),
+    ]
+    for c in candidatos:
+        if c and os.path.isfile(c):
+            return c
+    return None
+
+
+def _garantir_pdf_folha(caminho_html: str) -> Optional[str]:
+    """Converte a folha A4 HTML para PDF usando Chrome/Edge headless para visualizacao limpa no Gmail."""
+    if not caminho_html or not os.path.isfile(caminho_html):
+        return None
+    caminho_pdf = os.path.splitext(caminho_html)[0] + ".pdf"
+    try:
+        if (
+            os.path.isfile(caminho_pdf)
+            and os.path.getsize(caminho_pdf) > 1000
+            and os.path.getmtime(caminho_pdf) >= os.path.getmtime(caminho_html)
+        ):
+            return caminho_pdf
+    except OSError:
+        pass
+    browser = _encontrar_navegador_pdf()
+    if not browser:
+        return None
+    uri_html = pathlib.Path(os.path.abspath(caminho_html)).as_uri()
+    cmd = [
+        browser,
+        "--headless=new",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--no-pdf-header-footer",
+        f"--print-to-pdf={os.path.abspath(caminho_pdf)}",
+        uri_html,
+    ]
+    try:
+        subprocess.run(
+            cmd,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=25,
+            check=False,
+        )
+        if os.path.isfile(caminho_pdf) and os.path.getsize(caminho_pdf) > 1000:
+            return caminho_pdf
+    except Exception:
+        pass
+    return None
+
+
+def _anexar_folha_prova(msg: EmailMessage, caminho_html: str, protocolo: str) -> str:
+    """Anexa a folha em PDF (preferencial) ou HTML como fallback; retorna o nome do arquivo anexado."""
+    caminho_pdf = _garantir_pdf_folha(caminho_html)
+    if caminho_pdf:
+        with open(caminho_pdf, "rb") as af:
+            msg.add_attachment(
+                af.read(),
+                maintype="application",
+                subtype="pdf",
+                filename=f"{protocolo}.pdf",
+            )
+        return f"{protocolo}.pdf"
+    with open(caminho_html, "rb") as af:
+        msg.add_attachment(
+            af.read(),
+            maintype="text",
+            subtype="html",
+            filename=f"{protocolo}.html",
+        )
+    return f"{protocolo}.html"
 
 
 def _despachar_mime(msg: EmailMessage, nome_arquivo_eml: str) -> Dict[str, Any]:
@@ -84,7 +168,27 @@ def enviar_prova_por_email(
     )
     disc = config.obter_disciplina(disc_id)
     tempo_alvo = folha_info["tempo_alvo_min"]
-    url_base = config.PUBLIC_URL or f"http://{config.DASHBOARD_HOST}:{config.DASHBOARD_PORT}"
+    url_base = config.obter_public_url() or f"http://{config.DASHBOARD_HOST}:{config.DASHBOARD_PORT}"
+    url_portal = f"{url_base}/aluno?disciplina={disc_id}"
+    pin_aluno = str(aluno.get("pin_inicial") or "").strip()
+    if not pin_aluno and aluno.get("id"):
+        try:
+            al_full = banco_dados.obter_aluno_por_id(int(aluno["id"]), incluir_pin=True)
+            if al_full:
+                pin_aluno = str(al_full.get("pin_inicial") or "").strip()
+        except Exception:
+            pin_aluno = ""
+    linha_pin_txt = f"   (E-mail: {aluno['email']} | PIN de acesso: {pin_aluno})\n" if pin_aluno else ""
+    linha_pin_html = (
+        f'<tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Acesso ao Portal</strong></td>'
+        f'<td style="padding: 6px; border: 1px solid #cbd5e1;">'
+        f'<a href="{html.escape(url_portal)}">{html.escape(url_portal)}</a><br>'
+        f'E-mail: <code>{html.escape(aluno["email"])}</code> &bull; PIN: <strong><code>{html.escape(pin_aluno)}</code></strong>'
+        f'</td></tr>'
+        if pin_aluno
+        else f'<tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Portal do Aluno</strong></td>'
+        f'<td style="padding: 6px; border: 1px solid #cbd5e1;"><a href="{html.escape(url_portal)}">{html.escape(url_portal)}</a></td></tr>'
+    )
     modo_txt = "Checagem Independente (Sem Consulta)" if modo == "checagem" else "Sessao de Pratica Guiada"
     instrucao_papel = (
         "Resolva tudo a caneta no papel (escalonamentos, desenvolvimentos e resposta final exata em fracoes/radicais sem calculadora)."
@@ -103,8 +207,9 @@ def enviar_prova_por_email(
         f"Modalidade: {modo_txt} | Variante: {variante} | Tentativa: #{tentativa}\n"
         f"Tempo-alvo: {tempo_alvo} minutos | Criterio de dominio: 100% de acerto.\n\n"
         f"Passo a passo:\n"
-        f"1. Imprima o arquivo anexo ({protocolo}.html -> Imprimir / Salvar PDF).\n"
-        f"2. Antes de comecar a escrever, clique no Dashboard para iniciar o cronometro: {url_base}\n"
+        f"1. Abra e imprima o arquivo PDF em anexo ({protocolo}.pdf) ou acesse pelo Portal do Aluno.\n"
+        f"2. Antes de comecar a escrever, acesse o Portal do Aluno para iniciar o cronometro: {url_portal}\n"
+        f"{linha_pin_txt}"
         f"3. Preencha HORA INICIO, {instrucao_papel} e anote HORA TERMINO.\n"
         f"4. Tire uma foto nitida ou escaneie a folha completa (com os 4 cantos [+] visiveis).\n"
         f"5. Responda a este e-mail com a foto anexada (mantendo [{protocolo}] no assunto) ou envie pelo Dashboard.\n"
@@ -122,10 +227,11 @@ def enviar_prova_por_email(
       <tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Modalidade</strong></td><td style="padding: 6px; border: 1px solid #cbd5e1;">{html.escape(modo_txt)}</td></tr>
       <tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Variante / Tentativa</strong></td><td style="padding: 6px; border: 1px solid #cbd5e1;">{html.escape(variante)} &bull; Tentativa #{tentativa}</td></tr>
       <tr><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>Tempo-alvo de Fluencia</strong></td><td style="padding: 6px; border: 1px solid #cbd5e1;"><strong>{tempo_alvo} minutos</strong></td></tr>
+      {linha_pin_html}
     </table>
     <ol style="line-height: 1.6;">
-      <li>Imprima a folha A4 em anexo (<code>{html.escape(protocolo)}.html</code>).</li>
-      <li>Anote a <strong>Hora de Inicio</strong> na folha (ou acione o cronometro em <a href="{url_base}">{url_base}</a>).</li>
+      <li>Abra e imprima a folha A4 em anexo (<code>{html.escape(protocolo)}.pdf</code>).</li>
+      <li>Anote a <strong>Hora de Inicio</strong> na folha (ou acione o cronometro em <a href="{html.escape(url_portal)}">{html.escape(url_portal)}</a>).</li>
       <li>{html.escape(instrucao_papel)}</li>
       <li>Fotografe ou escaneie a folha inteira mantendo os marcadores <code>[+]</code> visiveis e responda este e-mail com a imagem anexada.</li>
     </ol>
@@ -141,13 +247,7 @@ def enviar_prova_por_email(
     msg.set_content(corpo_texto)
     msg.add_alternative(corpo_html, subtype="html")
 
-    with open(folha_info["caminho_folha_html"], "rb") as af:
-        msg.add_attachment(
-            af.read(),
-            maintype="text",
-            subtype="html",
-            filename=f"{protocolo}.html",
-        )
+    _anexar_folha_prova(msg, folha_info["caminho_folha_html"], protocolo)
 
     res = _despachar_mime(msg, f"ENVIO_PROVA_{protocolo}.eml")
     res["assunto"] = assunto
@@ -185,13 +285,7 @@ def enviar_feedback_por_email(
 
     if nova_folha and os.path.isfile(nova_folha.get("caminho_folha_html", "")):
         novo_prot = nova_folha["protocolo"]
-        with open(nova_folha["caminho_folha_html"], "rb") as af:
-            msg.add_attachment(
-                af.read(),
-                maintype="text",
-                subtype="html",
-                filename=f"{novo_prot}.html",
-            )
+        _anexar_folha_prova(msg, nova_folha["caminho_folha_html"], novo_prot)
 
     res = _despachar_mime(msg, f"FEEDBACK_{protocolo}.eml")
     res["assunto"] = assunto

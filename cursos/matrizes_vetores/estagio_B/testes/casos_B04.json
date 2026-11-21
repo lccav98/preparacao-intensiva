@@ -1,0 +1,63 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "B04",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "B04-E01": {
+      "tipo_resposta": "numero",
+      "esperado": -3,
+      "exemplo_correto": "-3",
+      "exemplo_incorreto": "3",
+      "dica_erro": "Nao houve troca de linhas neste exercicio; confira a subtracao L3' = L3 - 2*L2 na coluna 3."
+    },
+    "B04-E02": {
+      "tipo_resposta": "numero",
+      "esperado": 10,
+      "exemplo_correto": "10",
+      "exemplo_incorreto": "-10",
+      "dica_erro": "A troca L1 <-> L2 introduz um sinal -1; ao multiplicar pelo produto da diagonal (negativo), o resultado final fica positivo."
+    },
+    "B04-E03": {
+      "tipo_resposta": "numero",
+      "esperado": 28,
+      "exemplo_correto": "28",
+      "exemplo_incorreto": "14",
+      "dica_erro": "Se voce fatorou 2 da 1a linha para simplificar o pivo, nao esqueca de multiplicar o produto da diagonal por 2 no final."
+    },
+    "B04-E04": {
+      "tipo_resposta": "numero",
+      "esperado": -38,
+      "exemplo_correto": "-38",
+      "exemplo_incorreto": "38",
+      "dica_erro": "Verifique o sinal da troca L2 <-> L3 (-1) e o termo final a44' = 1 - (13/14)*4 = -19/7."
+    },
+    "B04-E05": {
+      "tipo_resposta": "numero",
+      "esperado": 18,
+      "exemplo_correto": "18",
+      "exemplo_incorreto": "6",
+      "dica_erro": "Na reducao ate I3, o determinante e o produto de todos os pivos fatorados (2 * 3 * 3 = 18)."
+    },
+    "B04-C01": {
+      "tipo_resposta": "numero",
+      "esperado": -37,
+      "exemplo_correto": "-37",
+      "exemplo_incorreto": "37",
+      "dica_erro": "Com uma troca L1 <-> L3 (-1) e pivo -1 na posicao (1,1), o sinal externo e o pivo se multiplicam dando +1, mantendo o sinal negativo de -37/8."
+    },
+    "B04-C02": {
+      "tipo_resposta": "numero",
+      "esperado": 4,
+      "exemplo_correto": "4",
+      "exemplo_incorreto": "-4",
+      "dica_erro": "Trocando L2 <-> L3 (sinal -1), o produto da diagonal da triangular e 1*1*(-2)*2 = -4, que multiplicado por -1 resulta em +4."
+    },
+    "B04-C03": {
+      "tipo_resposta": "numero",
+      "esperado": -90,
+      "exemplo_correto": "-90",
+      "exemplo_incorreto": "90",
+      "dica_erro": "Duas trocas de linhas (L1<->L2 e L3<->L4) cancelam os sinais negativos externos, mantendo o produto 1*(-5)*6*3 = -90."
+    }
+  }
+}

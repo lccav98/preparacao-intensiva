@@ -1,0 +1,70 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "E10",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "E10-E01": {
+      "tipo_resposta": "texto",
+      "esperado": "y = -2/3 x + 8/3, z = 2/3 x + 7/3",
+      "exemplo_correto": "y = -2/3 x + 8/3, z = 2/3 x + 7/3",
+      "exemplo_incorreto": "y = -2/3 x + 2, z = 2/3 x + 1",
+      "dica_erro": "Vetor diretor (3, -2, 2). t = (x-1)/3. Substituir em y e z."
+    },
+    "E10-E02": {
+      "tipo_resposta": "texto",
+      "esperado": "x + y + z - 1 = 0",
+      "exemplo_correto": "x + y + z - 1 = 0",
+      "exemplo_incorreto": "x + y + z + 1 = 0",
+      "dica_erro": "Normal (1,1,1), ponto (1,0,0). (x-1) + y + z = 0 => x+y+z-1=0."
+    },
+    "E10-E03": {
+      "tipo_resposta": "texto",
+      "esperado": "sqrt(2)",
+      "exemplo_correto": "sqrt(2)",
+      "exemplo_incorreto": "sqrt(6)",
+      "dica_erro": "d = sqrt(6)/sqrt(3) = sqrt(2)."
+    },
+    "E10-E04": {
+      "tipo_resposta": "numero",
+      "esperado": 2,
+      "exemplo_correto": "2",
+      "exemplo_incorreto": "4",
+      "dica_erro": "Normalizar pi2 (dividir por 2). d = |-3-3|/3 = 6/3 = 2."
+    },
+    "E10-E05": {
+      "tipo_resposta": "texto",
+      "esperado": "sen = 4/9",
+      "exemplo_correto": "sen = 4/9",
+      "exemplo_incorreto": "sen = 9/4",
+      "dica_erro": "sen = |4|/(3*3) = 4/9 (seno do angulo reta-plano)."
+    },
+    "E10-E06": {
+      "tipo_resposta": "texto",
+      "esperado": "sim",
+      "exemplo_correto": "sim",
+      "exemplo_incorreto": "nao",
+      "dica_erro": "Produto misto = 0 => coplanares => sim."
+    },
+    "E10-C01": {
+      "tipo_resposta": "texto",
+      "esperado": "cos = 0",
+      "exemplo_correto": "cos = 0",
+      "exemplo_incorreto": "cos = 1",
+      "dica_erro": "Produto escalar = 0 => cosseno = 0 => angulo 90."
+    },
+    "E10-C02": {
+      "tipo_resposta": "vetor_ponto",
+      "esperado": ["2", "1", "3"],
+      "exemplo_correto": "(2, 1, 3)",
+      "exemplo_incorreto": "(1, 2, 3)",
+      "dica_erro": "t = 1. Ponto: (1+1, 2-1, 3*1) = (2, 1, 3)."
+    },
+    "E10-C03": {
+      "tipo_resposta": "numero",
+      "esperado": 1,
+      "exemplo_correto": "1",
+      "exemplo_incorreto": "0",
+      "dica_erro": "Retas reversas. d = |produto misto| / |v1 x v2| = 1/1 = 1."
+    }
+  }
+}

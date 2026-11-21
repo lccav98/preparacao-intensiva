@@ -1,0 +1,150 @@
+{
+  "bloco": "D09",
+  "estagio": "D",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "casos_por_questao": {
+    "D09-E01": {
+      "questao_id": "D09-E01",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "20"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "20"
+        }
+      },
+      "dica_erro": "Desenvolva o determinante 3x3 pela 1a linha com matriz de sinais + - +.",
+      "exemplo_correto": "(a) 20 (b) 20",
+      "exemplo_incorreto": "(a) 14 (b) 14"
+    },
+    "D09-E02": {
+      "questao_id": "D09-E02",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "coplanares",
+          "sinonimos": [
+            "sao coplanares",
+            "sim"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nao coplanares",
+          "sinonimos": [
+            "nao sao coplanares",
+            "nao"
+          ]
+        }
+      },
+      "dica_erro": "Tres vetores sao coplanares se e somente se (u, v, w) = 0.",
+      "exemplo_correto": "(a) Sao coplanares (b) Nao sao coplanares",
+      "exemplo_incorreto": "(a) Nao sao coplanares (b) Sao coplanares"
+    },
+    "D09-E03": {
+      "questao_id": "D09-E03",
+      "modo": "pratica",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": [
+        "-5",
+        "31"
+      ],
+      "dica_erro": "O volume e |det| = |13 - m| = 18, que gera duas equacoes: 13 - m = 18 e 13 - m = -18.",
+      "exemplo_correto": "m = -5 ou m = 31",
+      "exemplo_incorreto": "m = -5"
+    },
+    "D09-E04": {
+      "questao_id": "D09-E04",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "2"
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nao coplanares",
+          "sinonimos": [
+            "nao sao coplanares",
+            "nao"
+          ]
+        }
+      },
+      "dica_erro": "Forme tres vetores partindo de A (AB, AC, AD) e calcule |(AB, AC, AD)|.",
+      "exemplo_correto": "(a) 2 (b) Nao sao coplanares",
+      "exemplo_incorreto": "(a) 0 (b) Sao coplanares"
+    },
+    "D09-E05": {
+      "questao_id": "D09-E05",
+      "modo": "pratica",
+      "tipo_resposta": "numero",
+      "esperado": "3",
+      "dica_erro": "Volume do tetraedro = (1/6)*|(AB, AC, AD)| = |18|/6 = 3.",
+      "exemplo_correto": "3",
+      "exemplo_incorreto": "18"
+    },
+    "D09-E06": {
+      "questao_id": "D09-E06",
+      "modo": "pratica",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": [
+        "-8/5",
+        "12/5"
+      ],
+      "dica_erro": "V_tetra = (1/6)|5k - 2| = 5/3 => |5k - 2| = 10 => k = 12/5 ou k = -8/5.",
+      "exemplo_correto": "k = -8/5 ou k = 12/5",
+      "exemplo_incorreto": "k = 12/5"
+    },
+    "D09-C01": {
+      "questao_id": "D09-C01",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "1/3"
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nao coplanares",
+          "sinonimos": [
+            "nao sao coplanares",
+            "nao"
+          ]
+        }
+      },
+      "dica_erro": "|(PQ, PR, PS)| = 2 != 0 => V_tetra = 2/6 = 1/3, logo nao sao coplanares.",
+      "exemplo_correto": "(a) 1/3 (b) Nao sao coplanares",
+      "exemplo_incorreto": "(a) 2 (b) Sao coplanares"
+    },
+    "D09-C02": {
+      "questao_id": "D09-C02",
+      "modo": "checagem",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": [
+        "-16/3",
+        "4/3"
+      ],
+      "dica_erro": "|(u, v, w)| = |6m + 12| = 20 gera m = 4/3 e m = -16/3.",
+      "exemplo_correto": "m = -16/3 ou m = 4/3",
+      "exemplo_incorreto": "m = 4/3"
+    },
+    "D09-C03": {
+      "questao_id": "D09-C03",
+      "modo": "checagem",
+      "tipo_resposta": "numero",
+      "esperado": "5*sqrt(3)/3",
+      "dica_erro": "h = |(AB, AC, AD)| / |AB x AC| = 15 / (3*sqrt(3)) = 5*sqrt(3)/3.",
+      "exemplo_correto": "5*sqrt(3)/3",
+      "exemplo_incorreto": "5/3"
+    }
+  }
+}

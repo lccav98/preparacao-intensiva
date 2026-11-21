@@ -15,3 +15,7 @@ spool_email/
 uploads_provas/
 *.db
 00_acompanhamento.csv
+
+automacao_curso/dashboard_evolucao.html
+dashboard_evolucao.html
+00_acompanhamento_mv.csv

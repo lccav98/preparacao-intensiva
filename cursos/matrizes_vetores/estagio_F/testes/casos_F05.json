@@ -1,0 +1,87 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "F05",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "F05-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "horizontal" },
+        "b": { "tipo_resposta": "texto", "esperado": "(+-5, 0)" },
+        "c": { "tipo_resposta": "texto", "esperado": "e = 5/3" }
+      },
+      "exemplo_correto": "(a) horizontal (b) (+-5, 0) (c) e = 5/3",
+      "exemplo_incorreto": "(a) vertical (b) (+-5, 0) (c) e = 5/3",
+      "dica_erro": "x² tem denominador positivo → eixo horizontal. c=√(9+16)=5. e=5/3."
+    },
+    "F05-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "vertical" },
+        "b": { "tipo_resposta": "texto", "esperado": "(0, +-13)" },
+        "c": { "tipo_resposta": "texto", "esperado": "y = +-5/12 x" }
+      },
+      "exemplo_correto": "(a) vertical (b) (0, +-13) (c) y = +-5/12 x",
+      "exemplo_incorreto": "(a) horizontal (b) (0, +-13) (c) y = +-5/12 x",
+      "dica_erro": "y² tem denominador positivo → eixo vertical. Assíntotas y=±(a/b)x = ±(5/12)x."
+    },
+    "F05-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "a=5, b=5" },
+        "b": { "tipo_resposta": "texto", "esperado": "e = √2" },
+        "c": { "tipo_resposta": "texto", "esperado": "y = +-x" }
+      },
+      "exemplo_correto": "(a) a=5, b=5 (b) e = √2 (c) y = +-x",
+      "exemplo_incorreto": "(a) a=3, b=4 (b) e = √2 (c) y = +-x",
+      "dica_erro": "x²-y²=25 → x²/25-y²/25=1 → a=b=5 (equilátera). e=√2. Assíntotas y=±x."
+    },
+    "F05-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "x²/16 - y²/9 = 1" },
+        "b": { "tipo_resposta": "texto", "esperado": "(+-5, 0)" }
+      },
+      "exemplo_correto": "(a) x²/16 - y²/9 = 1 (b) (+-5, 0)",
+      "exemplo_incorreto": "(a) x²/9 - y²/16 = 1 (b) (+-5, 0)",
+      "dica_erro": "a=4 → a²=16 sob x². b=3 → b²=9 sob y². c=√(16+9)=5."
+    },
+    "F05-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "y = +-4/3 x" },
+        "b": { "tipo_resposta": "texto", "esperado": "e = 5/4" }
+      },
+      "exemplo_correto": "(a) y = +-4/3 x (b) e = 5/4",
+      "exemplo_incorreto": "(a) y = +-3/4 x (b) e = 5/4",
+      "dica_erro": "Eixo vertical → assíntotas y=±(a/b)x = ±(4/3)x. c=5, e=5/4."
+    },
+    "F05-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "c=√34" },
+        "b": { "tipo_resposta": "texto", "esperado": "e = √34/5" }
+      },
+      "exemplo_correto": "(a) c=√34 (b) e = √34/5",
+      "exemplo_incorreto": "(a) c=√34 (b) e = 5/√34",
+      "dica_erro": "c=√(25+9)=√34. e=c/a=√34/5."
+    },
+    "F05-C02": {
+      "tipo_resposta": "texto",
+      "esperado": "y = +-3/2 x",
+      "exemplo_correto": "y = +-3/2 x",
+      "exemplo_incorreto": "y = +-2/3 x",
+      "dica_erro": "Eixo horizontal → assíntotas y=±(b/a)x = ±(3/2)x."
+    },
+    "F05-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "e = √2" },
+        "b": { "tipo_resposta": "texto", "esperado": "y = +-x" }
+      },
+      "exemplo_correto": "(a) e = √2 (b) y = +-x",
+      "exemplo_incorreto": "(a) e = 2 (b) y = +-x",
+      "dica_erro": "Hipérbole equilátera: e=√2, assíntotas y=±x."
+    }
+  }
+}

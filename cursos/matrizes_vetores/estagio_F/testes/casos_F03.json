@@ -1,0 +1,86 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "F03",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "F03-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "a=4, b=3" },
+        "b": { "tipo_resposta": "texto", "esperado": "(+-√7, 0)" },
+        "c": { "tipo_resposta": "texto", "esperado": "e = √7/4" }
+      },
+      "exemplo_correto": "(a) a=4, b=3 (b) (+-√7, 0) (c) e = √7/4",
+      "exemplo_incorreto": "(a) a=3, b=4 (b) (+-√7, 0) (c) e = √7/4",
+      "dica_erro": "a²=16 → a=4, b²=9 → b=3. c=√(16-9)=√7. e=√7/4."
+    },
+    "F03-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "a=5, b=3" },
+        "b": { "tipo_resposta": "texto", "esperado": "(0, +-4)" },
+        "c": { "tipo_resposta": "texto", "esperado": "e = 4/5" }
+      },
+      "exemplo_correto": "(a) a=5, b=3 (b) (0, +-4) (c) e = 4/5",
+      "exemplo_incorreto": "(a) a=3, b=5 (b) (0, +-4) (c) e = 4/5",
+      "dica_erro": "y² tem denominador 25 (maior), então a=5, eixo vertical. c=√(25-9)=4."
+    },
+    "F03-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "b=4" },
+        "b": { "tipo_resposta": "texto", "esperado": "x²/25 + y²/16 = 1" }
+      },
+      "exemplo_correto": "(a) b=4 (b) x²/25 + y²/16 = 1",
+      "exemplo_incorreto": "(a) b=3 (b) x²/25 + y²/16 = 1",
+      "dica_erro": "a²=b²+c² → 25=b²+9 → b²=16 → b=4. Equação x²/25 + y²/16 = 1."
+    },
+    "F03-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "sim" },
+        "b": { "tipo_resposta": "texto", "esperado": "r=4, centro=(0,0), e=0" }
+      },
+      "exemplo_correto": "(a) sim (b) r=4, centro=(0,0), e=0",
+      "exemplo_incorreto": "(a) nao (b) r=4, centro=(0,0), e=0",
+      "dica_erro": "Coeficientes iguais em x² e y² → circunferência. r=4, e=0."
+    },
+    "F03-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "x²/16 + y²/12 = 1" },
+        "b": { "tipo_resposta": "texto", "esperado": "e = 1/2" }
+      },
+      "exemplo_correto": "(a) x²/16 + y²/12 = 1 (b) e = 1/2",
+      "exemplo_incorreto": "(a) x²/16 + y²/9 = 1 (b) e = 1/2",
+      "dica_erro": "a=4, c=2 → b²=16-4=12. e=c/a=2/4=1/2."
+    },
+    "F03-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "c=4" },
+        "b": { "tipo_resposta": "texto", "esperado": "e = 2/3" }
+      },
+      "exemplo_correto": "(a) c=4 (b) e = 2/3",
+      "exemplo_incorreto": "(a) c=4 (b) e = 4/6",
+      "dica_erro": "c=√(36-20)=4. e=4/6=2/3 após simplificar."
+    },
+    "F03-C02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "a=3" },
+        "b": { "tipo_resposta": "texto", "esperado": "(0, +-√5)" }
+      },
+      "exemplo_correto": "(a) a=3 (b) (0, +-√5)",
+      "exemplo_incorreto": "(a) a=2 (b) (0, +-√5)",
+      "dica_erro": "y² tem denominador 9 (maior), então a=3, eixo vertical. c=√(9-4)=√5."
+    },
+    "F03-C03": {
+      "tipo_resposta": "texto",
+      "esperado": "r=5, e=0",
+      "exemplo_correto": "r=5, e=0",
+      "exemplo_incorreto": "r=25, e=0",
+      "dica_erro": "x²+y²=25 → r²=25 → r=5. Circunferência tem e=0."
+    }
+  }
+}

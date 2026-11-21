@@ -116,11 +116,60 @@ def formatar_resposta_matematica(texto: str, spec: dict) -> str:
     return valores["resultado"]
 
 
+def _consultar_modelo_gemini(mensagem: dict, formato: dict, api_key: str) -> dict:
+    """Consulta a API Gemini Vision REST quando executando na nuvem sem Ollama local."""
+    modelo = os.environ.get("PREP_GEMINI_MODEL", "").strip() or "gemini-2.5-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent"
+    partes = [{"text": mensagem.get("content", "")}]
+    for img_b64 in (mensagem.get("images") or []):
+        partes.append({"inline_data": {"mime_type": "image/jpeg", "data": img_b64}})
+    payload = {
+        "contents": [{"role": "user", "parts": partes}],
+        "generationConfig": {
+            "temperature": 0,
+            "responseMimeType": "application/json",
+            "responseSchema": formato,
+        },
+    }
+    try:
+        resp = requests.post(
+            url,
+            params={"key": api_key},
+            json=payload,
+            timeout=(10, 120),
+        )
+        resp.raise_for_status()
+        dados = resp.json()
+        cand = (dados.get("candidates") or [{}])[0]
+        texto = (((cand.get("content") or {}).get("parts") or [{}])[0]).get("text", "")
+        if not texto:
+            raise ValueError("Resposta vazia da API Gemini.")
+        return json.loads(texto)
+    except (requests.RequestException, KeyError, IndexError, ValueError) as exc:
+        raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {exc}") from exc
+
+
 def _consultar_modelo(mensagem: dict, formato: dict) -> dict:
+    provider = os.environ.get("PREP_OCR_PROVIDER", "").strip().lower()
+    gemini_key = (
+        os.environ.get("GEMINI_API_KEY", "").strip()
+        or os.environ.get("PREP_GEMINI_API_KEY", "").strip()
+    )
+    if provider == "gemini" or (not provider and gemini_key):
+        if not gemini_key:
+            raise ValueError(
+                "PREP_OCR_PROVIDER=gemini configurado, mas GEMINI_API_KEY nao foi definida."
+            )
+        return _consultar_modelo_gemini(mensagem, formato, gemini_key)
+
+    ollama_url = (
+        os.environ.get("PREP_OLLAMA_URL", "").strip()
+        or "http://127.0.0.1:11434/api/chat"
+    )
     with requests.Session() as sessao:
         sessao.trust_env = False
         try:
-            resposta = sessao.post("http://127.0.0.1:11434/api/chat", json={
+            resposta = sessao.post(ollama_url, json={
                 "model": MODELO_OCR_LOCAL, "messages": [mensagem], "stream": False,
                 "format": formato, "think": False, "options": {"temperature": 0, "num_ctx": 8192, "num_predict": 2048},
             }, timeout=(5, 360), allow_redirects=False)
@@ -130,7 +179,7 @@ def _consultar_modelo(mensagem: dict, formato: dict) -> dict:
                 raise ValueError("Transcrição incompleta.")
             return json.loads(dados["message"]["content"])
         except (requests.RequestException, KeyError, ValueError) as exc:
-            raise ValueError("Falha de leitura local. Confira o Ollama e o modelo visual instalado.") from exc
+            raise ValueError("Falha de leitura local. Confira o Ollama e o modelo visual instalado (ou configure GEMINI_API_KEY na nuvem).") from exc
 
 
 def _ocr_local(caminho: str) -> tuple[str, int]:

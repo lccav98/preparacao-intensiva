@@ -1,0 +1,152 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "A07",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "A07-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [4, 6]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "anti-simetrica",
+          "sinonimos": ["antisimetrica", "matriz anti-simetrica", "matriz antisimetrica"]
+        }
+      },
+      "exemplo_correto": "(a) (4, 6) (b) anti-simetrica",
+      "exemplo_incorreto": "(a) (4, 6) (b) simetrica",
+      "dica_erro": "Na simétrica s_ij = s_ji; na anti-simétrica k_ij = -k_ji e a diagonal é nula."
+    },
+    "A07-E02": {
+      "tipo_resposta": "vetor",
+      "esperado": [2, -5, -3, -1],
+      "exemplo_correto": "(2, -5, -3, -1)",
+      "exemplo_incorreto": "(2, 5, 3, -1)",
+      "dica_erro": "Em matriz anti-simétrica, k_ii = 0 e k_ij = -k_ji."
+    },
+    "A07-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [2, 2, -2],
+            [2, 0, 1],
+            [-2, 1, 6]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "simetrica",
+          "sinonimos": ["matriz simetrica"]
+        },
+        "c": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [14, 3, -4],
+            [3, 26, -23],
+            [-4, -23, 29]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[2, 2, -2], [2, 0, 1], [-2, 1, 6]] (b) simetrica (c) [[14, 3, -4], [3, 26, -23], [-4, -23, 29]]",
+      "exemplo_incorreto": "(a) [[2, 2, -2], [2, 0, 1], [-2, 1, 6]] (b) diagonal (c) [[14, 3, -4], [3, 26, -23], [-4, -23, 29]]",
+      "dica_erro": "C + C^T e C * C^T resultam sempre em matrizes simétricas (D^T = D e E^T = E)."
+    },
+    "A07-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [4, 1],
+            [1, 6]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 2],
+            [-2, 0]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[4, 1], [1, 6]] (b) [[0, 2], [-2, 0]]",
+      "exemplo_incorreto": "(a) [[8, 2], [2, 12]] (b) [[0, 4], [-4, 0]]",
+      "dica_erro": "Nao esqueca do fator 1/2 nas formulas S = (M + M^T)/2 e K = (M - M^T)/2."
+    },
+    "A07-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, 0],
+            [0, 1]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "ortogonal",
+          "sinonimos": ["matriz ortogonal"]
+        }
+      },
+      "exemplo_correto": "(a) [[1, 0], [0, 1]] (b) ortogonal",
+      "exemplo_incorreto": "(a) [[1, 0], [0, 1]] (b) simetrica",
+      "dica_erro": "Quando G * G^T = I, a matriz G é classificada como ortogonal."
+    },
+    "A07-C01": {
+      "tipo_resposta": "vetor",
+      "esperado": [3, -4, 0],
+      "exemplo_correto": "(3, -4, 0)",
+      "exemplo_incorreto": "(3, 4, 0)",
+      "dica_erro": "A diagonal principal deve ser nula (x - 3 = 0, z = 0) e a13 = -a31 (y = -4)."
+    },
+    "A07-C02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [2, 3, 2],
+            [3, 4, 1],
+            [2, 1, 0]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 2, -3],
+            [-2, 0, 2],
+            [3, -2, 0]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[2, 3, 2], [3, 4, 1], [2, 1, 0]] (b) [[0, 2, -3], [-2, 0, 2], [3, -2, 0]]",
+      "exemplo_incorreto": "(a) [[2, 3, 2], [3, 4, 1], [2, 1, 0]] (b) [[0, -2, 3], [2, 0, -2], [-3, 2, 0]]",
+      "dica_erro": "Em K = (M - M^T)/2, calcule k12 = (5 - 1)/2 = +2 e k13 = (-1 - 5)/2 = -3."
+    },
+    "A07-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-5/13", "5/13"]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, 0],
+            [0, 1]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) a = +-5/13 (b) [[1, 0], [0, 1]]",
+      "exemplo_incorreto": "(a) a = 5/13 (b) [[1, 0], [0, 1]]",
+      "dica_erro": "De a^2 + 144/169 = 1 segue a^2 = 25/169, que possui duas raízes: +-5/13."
+    }
+  }
+}

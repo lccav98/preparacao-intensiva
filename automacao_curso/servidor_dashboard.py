@@ -14,6 +14,7 @@ import json
 import os
 import re
 import secrets
+import sqlite3
 import sys
 import time
 import urllib.parse
@@ -294,7 +295,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
         if proto:
             return "https" in proto
         host = (self.headers.get("Host") or "").lower().split(":")[0]
-        pub = config.PUBLIC_URL.lower()
+        pub = config.obter_public_url().lower()
         pub_host = pub.split("//")[-1].split("/")[0].split(":")[0]
         if host and pub_host and host == pub_host:
             return pub.startswith("https://")
@@ -452,7 +453,8 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         if path == "/aluno":
             if not sess:
-                self._redirecionar("/login")
+                dest_next = urllib.parse.quote(self.path, safe="")
+                self._redirecionar(f"/login?next={dest_next}")
                 return
             disc_qs = (qs.get("disciplina") or [""])[0] or None
             if sess["role"] == "aluno":
@@ -568,6 +570,20 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(data)
             return
 
+        if path == "/api/admin/backup-db":
+            if not self._exigir_admin_api():
+                return
+            banco_dados.inicializar_banco()
+            with open(config.DB_PATH, "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/x-sqlite3")
+            self.send_header("Content-Disposition", 'attachment; filename="automacao.db"')
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
+
         if path.startswith("/folha/"):
             if not sess:
                 accept = (self.headers.get("Accept") or "").lower()
@@ -668,11 +684,17 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     }
                 )
                 ck = self._montar_set_cookie(token, SESSION_TTL_SEC)
+                next_raw = str(body.get("next", "")).strip()
+                destino_aluno = (
+                    next_raw
+                    if next_raw.startswith("/") and not next_raw.startswith("//") and not next_raw.startswith("/admin")
+                    else "/"
+                )
                 if eh_form:
-                    self._redirecionar("/", cookie_header=ck)
+                    self._redirecionar(destino_aluno, cookie_header=ck)
                 else:
                     self._enviar_json(
-                        {"ok": True, "role": "aluno", "aluno_id": al["id"], "redirect": "/"},
+                        {"ok": True, "role": "aluno", "aluno_id": al["id"], "redirect": destino_aluno},
                         cookie_header=ck,
                     )
                 return
@@ -809,6 +831,102 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     self._enviar_json({"erro": "Aluno nao encontrado."}, status=404)
                     return
                 self._enviar_json(al)
+                return
+
+            if path == "/api/alunos/excluir":
+                if not self._exigir_admin_api():
+                    return
+                try:
+                    aid = int(body.get("aluno_id", 0))
+                except (TypeError, ValueError):
+                    aid = 0
+                confirmar_email = str(body.get("confirmar_email", "")).strip().lower()
+                confirmacao_dupla = bool(body.get("confirmacao_dupla", False))
+                if aid <= 0:
+                    self._enviar_json({"erro": "ID do aluno invalido."}, status=400)
+                    return
+                al_alvo = banco_dados.obter_aluno_por_id(aid, incluir_pin=False)
+                if not al_alvo:
+                    self._enviar_json({"erro": "Aluno nao encontrado."}, status=404)
+                    return
+                if not confirmacao_dupla:
+                    self._enviar_json(
+                        {"erro": "Confirmacao dupla obrigatoria para excluir o aluno."},
+                        status=400,
+                    )
+                    return
+                if confirmar_email != str(al_alvo["email"]).strip().lower():
+                    self._enviar_json(
+                        {"erro": "O e-mail digitado nao corresponde ao aluno selecionado."},
+                        status=400,
+                    )
+                    return
+                excluido = banco_dados.excluir_aluno(aid)
+                disc_req = config.normalizar_disciplina_id(
+                    body.get("disciplina") or config.DISCIPLINA_PADRAO
+                )
+                gerar_snapshot_dashboard(disciplina=disc_req)
+                self._enviar_json({"ok": True, "excluido": excluido})
+                return
+
+            if path == "/api/admin/restore-db":
+                if not self._exigir_admin_api():
+                    return
+                b64 = str(body.get("db_base64", "")).strip()
+                if not b64:
+                    self._enviar_json({"erro": "Campo db_base64 obrigatorio."}, status=400)
+                    return
+                try:
+                    raw = base64.b64decode(b64, validate=True)
+                except Exception:
+                    self._enviar_json({"erro": "db_base64 invalido."}, status=400)
+                    return
+                if not raw.startswith(b"SQLite format 3\x00"):
+                    self._enviar_json(
+                        {"erro": "Arquivo nao possui cabecalho SQLite 3 valido."},
+                        status=400,
+                    )
+                    return
+                config.garantir_diretorios()
+                db_dir = os.path.dirname(os.path.abspath(config.DB_PATH))
+                os.makedirs(db_dir, exist_ok=True)
+                tmp_path = os.path.join(db_dir, f".restore_{os.getpid()}_{secrets.token_hex(6)}.db")
+                src_conn = None
+                dst_conn = None
+                try:
+                    with open(tmp_path, "wb") as f:
+                        f.write(raw)
+                    src_conn = sqlite3.connect(tmp_path)
+                    chk = src_conn.execute("PRAGMA integrity_check").fetchone()
+                    if not chk or str(chk[0]).lower() != "ok":
+                        raise ValueError("Banco SQLite falhou na verificacao de integridade.")
+                    dst_conn = banco_dados.conectar()
+                    src_conn.backup(dst_conn)
+                    dst_conn.close()
+                    dst_conn = None
+                    src_conn.close()
+                    src_conn = None
+                    banco_dados.inicializar_banco()
+                except Exception as exc:
+                    if dst_conn is not None:
+                        try:
+                            dst_conn.close()
+                        except Exception:
+                            pass
+                    if src_conn is not None:
+                        try:
+                            src_conn.close()
+                        except Exception:
+                            pass
+                    self._enviar_json({"erro": f"Falha ao restaurar banco: {exc}"}, status=500)
+                    return
+                finally:
+                    if os.path.isfile(tmp_path):
+                        try:
+                            os.remove(tmp_path)
+                        except OSError:
+                            pass
+                self._enviar_json({"ok": True, "bytes": len(raw)})
                 return
 
             if path == "/api/emitir-prova":

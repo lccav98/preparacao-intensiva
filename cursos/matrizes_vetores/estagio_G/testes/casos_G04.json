@@ -1,0 +1,100 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "G04",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "G04-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "reta",
+          "esperado": { "ponto": [1, 2, -1], "diretor": [1, 2, 2] }
+        },
+        "b": {
+          "tipo_resposta": "reta",
+          "esperado": { "ponto": [0, 0, 0], "diretor": [-1, 5, 3] }
+        }
+      },
+      "exemplo_correto": "(a) y = 2x, z = 2x - 3 (b) (x, y, z) = (0, 0, 0) + t(-1, 5, 3)",
+      "exemplo_incorreto": "(a) y = 2x, z = 2x + 3 (b) (x, y, z) = (0, 0, 0) + t(1, 5, 3)",
+      "dica_erro": "Em (a) v_AB = (2, 4, 4) // (1, 2, 2); em (b) o diretor e v1 x v2 = (-1, 5, 3)."
+    },
+    "G04-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "concorrentes",
+          "sinonimos": ["retas concorrentes"]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [2, 1, 5]
+        }
+      },
+      "exemplo_correto": "(a) concorrentes (b) (2, 1, 5)",
+      "exemplo_incorreto": "(a) reversas (b) (2, 1, 5)",
+      "dica_erro": "O sistema tem solucao unica t = 1 e s = 1 em todas as 3 coordenadas, gerando (2, 1, 5)."
+    },
+    "G04-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "plano", "esperado": [1, -1, 2, -3] },
+        "b": { "tipo_resposta": "numero", "esperado": "sqrt(6)/6" }
+      },
+      "exemplo_correto": "(a) x - y + 2z - 3 = 0 (b) sqrt(6)/6",
+      "exemplo_incorreto": "(a) x + y + 2z - 3 = 0 (b) sqrt(6)/3",
+      "dica_erro": "O normal e AB x AC = (1, -1, 2); sen(phi) = |v . n| / (|v| |n|) = 3 / (3 * sqrt(6))."
+    },
+    "G04-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "reta",
+          "esperado": { "ponto": [2, 0, 0], "diretor": [0, 1, 1] }
+        },
+        "b": { "tipo_resposta": "numero", "esperado": 8 }
+      },
+      "exemplo_correto": "(a) x = 2, y = t, z = t (b) 8",
+      "exemplo_incorreto": "(a) x = 2, y = t, z = -t (b) 48",
+      "dica_erro": "Somando pi1 e pi2 obtem-se x = 2 e y = z; em (b) os interceptos sao 6, 4 e 2, logo V = (6*4*2)/6 = 8."
+    },
+    "G04-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "numero", "esperado": "sqrt(3)/3" },
+        "b": { "tipo_resposta": "numero", "esperado": 3 }
+      },
+      "exemplo_correto": "(a) sqrt(3)/3 (b) 3",
+      "exemplo_incorreto": "(a) sqrt(3) (b) 5",
+      "dica_erro": "Em (b) divida pi2 por 2 para igualar o normal (2, -1, 2) antes de calcular |6 - (-3)| / 3."
+    },
+    "G04-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "plano", "esperado": [1, 2, -4, -5] },
+        "b": { "tipo_resposta": "vetor", "esperado": [-2, 5, -9] }
+      },
+      "exemplo_correto": "(a) x + 2y - 4z - 5 = 0 (b) (-2, 5, -9)",
+      "exemplo_incorreto": "(a) x + 2y + 4z - 5 = 0 (b) (2, 5, -9)",
+      "dica_erro": "O normal e PP0 x v = (-1, -2, 4); substituindo s em beta encontra-se t = -4."
+    },
+    "G04-C02": {
+      "tipo_resposta": "numero",
+      "esperado": "sqrt(3)/3",
+      "exemplo_correto": "sqrt(3)/3",
+      "exemplo_incorreto": "sqrt(3)",
+      "dica_erro": "u x v = (3, -3, 3) tem modulo 3*sqrt(3) e produto misto 3, logo d = 3 / (3*sqrt(3))."
+    },
+    "G04-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "numero", "esperado": 3 },
+        "b": { "tipo_resposta": "numero", "esperado": "sqrt(5)/3" }
+      },
+      "exemplo_correto": "(a) 3 (b) sqrt(5)/3",
+      "exemplo_incorreto": "(a) 11/3 (b) sqrt(5)",
+      "dica_erro": "Em (a) divida pi2 por -3 antes de aplicar |d1 - d2| / |n|; em (b) d = |v x P0Q| / |v|."
+    }
+  }
+}

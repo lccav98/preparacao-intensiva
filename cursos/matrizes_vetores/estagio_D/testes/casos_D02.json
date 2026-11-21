@@ -1,0 +1,214 @@
+{
+  "bloco": "D02",
+  "estagio": "D",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "casos_por_questao": {
+    "D02-E01": {
+      "questao_id": "D02-E01",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "-3",
+            "7",
+            "4"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "3",
+            "-7",
+            "-4"
+          ]
+        }
+      },
+      "dica_erro": "Use sempre extremidade menos origem: AB = B - A e BA = A - B = -AB.",
+      "exemplo_correto": "(a) (-3, 7, 4) (b) (3, -7, -4)",
+      "exemplo_incorreto": "(a) (3, -7, -4) (b) (-3, 7, 4)"
+    },
+    "D02-E02": {
+      "questao_id": "D02-E02",
+      "modo": "pratica",
+      "tipo_resposta": "vetor",
+      "esperado": [
+        "-4",
+        "14/3",
+        "2/3"
+      ],
+      "dica_erro": "Isole w antes de substituir coordenadas: 3/2 w = 3v - u => w = 2v - (2/3)u.",
+      "exemplo_correto": "(-4, 14/3, 2/3)",
+      "exemplo_incorreto": "(-4, 10/3, 2/3)"
+    },
+    "D02-E03": {
+      "questao_id": "D02-E03",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "3",
+            "4",
+            "-4"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "3",
+            "2/3",
+            "1/3"
+          ]
+        }
+      },
+      "dica_erro": "De AP = 2 PB tem-se P - A = 2(B - P), logo 3P = A + 2B.",
+      "exemplo_correto": "(a) (3, 4, -4) (b) (3, 2/3, 1/3)",
+      "exemplo_incorreto": "(a) (-3, -4, 4) (b) (9, 2, 1)"
+    },
+    "D02-E04": {
+      "questao_id": "D02-E04",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "5",
+            "10",
+            "-11"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "6",
+            "1",
+            "1"
+          ]
+        }
+      },
+      "dica_erro": "Em DC = BA, C - D = A - B, portanto D = C + B - A.",
+      "exemplo_correto": "(a) (5, 10, -11) (b) (6, 1, 1)",
+      "exemplo_incorreto": "(a) (5, 10, -11) (b) (0, 1, 1)"
+    },
+    "D02-E05": {
+      "questao_id": "D02-E05",
+      "modo": "pratica",
+      "tipo_resposta": "conjunto_vetores",
+      "esperado": [
+        [
+          "6",
+          "-5",
+          "1"
+        ],
+        [
+          "-4",
+          "1",
+          "5"
+        ],
+        [
+          "0",
+          "7",
+          "-1"
+        ]
+      ],
+      "dica_erro": "Sem ordem fixa dos vertices, ha 3 paralelogramos possiveis: S1 = P+Q-R, S2 = P+R-Q e S3 = Q+R-P.",
+      "exemplo_correto": "(6, -5, 1), (-4, 1, 5), (0, 7, -1)",
+      "exemplo_incorreto": "(6, -5, 1)"
+    },
+    "D02-E06": {
+      "questao_id": "D02-E06",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "-1/2",
+            "-1",
+            "3"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "7",
+            "-11",
+            "-2"
+          ]
+        }
+      },
+      "dica_erro": "Em AP = PB, P e o ponto medio (A+B)/2; em AP = 3 AB, P = A + 3(B - A).",
+      "exemplo_correto": "(a) (-1/2, -1, 3) (b) (7, -11, -2)",
+      "exemplo_incorreto": "(a) (1/2, -1, 3) (b) (9, -12, -6)"
+    },
+    "D02-C01": {
+      "questao_id": "D02-C01",
+      "modo": "checagem",
+      "tipo_resposta": "vetor",
+      "esperado": [
+        "-1",
+        "3",
+        "-7/5"
+      ],
+      "dica_erro": "2x + a = 3b - 3x => 5x = 3b - a.",
+      "exemplo_correto": "(-1, 3, -7/5)",
+      "exemplo_incorreto": "(-1, 3, 7/5)"
+    },
+    "D02-C02": {
+      "questao_id": "D02-C02",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "11",
+            "-24",
+            "22"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "3/2",
+            "2",
+            "0"
+          ]
+        }
+      },
+      "dica_erro": "BA = A - B, CB = B - C e M = A + (1/2)(B - A).",
+      "exemplo_correto": "(a) (11, -24, 22) (b) (3/2, 2, 0)",
+      "exemplo_incorreto": "(a) (11, -24, 22) (b) (-3/2, 3, -2)"
+    },
+    "D02-C03": {
+      "questao_id": "D02-C03",
+      "modo": "checagem",
+      "tipo_resposta": "conjunto_vetores",
+      "esperado": [
+        [
+          "-2",
+          "-2",
+          "1"
+        ],
+        [
+          "2",
+          "6",
+          "-3"
+        ],
+        [
+          "6",
+          "0",
+          "5"
+        ]
+      ],
+      "dica_erro": "Considere as tres diagonais possiveis (PQ, PR, QR) para obter P+Q-R, P+R-Q e Q+R-P.",
+      "exemplo_correto": "[(-2, -2, 1), (2, 6, -3), (6, 0, 5)]",
+      "exemplo_incorreto": "(-2, -2, 1), (2, 6, -3)"
+    }
+  }
+}

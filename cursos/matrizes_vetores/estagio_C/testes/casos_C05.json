@@ -1,0 +1,164 @@
+{
+  "bloco": "C05",
+  "titulo": "Forma de Escada (Escalonada), Posto (C_A, C_V, C) e Sistemas m x n",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "questoes": [
+    {
+      "questao_id": "C05-E01",
+      "secao": "pratica",
+      "titulo": "Posto C_A > C_V e incompatibilidade (Lista 5 Ex. 1)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 1 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SI",
+          "sinonimos": ["si", "incompativel", "sistema incompativel"]
+        }
+      },
+      "dica_erro": "Conte CA na matriz B inteira (incluindo a linha [0 0 | 3]) e CV apenas na submatriz V.",
+      "exemplo_correto": "ca: 2; cv: 1; classificacao: SI",
+      "exemplo_incorreto": "ca: 1; cv: 1; classificacao: SPI"
+    },
+    {
+      "questao_id": "C05-E02",
+      "secao": "pratica",
+      "titulo": "Sistema sobredeterminado 3x2 SPD (Lista 5 Ex. 10)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 0 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [2, -3] }
+      },
+      "dica_erro": "A 3a linha de B zera completamente; logo C_A = C_V = 2 = n e g = 0.",
+      "exemplo_correto": "ca: 2; cv: 2; g: 0; classificacao: SPD; solucao: (2, -3)",
+      "exemplo_incorreto": "ca: 3; cv: 2; g: 0; classificacao: SI; solucao: (2, -3)"
+    },
+    {
+      "questao_id": "C05-E03",
+      "secao": "pratica",
+      "titulo": "Sistema sobredeterminado 3x2 SI (Lista 5 Ex. 11)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 3 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SI",
+          "sinonimos": ["si", "incompativel", "sistema incompativel"]
+        }
+      },
+      "dica_erro": "A 3a linha resulta [0, 0 | -13/2], mantendo C_A = 3 > C_V = 2.",
+      "exemplo_correto": "ca: 3; cv: 2; classificacao: SI",
+      "exemplo_incorreto": "ca: 2; cv: 2; classificacao: SPD"
+    },
+    {
+      "questao_id": "C05-E04",
+      "secao": "pratica",
+      "titulo": "Sistema 3x3 com posto C = 2 < n (Lista 5 Ex. 9)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 1 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [1, 1, 1] }
+      },
+      "dica_erro": "Com x = 3 - 2z e y = 3 - 2z, atribuindo z = 1 resulta (1, 1, 1).",
+      "exemplo_correto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (1, 1, 1)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 2; classificacao: SPI; solucao: (1, 1, 1)"
+    },
+    {
+      "questao_id": "C05-E05",
+      "secao": "pratica",
+      "titulo": "Sistema subdeterminado 2x4",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 2 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [6, 2, 1, 0] }
+      },
+      "dica_erro": "g = n - C = 4 - 2 = 2; substitua z = 1 e w = 0 em x = 11 - 5z - 5w e y = 3 - z - 3w.",
+      "exemplo_correto": "ca: 2; cv: 2; g: 2; classificacao: SPI; solucao: (6, 2, 1, 0)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (6, 2, 1, 0)"
+    },
+    {
+      "questao_id": "C05-C01",
+      "secao": "checagem",
+      "titulo": "Sobredeterminado 4x2 (Apostila p. 37-39)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 0 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [2, 3] }
+      },
+      "dica_erro": "As duas ultimas linhas se anulam totalmente em B, deixando C_A = C_V = 2 = n.",
+      "exemplo_correto": "ca: 2; cv: 2; g: 0; classificacao: SPD; solucao: (2, 3)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 2; classificacao: SPI; solucao: (2, 3)"
+    },
+    {
+      "questao_id": "C05-C02",
+      "secao": "checagem",
+      "titulo": "Subdeterminado 3x4 com linha nula",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 2 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [2, 0, 0, 1] }
+      },
+      "dica_erro": "Atente para os pivos nas colunas de x e z; y e w ficam livres (y=0, w=1 -> x=2, z=0).",
+      "exemplo_correto": "ca: 2; cv: 2; g: 2; classificacao: SPI; solucao: (2, 0, 0, 1)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 2; classificacao: SPI; solucao: (-1, 0, 2, 1)"
+    },
+    {
+      "questao_id": "C05-C03",
+      "secao": "checagem",
+      "titulo": "Sobredeterminado 3x2 com fracoes",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 0 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": ["5/4", "3/2"] }
+      },
+      "dica_erro": "A 3a linha de B zera, confirmando compatibilidade com solucao unica (5/4, 3/2).",
+      "exemplo_correto": "ca: 2; cv: 2; g: 0; classificacao: SPD; solucao: (5/4, 3/2)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 0; classificacao: SPD; solucao: (5/2, 3/2)"
+    }
+  ]
+}

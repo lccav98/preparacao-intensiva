@@ -227,6 +227,26 @@ DASHBOARD_HOST = os.environ.get(
 )
 DASHBOARD_PORT = int(os.environ.get("PORT") or os.environ.get("PREP_DASHBOARD_PORT") or "8090")
 PUBLIC_URL = os.environ.get("PREP_PUBLIC_URL", "").strip().rstrip("/")
+
+
+def obter_public_url() -> str:
+    """Retorna a URL publica ativa, relendo PREP_PUBLIC_URL do .env caso o tunel tenha sido atualizado."""
+    env_path = os.environ.get("PREP_ENV_FILE", "").strip() or os.path.join(_RAIZ_CURSO, ".env")
+    if os.path.isfile(env_path):
+        try:
+            with open(env_path, "r", encoding="utf-8") as f:
+                for linha in f:
+                    s = linha.strip()
+                    if not s or s.startswith("#") or "=" not in s:
+                        continue
+                    k, _, v = s.partition("=")
+                    if k.strip() == "PREP_PUBLIC_URL":
+                        val = v.strip().strip("'").strip('"').rstrip("/")
+                        if val:
+                            return val
+        except OSError:
+            pass
+    return (os.environ.get("PREP_PUBLIC_URL", "").strip() or PUBLIC_URL).rstrip("/")
 ADMIN_EMAIL = os.environ.get("PREP_ADMIN_EMAIL", "lcezenilda@gmail.com").strip().lower()
 ADMIN_PASSWORD = os.environ.get("PREP_ADMIN_PASSWORD", "").strip()
 SECRET_KEY = os.environ.get("PREP_SECRET_KEY", "").strip()

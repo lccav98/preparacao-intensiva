@@ -371,15 +371,48 @@ def _avaliar_conceitual_portugues(questao: Questao, resp: str, bloco: BlocoCurri
         )
 
     if qid == "A01-E04":
-        ok_a = bool(re.search(r"z\s*[,>\-\s]+k\s*[,>\-\s]+y\s*[,>\-\s]+x\s*[,>\-\s]+w", low))
-        ok_chain = "algoritmo" in low and "fonte" in low and "compilador" in low and ("executavel" in low or "executável" in low)
-        ok_papel = "traduz" in low or "converte" in low or "linguagem de maquina" in low or "linguagem de máquina" in low
+        low_norm = (
+            low.replace("á", "a").replace("à", "a").replace("â", "a").replace("ã", "a")
+            .replace("é", "e").replace("ê", "e")
+            .replace("í", "i")
+            .replace("ó", "o").replace("ô", "o").replace("õ", "o")
+            .replace("ú", "u").replace("ç", "c")
+        )
+        ok_a_letras = bool(re.search(r"z\s*[,>\-\s]+k\s*[,>\-\s]+y\s*[,>\-\s]+x\s*[,>\-\s]+w", low_norm))
+        ok_a_extenso = bool(
+            re.search(
+                r"p1.*?p2.*?calcul.*?(?:exib|mostr|imprim).*?(?:encerr|fim)",
+                low_norm,
+                re.S,
+            )
+        )
+        ok_a = ok_a_letras or ok_a_extenso
+        ok_chain = (
+            "algoritmo" in low_norm
+            and "fonte" in low_norm
+            and "compilador" in low_norm
+            and "executavel" in low_norm
+        )
+        ok_papel = (
+            "traduz" in low_norm
+            or "converte" in low_norm
+            or "linguagem de maquina" in low_norm
+            or "codigo de maquina" in low_norm
+            or "baixo nivel" in low_norm
+        )
         if ok_a and ok_chain and ok_papel:
             return _ret("correto", "sem_erro", f"[{qid}] Excelente! Ordenacao Z, K, Y, X, W, cadeia e papel do compilador corretos.")
+        faltas = []
+        if not ok_a:
+            faltas.append("a ordenacao correta em (a): Z (Ler P1) -> K (Ler P2) -> Y (Calcular media) -> X (Exibir media) -> W (Encerrar)")
+        if not ok_chain:
+            faltas.append("a cadeia completa em (b): Algoritmo -> Codigo-Fonte -> Compilador -> Executavel")
+        if not ok_papel:
+            faltas.append("escrever em 1 frase o papel do compilador: traduzir o codigo-fonte de alto nivel para linguagem de maquina")
         return _ret(
             "parcial",
             "justificativa_ausente",
-            f"[{qid}] Ordenacoes perfeitas em (a) ('Z, K, Y, X, W') e em (b) ('Algoritmo -> Codigo-Fonte -> Compilador -> Executavel'). Faltou apenas escrever em 1 frase o papel do compilador: traduzir o codigo-fonte de alto nivel para linguagem de maquina.",
+            f"[{qid}] Resposta parcial. Faltou: {'; '.join(faltas)}.",
         )
 
     if qid == "A01-E05":

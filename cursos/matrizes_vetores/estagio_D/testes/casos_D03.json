@@ -1,0 +1,181 @@
+{
+  "bloco": "D03",
+  "estagio": "D",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "casos_por_questao": {
+    "D03-E01": {
+      "questao_id": "D03-E01",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "3"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "-1"
+        }
+      },
+      "dica_erro": "Monte o sistema 2x2 igualando coordenadas e resolva por escalonamento.",
+      "exemplo_correto": "(a) 3 (b) -1",
+      "exemplo_incorreto": "(a) -3 (b) 1"
+    },
+    "D03-E02": {
+      "questao_id": "D03-E02",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "3"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "-2"
+        }
+      },
+      "dica_erro": "Escalone o sistema 3x2 e confira a terceira equacao para garantir consistencia.",
+      "exemplo_correto": "(a) 3 (b) -2",
+      "exemplo_incorreto": "(a) 2 (b) -3"
+    },
+    "D03-E03": {
+      "questao_id": "D03-E03",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nao paralelos",
+          "sinonimos": [
+            "nao sao paralelos",
+            "nao"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "-3"
+        },
+        "c": {
+          "tipo_resposta": "numero",
+          "esperado": "9"
+        }
+      },
+      "dica_erro": "Todas as razoes devem ser iguais: 6/4 = 3/2, logo a = -2*(3/2) = -3 e b = 6*(3/2) = 9.",
+      "exemplo_correto": "(a) Nao paralelos (b) -3 (c) 9",
+      "exemplo_incorreto": "(a) Paralelos (b) -3 (c) 8"
+    },
+    "D03-E04": {
+      "questao_id": "D03-E04",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "colineares",
+          "sinonimos": [
+            "sao colineares",
+            "sim"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nao colineares",
+          "sinonimos": [
+            "nao sao colineares",
+            "nao"
+          ]
+        }
+      },
+      "dica_erro": "Tres pontos A, B, C sao colineares se e somente se AB e AC sao paralelos (proporcionais).",
+      "exemplo_correto": "(a) Sao colineares (b) Nao sao colineares",
+      "exemplo_incorreto": "(a) Nao sao colineares (b) Sao colineares"
+    },
+    "D03-E05": {
+      "questao_id": "D03-E05",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "7"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "9"
+        }
+      },
+      "dica_erro": "De AC = k*AB com AB = (2, 4, -4) e AC = (a-2, b+1, -10), ache k = 5/2.",
+      "exemplo_correto": "(a) 7 (b) 9",
+      "exemplo_incorreto": "(a) 5 (b) 10"
+    },
+    "D03-E06": {
+      "questao_id": "D03-E06",
+      "modo": "pratica",
+      "tipo_resposta": "vetor",
+      "esperado": [
+        "2",
+        "3",
+        "-1"
+      ],
+      "dica_erro": "Escalone a matriz ampliada do sistema c1*v1 + c2*v2 + c3*v3 = w.",
+      "exemplo_correto": "(2, 3, -1)",
+      "exemplo_incorreto": "(2, -3, 1)"
+    },
+    "D03-C01": {
+      "questao_id": "D03-C01",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "3"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "1"
+        }
+      },
+      "dica_erro": "Escalone o sistema gerado por (5, -5, 2) = a1*(1, -2, 1) + a2*(2, 1, -1).",
+      "exemplo_correto": "(a) 3 (b) 1",
+      "exemplo_incorreto": "(a) 1 (b) 3"
+    },
+    "D03-C02": {
+      "questao_id": "D03-C02",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "-6"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "15"
+        }
+      },
+      "dica_erro": "A razao de proporcionalidade e 9/6 = 3/2.",
+      "exemplo_correto": "(a) -6 (b) 15",
+      "exemplo_incorreto": "(a) 6 (b) -15"
+    },
+    "D03-C03": {
+      "questao_id": "D03-C03",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "6"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "-7"
+        }
+      },
+      "dica_erro": "AB = (2, -4, 4) e AC = (x-1, y-3, 10) => k = 10/4 = 5/2.",
+      "exemplo_correto": "(a) 6 (b) -7",
+      "exemplo_incorreto": "(a) 5 (b) -10"
+    }
+  }
+}

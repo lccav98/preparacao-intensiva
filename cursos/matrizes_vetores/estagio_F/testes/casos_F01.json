@@ -1,0 +1,391 @@
+{
+  "bloco": "F01",
+  "estagio": "F",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "casos_por_questao": {
+    "F01-E01": {
+      "questao_id": "F01-E01",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "8"
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "4",
+            "0"
+          ]
+        },
+        "c": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": [
+              "x",
+              "y"
+            ],
+            "expr": "x + 4",
+            "pontos_teste": [
+              [
+                -4,
+                0
+              ],
+              [
+                -4,
+                3
+              ],
+              [
+                -4,
+                -5
+              ]
+            ]
+          }
+        }
+      },
+      "dica_erro": "Na forma y^2 = 2px, 2p = 16 => p = 8; foco (p/2, 0) = (4, 0) e diretriz x = -4.",
+      "exemplo_correto": "(a) 8 (b) (4, 0) (c) x = -4",
+      "exemplo_incorreto": "(a) 16 (b) (8, 0) (c) y = -4"
+    },
+    "F01-E02": {
+      "questao_id": "F01-E02",
+      "modo": "pratica",
+      "tipo_resposta": "equacao_algebrica",
+      "esperado": {
+        "variaveis": [
+          "x",
+          "y"
+        ],
+        "expr": "x^2 + 14*y",
+        "pontos_teste": [
+          [
+            0,
+            0
+          ],
+          [
+            14,
+            -14
+          ],
+          [
+            -14,
+            -14
+          ],
+          [
+            7,
+            "-7/2"
+          ]
+        ]
+      },
+      "dica_erro": "Diretriz y = 7/2 => -p/2 = 7/2 => p = -7 => 2p = -14 => x^2 = -14y.",
+      "exemplo_correto": "x^2 = -14y",
+      "exemplo_incorreto": "x^2 = 14y"
+    },
+    "F01-E03": {
+      "questao_id": "F01-E03",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "-4"
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "0",
+            "-2"
+          ]
+        },
+        "c": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": [
+              "x",
+              "y"
+            ],
+            "expr": "y - 2",
+            "pontos_teste": [
+              [
+                0,
+                2
+              ],
+              [
+                3,
+                2
+              ],
+              [
+                -4,
+                2
+              ]
+            ]
+          }
+        }
+      },
+      "dica_erro": "O coeficiente de y em x^2 = 2py vale 2p = -8, logo p = -4, F(0, -2) e diretriz y = 2.",
+      "exemplo_correto": "(a) -4 (b) (0, -2) (c) y = 2",
+      "exemplo_incorreto": "(a) -8 (b) (0, -4) (c) y = 4"
+    },
+    "F01-E04": {
+      "questao_id": "F01-E04",
+      "modo": "pratica",
+      "tipo_resposta": "equacao_algebrica",
+      "esperado": {
+        "variaveis": [
+          "x",
+          "y"
+        ],
+        "expr": "y^2 + 12*x",
+        "pontos_teste": [
+          [
+            0,
+            0
+          ],
+          [
+            -3,
+            6
+          ],
+          [
+            -3,
+            -6
+          ],
+          [
+            -12,
+            12
+          ]
+        ]
+      },
+      "dica_erro": "Eixo Ox implica y^2 = 2px; substituindo (-3, 6) resulta 36 = -6p => 2p = -12 => y^2 = -12x.",
+      "exemplo_correto": "y^2 = -12x",
+      "exemplo_incorreto": "x^2 = -12y"
+    },
+    "F01-E05": {
+      "questao_id": "F01-E05",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": [
+              "x",
+              "y"
+            ],
+            "expr": "x^2 - 8*y",
+            "pontos_teste": [
+              [
+                0,
+                0
+              ],
+              [
+                4,
+                2
+              ],
+              [
+                -4,
+                2
+              ],
+              [
+                8,
+                8
+              ]
+            ]
+          }
+        },
+        "b": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "0",
+            "2"
+          ]
+        },
+        "c": {
+          "tipo_resposta": "numero",
+          "esperado": "8"
+        }
+      },
+      "dica_erro": "De x^2 = 2py com (4, 2) tem-se 16 = 4p => p = 4, x^2 = 8y, F(0, 2) e latus rectum |2p| = 8.",
+      "exemplo_correto": "(a) x^2 = 8y (b) (0, 2) (c) 8",
+      "exemplo_incorreto": "(a) x^2 = 4y (b) (0, 1) (c) 4"
+    },
+    "F01-E06": {
+      "questao_id": "F01-E06",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": [
+              "x",
+              "y"
+            ],
+            "expr": "y^2 - 12*x",
+            "pontos_teste": [
+              [
+                0,
+                0
+              ],
+              [
+                3,
+                6
+              ],
+              [
+                3,
+                -6
+              ],
+              [
+                12,
+                12
+              ]
+            ]
+          }
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "12"
+        }
+      },
+      "dica_erro": "(x-3)^2 + y^2 = (x+3)^2 simplifica para y^2 = 12x; para x = 12, y positivo e 12.",
+      "exemplo_correto": "(a) y^2 = 12x (b) 12",
+      "exemplo_incorreto": "(a) y^2 = 6x (b) 6"
+    },
+    "F01-C01": {
+      "questao_id": "F01-C01",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "0",
+            "5"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": [
+              "x",
+              "y"
+            ],
+            "expr": "y + 5",
+            "pontos_teste": [
+              [
+                0,
+                -5
+              ],
+              [
+                2,
+                -5
+              ],
+              [
+                -3,
+                -5
+              ]
+            ]
+          }
+        }
+      },
+      "dica_erro": "De x^2 = 20y vem 2p = 20 => p = 10 => F(0, 5) e diretriz y = -5.",
+      "exemplo_correto": "(a) (0, 5) (b) y = -5",
+      "exemplo_incorreto": "(a) (0, 10) (b) y = -10"
+    },
+    "F01-C02": {
+      "questao_id": "F01-C02",
+      "modo": "checagem",
+      "tipo_resposta": "equacao_algebrica",
+      "esperado": {
+        "variaveis": [
+          "x",
+          "y"
+        ],
+        "expr": "y^2 + 6*x",
+        "pontos_teste": [
+          [
+            0,
+            0
+          ],
+          [
+            "-3/2",
+            3
+          ],
+          [
+            "-3/2",
+            -3
+          ],
+          [
+            -6,
+            6
+          ]
+        ]
+      },
+      "dica_erro": "Foco (-3/2, 0) => p/2 = -3/2 => p = -3 => 2p = -6 => y^2 = -6x.",
+      "exemplo_correto": "y^2 = -6x",
+      "exemplo_incorreto": "y^2 = -3x"
+    },
+    "F01-C03": {
+      "questao_id": "F01-C03",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": [
+              "x",
+              "y"
+            ],
+            "expr": "x^2 + 12*y",
+            "pontos_teste": [
+              [
+                0,
+                0
+              ],
+              [
+                -6,
+                -3
+              ],
+              [
+                6,
+                -3
+              ],
+              [
+                12,
+                -12
+              ]
+            ]
+          }
+        },
+        "b": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": [
+              "x",
+              "y"
+            ],
+            "expr": "y - 3",
+            "pontos_teste": [
+              [
+                0,
+                3
+              ],
+              [
+                4,
+                3
+              ],
+              [
+                -2,
+                3
+              ]
+            ]
+          }
+        }
+      },
+      "dica_erro": "x^2 = 2py em (-6, -3) da 36 = -6p => 2p = -12 => x^2 = -12y e diretriz y = 3.",
+      "exemplo_correto": "(a) x^2 = -12y (b) y = 3",
+      "exemplo_incorreto": "(a) x^2 = -6y (b) y = -3"
+    }
+  }
+}

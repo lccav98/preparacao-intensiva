@@ -1,0 +1,174 @@
+{
+  "bloco": "C04",
+  "titulo": "Metodo da Matriz Inversa (X = A^{-1}B)",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "questoes": [
+    {
+      "questao_id": "C04-E01",
+      "secao": "pratica",
+      "titulo": "Inversa 2x2 e solucao X = A^{-1}B",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [[2, -5], [-1, 3]]
+        },
+        "solucao": {
+          "tipo_resposta": "vetor",
+          "esperado": [4, -1]
+        }
+      },
+      "dica_erro": "Calcule A^{-1} por [A | I] -> [I | A^{-1}] e multiplique A^{-1} * [7, 2]^T pela esquerda.",
+      "exemplo_correto": "inversa: [[2, -5], [-1, 3]]; solucao: (4, -1)",
+      "exemplo_incorreto": "inversa: [[2, 5], [1, 3]]; solucao: (4, -1)"
+    },
+    {
+      "questao_id": "C04-E02",
+      "secao": "pratica",
+      "titulo": "Inversa 3x3 e multiplos vetores B (Lista 5 Ex. 20 e 22)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [[3, -4, 2], [-2, 1, 0], [-1, -1, 1]]
+        },
+        "solucao1": {
+          "tipo_resposta": "vetor",
+          "esperado": [2, 3, 4]
+        },
+        "solucao2": {
+          "tipo_resposta": "vetor",
+          "esperado": [-13, 5, -2]
+        }
+      },
+      "dica_erro": "Confira A * A^{-1} = I antes de multiplicar pelos dois vetores B.",
+      "exemplo_correto": "inversa: [[3, -4, 2], [-2, 1, 0], [-1, -1, 1]]; solucao1: (2, 3, 4); solucao2: (-13, 5, -2)",
+      "exemplo_incorreto": "inversa: [[3, -4, 2], [-2, 1, 0], [-1, -1, 1]]; solucao1: (2, 3, 4); solucao2: (13, 5, -2)"
+    },
+    {
+      "questao_id": "C04-E03",
+      "secao": "pratica",
+      "titulo": "Caca ao bug: matriz singular e ordem da multiplicacao",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversivel": {
+          "tipo_resposta": "classificacao",
+          "esperado": "nao",
+          "sinonimos": ["nao", "nao inversivel", "singular"]
+        },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SI",
+          "sinonimos": ["si", "incompativel", "sistema incompativel"]
+        }
+      },
+      "dica_erro": "Como L2 = 2*L1 na matriz A, ela e singular; escalonando [A|B] obtem-se 0 = 1 (SI).",
+      "exemplo_correto": "inversivel: nao; classificacao: SI",
+      "exemplo_incorreto": "inversivel: sim; classificacao: SPD"
+    },
+    {
+      "questao_id": "C04-E04",
+      "secao": "pratica",
+      "titulo": "Inversa com fracoes (Apostila p. 25-31)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [["-1/8", "3/8", "-1/8"], ["-1/4", 0, "1/4"], ["1/2", "-1/4", 0]]
+        },
+        "solucao": {
+          "tipo_resposta": "vetor",
+          "esperado": [2, 1, 4]
+        }
+      },
+      "dica_erro": "Mantenha denominadores 8, 4 e 2 em A^{-1}; multiplique por [17, 18, 21]^T.",
+      "exemplo_correto": "inversa: [[-1/8, 3/8, -1/8], [-1/4, 0, 1/4], [1/2, -1/4, 0]]; solucao: (2, 1, 4)",
+      "exemplo_incorreto": "inversa: [[-1/8, 3/8, -1/8], [-1/4, 0, 1/4], [1/2, -1/4, 0]]; solucao: (2, -1, 4)"
+    },
+    {
+      "questao_id": "C04-E05",
+      "secao": "pratica",
+      "titulo": "Inversa fracionaria e multiplas solucoes",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [["3/2", 0, "-1/2"], ["1/2", 1, "-1/2"], [-1, -1, 1]]
+        },
+        "solucao1": {
+          "tipo_resposta": "vetor",
+          "esperado": ["5/2", "1/2", 0]
+        },
+        "solucao2": {
+          "tipo_resposta": "vetor",
+          "esperado": [-1, 0, 2]
+        }
+      },
+      "dica_erro": "Aplique L3' = L3 + L1(-1) e L3'' = L3' + L2(-1) antes de normalizar L2(1/2).",
+      "exemplo_correto": "inversa: [[3/2, 0, -1/2], [1/2, 1, -1/2], [-1, -1, 1]]; solucao1: (5/2, 1/2, 0); solucao2: (-1, 0, 2)",
+      "exemplo_incorreto": "inversa: [[3/2, 0, -1/2], [1/2, 1, -1/2], [-1, -1, 1]]; solucao1: (5/2, -1/2, 0); solucao2: (-1, 0, 2)"
+    },
+    {
+      "questao_id": "C04-C01",
+      "secao": "checagem",
+      "titulo": "Inversa 2x2 e dois vetores B",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [[-2, 3], [3, -4]]
+        },
+        "solucao1": {
+          "tipo_resposta": "vetor",
+          "esperado": [2, -1]
+        },
+        "solucao2": {
+          "tipo_resposta": "vetor",
+          "esperado": [-8, 11]
+        }
+      },
+      "dica_erro": "Confira se A * A^{-1} = I_2 antes de calcular X^{(1)} e X^{(2)}.",
+      "exemplo_correto": "inversa: [[-2, 3], [3, -4]]; solucao1: (2, -1); solucao2: (-8, 11)",
+      "exemplo_incorreto": "inversa: [[-2, 3], [3, -4]]; solucao1: (2, 1); solucao2: (-8, 11)"
+    },
+    {
+      "questao_id": "C04-C02",
+      "secao": "checagem",
+      "titulo": "Inversa 3x3 completa sem consulta",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [[-11, 2, 2], [-4, 0, 1], [6, -1, -1]]
+        },
+        "solucao": {
+          "tipo_resposta": "vetor",
+          "esperado": [-17, -5, 10]
+        }
+      },
+      "dica_erro": "Atencao ao sinal negativo em L3'' = [0, 0, -1 | -6, 1, 1] ao multiplicar por -1.",
+      "exemplo_correto": "inversa: [[-11, 2, 2], [-4, 0, 1], [6, -1, -1]]; solucao: (-17, -5, 10)",
+      "exemplo_incorreto": "inversa: [[-11, 2, 2], [-4, 0, 1], [-6, 1, 1]]; solucao: (-17, -5, 10)"
+    },
+    {
+      "questao_id": "C04-C03",
+      "secao": "checagem",
+      "titulo": "Reuso de inversa 3x3 (Lista 5 Ex. 23)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "solucao1": {
+          "tipo_resposta": "vetor",
+          "esperado": [11, -4, 0]
+        },
+        "solucao2": {
+          "tipo_resposta": "vetor",
+          "esperado": [1, 2, 3]
+        }
+      },
+      "dica_erro": "Multiplique cada linha de A^{-1} pela coluna B correspondente.",
+      "exemplo_correto": "solucao1: (11, -4, 0); solucao2: (1, 2, 3)",
+      "exemplo_incorreto": "solucao1: (11, 4, 0); solucao2: (1, 2, 3)"
+    }
+  ]
+}

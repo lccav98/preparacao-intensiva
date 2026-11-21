@@ -1,0 +1,120 @@
+{
+  "bloco": "C03",
+  "titulo": "Metodo de Gauss-Jordan na Matriz Ampliada (n x n)",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "questoes": [
+    {
+      "questao_id": "C03-E01",
+      "secao": "pratica",
+      "titulo": "Gauss-Jordan 3x3 completo (Lista 5 Ex. 2)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": {
+          "tipo_resposta": "vetor",
+          "esperado": [3, 2, 1]
+        }
+      },
+      "dica_erro": "Permute L13 para ter pivo 1 inicial e reduza ate [I | X].",
+      "exemplo_correto": "classificacao: SPD; solucao: (3, 2, 1)",
+      "exemplo_incorreto": "classificacao: SPI; solucao: (3, 2, 1)"
+    },
+    {
+      "questao_id": "C03-E02",
+      "secao": "pratica",
+      "titulo": "Gauss-Jordan com zeros na matriz (Lista 5 Ex. 5)",
+      "tipo_resposta": "vetor",
+      "esperado": [4, 3, -4],
+      "dica_erro": "Nao esqueca do 0 onde falta variavel (y na 1a equacao, z na 2a) ao montar a matriz ampliada.",
+      "exemplo_correto": "(4, 3, -4)",
+      "exemplo_incorreto": "(4, 3, 4)"
+    },
+    {
+      "questao_id": "C03-E03",
+      "secao": "pratica",
+      "titulo": "Caca ao bug no Gauss-Jordan",
+      "tipo_resposta": "vetor",
+      "esperado": [2, -5, 3],
+      "dica_erro": "Ao aplicar L3(-1/4) sobre [0 0 -4 | -12], (-12)*(-1/4) = +3.",
+      "exemplo_correto": "(2, -5, 3)",
+      "exemplo_incorreto": "(2, -5, -3)"
+    },
+    {
+      "questao_id": "C03-E04",
+      "secao": "pratica",
+      "titulo": "Deteccao de sistema 3x3 incompativel",
+      "tipo_resposta": "classificacao",
+      "esperado": "SI",
+      "sinonimos": ["si", "incompativel", "sistema incompativel"],
+      "dica_erro": "A 3a linha reduz para [0 0 0 | 2], indicando 0 = 2 (absurdo).",
+      "exemplo_correto": "SI",
+      "exemplo_incorreto": "SPI"
+    },
+    {
+      "questao_id": "C03-E05",
+      "secao": "pratica",
+      "titulo": "Gauss-Jordan com solucao fracionaria",
+      "tipo_resposta": "vetor",
+      "esperado": ["11/12", "1/4", "-1/12"],
+      "dica_erro": "Na 3a linha obtem-se -12z = 1 (z = -1/12); mantenha fracoes com denominador 12.",
+      "exemplo_correto": "(11/12, 1/4, -1/12)",
+      "exemplo_incorreto": "(11/12, 1/4, 1/12)"
+    },
+    {
+      "questao_id": "C03-C01",
+      "secao": "checagem",
+      "titulo": "Classificacao e solucao fracionaria independente",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": {
+          "tipo_resposta": "vetor",
+          "esperado": ["3/2", "-1/2", "1/2"]
+        }
+      },
+      "dica_erro": "Reduza ate [I | X]; atencao a L2(-1/4) sobre 4 que resulta -1.",
+      "exemplo_correto": "classificacao: SPD; solucao: (3/2, -1/2, 1/2)",
+      "exemplo_incorreto": "classificacao: SPD; solucao: (3/2, 1/2, 1/2)"
+    },
+    {
+      "questao_id": "C03-C02",
+      "secao": "checagem",
+      "titulo": "Sistema quadrado indeterminado (Lista 5 Ex. 3)",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao_z1": {
+          "tipo_resposta": "vetor",
+          "esperado": [-10, 2, 1]
+        }
+      },
+      "dica_erro": "Da forma reduzida x - (1/4)z = -41/4 e y + (13/8)z = 29/8, substitua z = 1.",
+      "exemplo_correto": "classificacao: SPI; solucao_z1: (-10, 2, 1)",
+      "exemplo_incorreto": "classificacao: SPD; solucao_z1: (-10, 2, 1)"
+    },
+    {
+      "questao_id": "C03-C03",
+      "secao": "checagem",
+      "titulo": "Sistema quadrado incompativel independente",
+      "tipo_resposta": "classificacao",
+      "esperado": "SI",
+      "sinonimos": ["si", "incompativel", "sistema incompativel"],
+      "dica_erro": "Note que a soma das duas primeiras equacoes da 3x - 5y + 5z = 11, conflitando com 9.",
+      "exemplo_correto": "SI",
+      "exemplo_incorreto": "SPD"
+    }
+  ]
+}

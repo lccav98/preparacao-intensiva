@@ -1,0 +1,154 @@
+{
+  "bloco": "D05",
+  "estagio": "D",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "casos_por_questao": {
+    "D05-E01": {
+      "questao_id": "D05-E01",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "-4/9"
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "obtuso",
+          "sinonimos": [
+            "angulo obtuso"
+          ]
+        }
+      },
+      "dica_erro": "u.v < 0 indica cosseno negativo e angulo obtuso.",
+      "exemplo_correto": "(a) -4/9 (b) obtuso",
+      "exemplo_incorreto": "(a) 4/9 (b) agudo"
+    },
+    "D05-E02": {
+      "questao_id": "D05-E02",
+      "modo": "pratica",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": [
+        "-1",
+        "3"
+      ],
+      "dica_erro": "a.b = 0 gera alpha^2 - 2*alpha - 3 = 0, que possui duas raizes reais.",
+      "exemplo_correto": "{-1, 3}",
+      "exemplo_incorreto": "3"
+    },
+    "D05-E03": {
+      "questao_id": "D05-E03",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "1/2"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "60"
+        }
+      },
+      "dica_erro": "No vertice B, os vetores devem partir de B: BA = A - B e BC = C - B.",
+      "exemplo_correto": "(a) 1/2 (b) 60°",
+      "exemplo_incorreto": "(a) -1/2 (b) 120°"
+    },
+    "D05-E04": {
+      "questao_id": "D05-E04",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [
+            "2/3",
+            "-1/3",
+            "2/3"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "1"
+        }
+      },
+      "dica_erro": "Os cossenos diretores formam exatamente o versor v_hat, e a soma de seus quadrados e sempre 1.",
+      "exemplo_correto": "(a) (2/3, -1/3, 2/3) (b) 1",
+      "exemplo_incorreto": "(a) (2/3, 1/3, 2/3) (b) 3"
+    },
+    "D05-E05": {
+      "questao_id": "D05-E05",
+      "modo": "pratica",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": [
+            "-1/2",
+            "1/2"
+          ]
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "60"
+        }
+      },
+      "dica_erro": "Use cos^2(alpha) + cos^2(beta) + cos^2(gamma) = 1: (1/2)^2 + (sqrt(2)/2)^2 + cos^2(gamma) = 1.",
+      "exemplo_correto": "(a) +-1/2 (b) 60°",
+      "exemplo_incorreto": "(a) 1/2 (b) 45°"
+    },
+    "D05-E06": {
+      "questao_id": "D05-E06",
+      "modo": "pratica",
+      "tipo_resposta": "numero",
+      "esperado": "1",
+      "dica_erro": "Ao elevar ao quadrado, surge m = -13/5, mas para m = -13/5 tem-se u.v < 0 (angulo 120°, raiz espuria).",
+      "exemplo_correto": "1",
+      "exemplo_incorreto": "-13/5"
+    },
+    "D05-C01": {
+      "questao_id": "D05-C01",
+      "modo": "checagem",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "1/2"
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": "60"
+        }
+      },
+      "dica_erro": "Use PQ = Q - P e PR = R - P partindo do vertice comum P.",
+      "exemplo_correto": "(a) 1/2 (b) 60°",
+      "exemplo_incorreto": "(a) sqrt(2)/2 (b) 45°"
+    },
+    "D05-C02": {
+      "questao_id": "D05-C02",
+      "modo": "checagem",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": [
+        "-1",
+        "0"
+      ],
+      "dica_erro": "De u.v = k^2 + k = 0 nao corte k; fatore k(k + 1) = 0.",
+      "exemplo_correto": "k = 0 ou k = -1",
+      "exemplo_incorreto": "k = -1"
+    },
+    "D05-C03": {
+      "questao_id": "D05-C03",
+      "modo": "checagem",
+      "tipo_resposta": "vetor",
+      "esperado": [
+        "4",
+        "2",
+        "-4"
+      ],
+      "dica_erro": "Como gamma e obtuso, cos(gamma) = -2/3; multiplique o versor por |w| = 6.",
+      "exemplo_correto": "(4, 2, -4)",
+      "exemplo_incorreto": "(4, 2, 4)"
+    }
+  }
+}

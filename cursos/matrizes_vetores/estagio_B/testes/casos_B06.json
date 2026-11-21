@@ -1,0 +1,100 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "B06",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "B06-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [[1, 0], [0, 1]]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "sim",
+          "sinonimos": ["sim", "inversa", "e inversa", "verdadeiro"]
+        }
+      },
+      "exemplo_correto": "(a) [[1, 0], [0, 1]] (b) sim",
+      "exemplo_incorreto": "(a) [[1, 1], [0, 1]] (b) nao",
+      "dica_erro": "Multiplique linha de A por coluna de B; como AB = I2 (e BA = I2), B e a inversa de A."
+    },
+    "B06-E02": {
+      "tipo_resposta": "matriz",
+      "esperado": [[3, -5], [-1, 2]],
+      "exemplo_correto": "[[3, -5], [-1, 2]]",
+      "exemplo_incorreto": "[[3, 5], [1, 2]]",
+      "dica_erro": "Resolva 2a+5c=1, a+3c=0 para a 1a coluna e 2b+5d=0, b+3d=1 para a 2a coluna."
+    },
+    "B06-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "m": {
+          "tipo_resposta": "numero",
+          "esperado": -5
+        },
+        "n": {
+          "tipo_resposta": "numero",
+          "esperado": 3
+        }
+      },
+      "exemplo_correto": "m: -5 ; n: 3",
+      "exemplo_incorreto": "m: 5 ; n: -3",
+      "dica_erro": "Na segunda coluna de AB = I2 temos 3m + 5n = 0 e m + 2n = 1."
+    },
+    "B06-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": 12
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": -2
+        }
+      },
+      "exemplo_correto": "(a) 12 (b) -2",
+      "exemplo_incorreto": "(a) 4 (b) 2",
+      "dica_erro": "Expandindo pela 1a coluna obtem-se det(M) = 3k + 6; singular quando 3k + 6 = 0."
+    },
+    "B06-E05": {
+      "tipo_resposta": "matriz",
+      "esperado": [[4, -1], [-1, "1/2"]],
+      "exemplo_correto": "[[4, -1], [-1, 1/2]]",
+      "exemplo_incorreto": "[[4, 1], [1, 1/2]]",
+      "dica_erro": "Multiplique A pelo resultado obtido e confira se resulta exatamente em [[1, 0], [0, 1]]."
+    },
+    "B06-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "x": {
+          "tipo_resposta": "numero",
+          "esperado": 1
+        },
+        "y": {
+          "tipo_resposta": "numero",
+          "esperado": -1
+        }
+      },
+      "exemplo_correto": "x: 1 ; y: -1",
+      "exemplo_incorreto": "x: 1 ; y: 1",
+      "dica_erro": "Da 1a coluna de AB = I2 tem-se 3x + 2y = 1 e x + y = 0."
+    },
+    "B06-C02": {
+      "tipo_resposta": "matriz",
+      "esperado": [["3/10", "1/10"], ["-2/5", "1/5"]],
+      "exemplo_correto": "[[3/10, 1/10], [-2/5, 1/5]]",
+      "exemplo_incorreto": "[[3/10, -1/10], [2/5, 1/5]]",
+      "dica_erro": "Atencao aos sinais em 2a - c = 1 e 4a + 3c = 0: c = -4/10 = -2/5."
+    },
+    "B06-C03": {
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-2", "1", "2"],
+      "exemplo_correto": "-2, 1, 2",
+      "exemplo_incorreto": "1, 2",
+      "dica_erro": "A equacao (k - 1)(k^2 - 4) = 0 possui tres raizes reais: k = 1, k = 2 e k = -2."
+    }
+  }
+}

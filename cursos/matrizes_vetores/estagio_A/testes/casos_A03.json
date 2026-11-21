@@ -1,0 +1,123 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "A03",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "A03-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, 3, 1],
+            [4, 2, 5]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [3, -9, 9],
+            [-2, 6, -9]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[1, 3, 1], [4, 2, 5]] (b) [[3, -9, 9], [-2, 6, -9]]",
+      "exemplo_incorreto": "(a) [[1, 3, 1], [4, 2, 5]] (b) [[3, 3, 1], [-2, 2, -9]]",
+      "dica_erro": "Na subtração A - B, lembre que subtrair um número negativo equivale a somar."
+    },
+    "A03-E02": {
+      "tipo_resposta": "matriz",
+      "esperado": [
+        [11, -32, 22],
+        [-23, 34, -13]
+      ],
+      "exemplo_correto": "[[11, -32, 22], [-23, 34, -13]]",
+      "exemplo_incorreto": "[[11, -32, 22], [-23, 22, -13]]",
+      "dica_erro": "Calcule 2A, -3B e 4C separadamente e só então some posição por posição."
+    },
+    "A03-E03": {
+      "tipo_resposta": "matriz",
+      "esperado": [
+        ["1", "3"],
+        ["-3", "13/3"]
+      ],
+      "exemplo_correto": "[[1, 3], [-3, 13/3]]",
+      "exemplo_incorreto": "[[0, 3], [-3, 10/3]]",
+      "dica_erro": "Some 1 na diagonal principal referente a I_2 e calcule 4 - 2/3 + 1 = 13/3."
+    },
+    "A03-E04": {
+      "tipo_resposta": "matriz",
+      "esperado": [
+        ["7/3", "3"],
+        ["-13/3", "14/3"]
+      ],
+      "exemplo_correto": "[[7/3, 3], [-13/3, 14/3]]",
+      "exemplo_incorreto": "[[7, 9], [-13, 14]]",
+      "dica_erro": "Isole X = (5B - I_2 - 2A)/3 e divida todos os elementos por 3."
+    },
+    "A03-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [2, 1],
+            [1, 3]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, -3],
+            [2, 1]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[2, 1], [1, 3]] (b) [[1, -3], [2, 1]]",
+      "exemplo_incorreto": "(a) [[2, 1], [1, 3]] (b) [[1, 3], [0, 1]]",
+      "dica_erro": "Some as duas equações para obter 3X = A + B e depois use Y = X - B."
+    },
+    "A03-C01": {
+      "tipo_resposta": "matriz",
+      "esperado": [
+        [11, -11, -7],
+        [-8, 19, -6]
+      ],
+      "exemplo_correto": "[[11, -11, -7], [-8, 19, -6]]",
+      "exemplo_incorreto": "[[3, -11, -7], [-8, 15, -6]]",
+      "dica_erro": "Em -2B, o elemento (1,1) de -2B é -2*(-2) = +4, e em (2,2) é -2*(-1) = +2."
+    },
+    "A03-C02": {
+      "tipo_resposta": "matriz",
+      "esperado": [
+        ["3", "-1"],
+        ["11/2", "9/2"]
+      ],
+      "exemplo_correto": "[[3, -1], [11/2, 9/2]]",
+      "exemplo_incorreto": "[[1, -1], [11/2, 5/2]]",
+      "dica_erro": "Some 4 apenas na diagonal principal ao incluir 4I_2 e depois divida por 2."
+    },
+    "A03-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, 2],
+            [1, 1]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [1, -3],
+            [0, 2]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[1, 2], [1, 1]] (b) [[1, -3], [0, 2]]",
+      "exemplo_incorreto": "(a) [[1, 2], [1, 1]] (b) [[1, 3], [0, 2]]",
+      "dica_erro": "Use 5X = A + 2B e depois substitua em Y = 2X - B."
+    }
+  }
+}

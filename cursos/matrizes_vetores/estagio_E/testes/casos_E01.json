@@ -1,0 +1,78 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "E01",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "E01-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "vetor", "esperado": ["-1", "3", "2", "3", "-4", "3"] },
+        "b": { "tipo_resposta": "texto", "esperado": "x = -1 + 3t, y = 3 - 4t, z = 2 + 3t" }
+      },
+      "exemplo_correto": "(a) (-1, 3, 2) + t(3, -4, 3) (b) x = -1 + 3t, y = 3 - 4t, z = 2 + 3t",
+      "exemplo_incorreto": "(a) (2, -1, 5) + t(3, -4, 3) (b) x = -1 + 3t, y = 3 - 4t, z = 2 + 3t",
+      "dica_erro": "O ponto de apoio eh o primeiro ponto A(-1, 3, 2) e o vetor diretor eh B - A = (3, -4, 3)."
+    },
+    "E01-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "(x-1)/2 = (y+2)/3 = (z-4)/(-1)" },
+        "b": { "tipo_resposta": "texto", "esperado": "y = 3/2 x - 7/2, z = -1/2 x + 9/2" }
+      },
+      "exemplo_correto": "(a) (x-1)/2 = (y+2)/3 = (z-4)/(-1) (b) y = 3/2 x - 7/2, z = -1/2 x + 9/2",
+      "exemplo_incorreto": "(a) (x+1)/2 = (y-2)/3 = (z+4)/(-1) (b) y = 3/2 x - 7/2, z = -1/2 x + 9/2",
+      "dica_erro": "Lembre de subtrair as coordenadas do ponto P(1, -2, 4): x - 1, y - (-2) = y + 2, z - 4."
+    },
+    "E01-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "vetor", "esperado": ["0", "1", "0"] },
+        "b": { "tipo_resposta": "texto", "esperado": "x = 3, z = -2" }
+      },
+      "exemplo_correto": "(a) (0, 1, 0) (b) x = 3, z = -2",
+      "exemplo_incorreto": "(a) (1, 0, 0) (b) x = 3, z = -2",
+      "dica_erro": "Paralela ao eixo y => vetor diretor (0, 1, 0). x e z sao constantes: x = 3, z = -2."
+    },
+    "E01-E04": {
+      "tipo_resposta": "texto",
+      "esperado": "nao",
+      "exemplo_correto": "nao",
+      "exemplo_incorreto": "sim t=1",
+      "dica_erro": "t deve ser o mesmo nas tres equacoes. Aqui t = 1 (x), t = 2 (y), t = 2 (z): nao e unico."
+    },
+    "E01-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "x = 2 - t, y = -3 + 2t, z = 5 + 3t" },
+        "b": { "tipo_resposta": "vetor_ponto", "esperado": ["2", "-3", "5"] }
+      },
+      "exemplo_correto": "(a) x = 2 - t, y = -3 + 2t, z = 5 + 3t (b) (2, -3, 5)",
+      "exemplo_incorreto": "(a) x = 2 + t, y = -3 + 2t, z = 5 + 3t (b) (2, -3, 5)",
+      "dica_erro": "Cada fracao igual a t: (x-2)/(-1) = t => x = 2 - t. O ponto de t=0 eh (2, -3, 5)."
+    },
+    "E01-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "vetor", "esperado": ["0", "4", "-3", "4", "-4", "4"] },
+        "b": { "tipo_resposta": "texto", "esperado": "y = 4 - x, z = x - 3" }
+      },
+      "exemplo_correto": "(a) (0, 4, -3) + t(4, -4, 4) (b) y = 4 - x, z = x - 3",
+      "exemplo_incorreto": "(a) (4, 0, 1) + t(4, -4, 4) (b) y = 4 - x, z = x - 3",
+      "dica_erro": "Ponto de apoio eh M(0, 4, -3) e vetor diretor eh N - M = (4, -4, 4)."
+    },
+    "E01-C02": {
+      "tipo_resposta": "texto",
+      "esperado": "nao",
+      "exemplo_correto": "nao",
+      "exemplo_incorreto": "sim t=3",
+      "dica_erro": "x: t=2, y: t=3, z: t=3. Nao e unico => nao pertence."
+    },
+    "E01-C03": {
+      "tipo_resposta": "texto",
+      "esperado": "y = -2/3 x + 13/3, z = 4/3 x - 26/3",
+      "exemplo_correto": "y = -2/3 x + 13/3, z = 4/3 x - 26/3",
+      "exemplo_incorreto": "y = -2/3 x + 13/3, z = 4/3 x - 20/3",
+      "dica_erro": "t = (x-5)/3. z = -2 + 4t = -2 + 4(x-5)/3 = (4x - 20 - 6)/3 = (4x - 26)/3."
+    }
+  }
+}

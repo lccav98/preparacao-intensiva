@@ -1,0 +1,153 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "G05",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "G05-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "vetor", "esperado": [1, 3] },
+        "b": { "tipo_resposta": "vetor", "esperado": [3, 3] },
+        "c": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": ["x"],
+            "expr": "x + 1",
+            "pontos_teste": [[-1]]
+          }
+        }
+      },
+      "exemplo_correto": "(a) (1, 3) (b) (3, 3) (c) x = -1",
+      "exemplo_incorreto": "(a) (1, 3) (b) (5, 3) (c) x = -3",
+      "dica_erro": "De (y-3)^2 = 8(x-1) temos V(1,3), 2p = 8 => p/2 = 2, foco F(3,3) e diretriz x = -1."
+    },
+    "G05-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "vetor", "esperado": [2, -3] },
+        "b": { "tipo_resposta": "numero", "esperado": "4/5" },
+        "c": { "tipo_resposta": "conjunto_vetores", "esperado": [[-2, -3], [6, -3]] }
+      },
+      "exemplo_correto": "(a) (2, -3) (b) 4/5 (c) [(-2, -3), (6, -3)]",
+      "exemplo_incorreto": "(a) (-2, 3) (b) 3/5 (c) [(2, -7), (2, 1)]",
+      "dica_erro": "Obtem-se (x-2)^2/25 + (y+3)^2/9 = 1, logo C(2,-3), a=5, b=3, c=4, e=4/5."
+    },
+    "G05-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": ["x", "y"],
+            "expr": "9*(x-3)^2 - 4*(y-1)^2 + 36",
+            "pontos_teste": [[3, 4], [3, -2], [5, 5.242640687119285], [1, -3.242640687119285]]
+          }
+        },
+        "b": { "tipo_resposta": "conjunto_vetores", "esperado": [[3, 4], [3, -2]] },
+        "c": { "tipo_resposta": "numero", "esperado": "sqrt(13)/3" }
+      },
+      "exemplo_correto": "(a) (y-1)^2/9 - (x-3)^2/4 = 1 (b) [(3, 4), (3, -2)] (c) sqrt(13)/3",
+      "exemplo_incorreto": "(a) (x-3)^2/4 - (y-1)^2/9 = 1 (b) [(5, 1), (1, 1)] (c) sqrt(13)/2",
+      "dica_erro": "Ao dividir 9(x-3)^2 - 4(y-1)^2 = -36 por -36, o termo positivo passa a ser (y-1)^2/9 (eixo real vertical, a=3)."
+    },
+    "G05-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "hiperboloide de uma folha",
+          "sinonimos": ["hiperboloide de 1 folha"]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "hiperboloide de duas folhas",
+          "sinonimos": ["hiperboloide de 2 folhas"]
+        },
+        "c": {
+          "tipo_resposta": "classificacao",
+          "esperado": "paraboloide hiperbolico",
+          "sinonimos": ["sela"]
+        }
+      },
+      "exemplo_correto": "(a) hiperboloide de uma folha (b) hiperboloide de duas folhas (c) paraboloide hiperbolico",
+      "exemplo_incorreto": "(a) hiperboloide de duas folhas (b) hiperboloide de uma folha (c) paraboloide eliptico",
+      "dica_erro": "1 sinal negativo com RHS=+1 e hiperboloide de 1 folha; 2 sinais negativos e de 2 folhas; z = x^2/4 - y^2/9 e paraboloide hiperbolico."
+    },
+    "G05-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "elipsoide",
+          "sinonimos": ["elipsoide centrado"]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "cone eliptico",
+          "sinonimos": ["cone"]
+        },
+        "c": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": ["x", "y"],
+            "expr": "2*x^2 - 3*x + 1 - y",
+            "pontos_teste": [[0, 1], [1, 0], [2, 3], [3, 10]]
+          }
+        }
+      },
+      "exemplo_correto": "(a) elipsoide (b) cone eliptico (c) y = 2*x^2 - 3*x + 1",
+      "exemplo_incorreto": "(a) elipsoide (b) paraboloide eliptico (c) y = x^2 - 2*x + 1",
+      "dica_erro": "z^2 = x^2/4 + y^2/9 e um cone eliptico; ajuste y = ax^2 + bx + c pelos 3 pontos."
+    },
+    "G05-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "vetor", "esperado": [-2, 3] },
+        "b": { "tipo_resposta": "numero", "esperado": "sqrt(3)/2" }
+      },
+      "exemplo_correto": "(a) (-2, 3) (b) sqrt(3)/2",
+      "exemplo_incorreto": "(a) (2, -3) (b) sqrt(3)/4",
+      "dica_erro": "Reduzindo obtem-se (x+2)^2/4 + (y-3)^2/16 = 1, logo C(-2,3), a=4, b=2 e c = 2*sqrt(3)."
+    },
+    "G05-C02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "equacao_algebrica",
+          "esperado": {
+            "variaveis": ["x", "y"],
+            "expr": "4*(x-1)^2 - 9*(y-2)^2 + 36",
+            "pontos_teste": [[1, 4], [1, 0], [4, 4.82842712474619], [-2, -0.8284271247461903]]
+          }
+        },
+        "b": { "tipo_resposta": "numero", "esperado": "sqrt(13)/2" }
+      },
+      "exemplo_correto": "(a) (y-2)^2/4 - (x-1)^2/9 = 1 (b) sqrt(13)/2",
+      "exemplo_incorreto": "(a) (x-1)^2/9 - (y-2)^2/4 = 1 (b) sqrt(13)/3",
+      "dica_erro": "Divida 4(x-1)^2 - 9(y-2)^2 = -36 por -36; como o termo positivo fica em y, a = 2 e c = sqrt(13)."
+    },
+    "G05-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "classificacao",
+          "esperado": "paraboloide eliptico",
+          "sinonimos": ["paraboloide"]
+        },
+        "b": {
+          "tipo_resposta": "classificacao",
+          "esperado": "cilindro eliptico",
+          "sinonimos": ["superficie cilindrica eliptica"]
+        },
+        "c": {
+          "tipo_resposta": "classificacao",
+          "esperado": "hiperboloide de duas folhas",
+          "sinonimos": ["hiperboloide de 2 folhas"]
+        }
+      },
+      "exemplo_correto": "(a) paraboloide eliptico (b) cilindro eliptico (c) hiperboloide de duas folhas",
+      "exemplo_incorreto": "(a) cone eliptico (b) elipsoide (c) hiperboloide de uma folha",
+      "dica_erro": "z ausente em x^2/4 + y^2/9 = 1 define cilindro eliptico; 2 negativos com RHS=+1 define hiperboloide de duas folhas."
+    }
+  }
+}

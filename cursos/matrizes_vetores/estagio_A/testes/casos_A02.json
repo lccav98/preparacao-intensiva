@@ -1,0 +1,112 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "A02",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "A02-E01": {
+      "tipo_resposta": "vetor",
+      "esperado": [4, -6],
+      "exemplo_correto": "(4, -6)",
+      "exemplo_incorreto": "(4, 6)",
+      "dica_erro": "Em y + 4 = -2, passe +4 subtraindo para obter y = -6."
+    },
+    "A02-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-5", "5"]
+        },
+        "b": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-4", "4"]
+        }
+      },
+      "exemplo_correto": "(a) m = +-5 (b) n = +-4",
+      "exemplo_incorreto": "(a) m = 5 (b) n = 4",
+      "dica_erro": "Toda equação m^2 = c (c > 0) possui duas raízes reais: +sqrt(c) e -sqrt(c)."
+    },
+    "A02-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": 6
+        },
+        "b": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["1", "5"]
+        }
+      },
+      "exemplo_correto": "(a) 6 (b) 1, 5",
+      "exemplo_incorreto": "(a) 6 (b) 5",
+      "dica_erro": "Fatore k^2 - 12k + 36 = (k - 6)^2 = 0 (raiz dupla 6) e p^2 - 6p + 5 = (p - 1)(p - 5) = 0 (duas raízes)."
+    },
+    "A02-E04": {
+      "tipo_resposta": "vetor",
+      "esperado": [4, 1],
+      "exemplo_correto": "(4, 1)",
+      "exemplo_incorreto": "(1, 4)",
+      "dica_erro": "Some x + y = 5 com 2x - y = 7 para eliminar y primeiro."
+    },
+    "A02-E05": {
+      "tipo_resposta": "vetor",
+      "esperado": ["1/3", "2/3", "2/9"],
+      "exemplo_correto": "(1/3, 2/3, 2/9)",
+      "exemplo_incorreto": "(1/3, 1, 2/3)",
+      "dica_erro": "Calcule m21 = 1 e m22 = 2/3 antes de igualar a b + 1/3 e 3c."
+    },
+    "A02-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-7", "7"]
+        },
+        "b": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-3", "3"]
+        }
+      },
+      "exemplo_correto": "(a) p = +-7 (b) q = +-3",
+      "exemplo_incorreto": "(a) p = 7 (b) q = +-3",
+      "dica_erro": "Não omita o sinal negativo em p^2 = 49 e q^2 = 9."
+    },
+    "A02-C02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "vetor",
+          "esperado": [2, 3]
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": 4
+        }
+      },
+      "exemplo_correto": "(a) (2, 3) (b) 4",
+      "exemplo_incorreto": "(a) (3, 2) (b) 4",
+      "dica_erro": "Resolva 2a - b = 1 e a + 3b = 11 por substituição e fatore r^2 - 8r + 16 = (r - 4)^2 = 0."
+    },
+    "A02-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": "1/2"
+        },
+        "b": {
+          "tipo_resposta": "conjunto_numeros",
+          "esperado": ["-3/2", "3/2"]
+        },
+        "c": {
+          "tipo_resposta": "numero",
+          "esperado": 0
+        }
+      },
+      "exemplo_correto": "(a) 1/2 (b) y = +-3/2 (c) 0",
+      "exemplo_incorreto": "(a) 1/2 (b) y = 3/2 (c) 0",
+      "dica_erro": "Lembre que I_2 = [[1, 0], [0, 1]]: iguale a diagonal principal a 1 e a posição (1,2) a 0."
+    }
+  }
+}

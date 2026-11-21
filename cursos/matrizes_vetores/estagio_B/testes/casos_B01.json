@@ -1,0 +1,81 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "B01",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "B01-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": 22
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": 9
+        }
+      },
+      "exemplo_correto": "(a) 22 (b) 9",
+      "exemplo_incorreto": "(a) 2 (b) -3",
+      "dica_erro": "Lembre-se: diagonal principal menos diagonal secundaria; com elementos negativos, a subtracao vira soma."
+    },
+    "B01-E02": {
+      "tipo_resposta": "numero",
+      "esperado": 77,
+      "exemplo_correto": "77",
+      "exemplo_incorreto": "53",
+      "dica_erro": "No desenvolvimento pela 1a linha, o segundo termo leva sinal negativo: -(-2) = +2."
+    },
+    "B01-E03": {
+      "tipo_resposta": "numero",
+      "esperado": -9,
+      "exemplo_correto": "-9",
+      "exemplo_incorreto": "27",
+      "dica_erro": "Confira os sinais de 1 - (-8) = 9 no terceiro menor e o sinal de a_13 = -2."
+    },
+    "B01-E04": {
+      "tipo_resposta": "numero",
+      "esperado": 1,
+      "exemplo_correto": "1",
+      "exemplo_incorreto": "-7",
+      "dica_erro": "Verifique os sinais ao subtrair produtos negativos dentro de cada determinante 2x2."
+    },
+    "B01-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "numero",
+          "esperado": -12
+        },
+        "b": {
+          "tipo_resposta": "numero",
+          "esperado": 18
+        }
+      },
+      "exemplo_correto": "(a) -12 (b) 18",
+      "exemplo_incorreto": "(a) -12 (b) -42",
+      "dica_erro": "Confira o sinal de det(B) = -15 e lembre-se de subtrair 2*det(B) = -30 (o que soma +30)."
+    },
+    "B01-C01": {
+      "tipo_resposta": "numero",
+      "esperado": 2,
+      "exemplo_correto": "2",
+      "exemplo_incorreto": "4",
+      "dica_erro": "Multiplique (-3/2)*(-2) = 3 e subtraia 4*(1/4) = 1."
+    },
+    "B01-C02": {
+      "tipo_resposta": "numero",
+      "esperado": -40,
+      "exemplo_correto": "-40",
+      "exemplo_incorreto": "-16",
+      "dica_erro": "Atencao ao segundo termo -(-3)*(2-6) = +3*(-4) = -12 e ao terceiro termo +1*(0-12) = -12."
+    },
+    "B01-C03": {
+      "tipo_resposta": "numero",
+      "esperado": -7,
+      "exemplo_correto": "-7",
+      "exemplo_incorreto": "-63",
+      "dica_erro": "O segundo elemento e -4, logo o sinal do cofator fica -(-4) = +4 multiplicado por (4 - (-3)) = 7."
+    }
+  }
+}

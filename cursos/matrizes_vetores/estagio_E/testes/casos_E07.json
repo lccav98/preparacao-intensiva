@@ -1,0 +1,67 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "E07",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "E07-E01": {
+      "tipo_resposta": "numero",
+      "esperado": "sqrt(89)",
+      "exemplo_correto": "sqrt(89)",
+      "exemplo_incorreto": "9",
+      "dica_erro": "d = sqrt(3^2 + 4^2 + 8^2) = sqrt(9+16+64) = sqrt(89)."
+    },
+    "E07-E02": {
+      "tipo_resposta": "texto",
+      "esperado": "sqrt(26)/3",
+      "exemplo_correto": "sqrt(26)/3",
+      "exemplo_incorreto": "sqrt(26)",
+      "dica_erro": "d = |v x (P1P0)| / |v| = sqrt(26)/3."
+    },
+    "E07-E03": {
+      "tipo_resposta": "numero",
+      "esperado": 5,
+      "exemplo_correto": "5",
+      "exemplo_incorreto": "12",
+      "dica_erro": "Distancia ao eixo z = sqrt(x^2 + y^2) = sqrt(9 + 16) = 5."
+    },
+    "E07-E04": {
+      "tipo_resposta": "numero",
+      "esperado": 0,
+      "exemplo_correto": "0",
+      "exemplo_incorreto": "1",
+      "dica_erro": "O ponto pertence a reta (produto vetorial eh zero). Distancia = 0."
+    },
+    "E07-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "numero", "esperado": 5 },
+        "b": { "tipo_resposta": "texto", "esperado": "sqrt(2)" }
+      },
+      "exemplo_correto": "(a) 5 (b) sqrt(2)",
+      "exemplo_incorreto": "(a) 5 (b) 2",
+      "dica_erro": "(a) d(P1,P2) = sqrt(3^2+4^2) = 5. (b) d(P1,r) = sqrt(2)."
+    },
+    "E07-C01": {
+      "tipo_resposta": "texto",
+      "esperado": "sqrt(34)",
+      "exemplo_correto": "sqrt(34)",
+      "exemplo_incorreto": "sqrt(30)",
+      "dica_erro": "d = sqrt(3^2 + (-3)^2 + (-4)^2) = sqrt(9+9+16) = sqrt(34)."
+    },
+    "E07-C02": {
+      "tipo_resposta": "texto",
+      "esperado": "3sqrt(2)/2",
+      "sinonimos": [["3/sqrt(2)"]],
+      "exemplo_correto": "3sqrt(2)/2",
+      "exemplo_incorreto": "3/2",
+      "dica_erro": "d = 3/sqrt(2) = 3*sqrt(2)/2 apos racionalizar."
+    },
+    "E07-C03": {
+      "tipo_resposta": "numero",
+      "esperado": 13,
+      "exemplo_correto": "13",
+      "exemplo_incorreto": "12",
+      "dica_erro": "Distancia ao eixo y = sqrt(x^2 + z^2) = sqrt(25 + 144) = sqrt(169) = 13."
+    }
+  }
+}

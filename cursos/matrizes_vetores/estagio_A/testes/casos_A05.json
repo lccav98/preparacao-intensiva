@@ -1,0 +1,155 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "A05",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "A05-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [4, 3],
+            [3, 12]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [14, -1],
+            [11, 2]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[4, 3], [3, 12]] (b) [[14, -1], [11, 2]]",
+      "exemplo_incorreto": "(a) [[4, 3], [3, 12]] (b) [[4, 3], [3, 12]]",
+      "dica_erro": "Na multiplicação de matrizes, em geral AB != BA; recalcule BA usando linhas de B por colunas de A."
+    },
+    "A05-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 0],
+            [0, 0]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [-10, 20],
+            [-5, 10]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[0, 0], [0, 0]] (b) [[-10, 20], [-5, 10]]",
+      "exemplo_incorreto": "(a) [[0, 0], [0, 0]] (b) [[0, 0], [0, 0]]",
+      "dica_erro": "AB = O nao implica BA = O; efetue explicitamente linhas de B por colunas de A."
+    },
+    "A05-E03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [3, -1],
+            [4, 6],
+            [-7, -5]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [5, -3],
+            [-8, 18],
+            [3, -15]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[3, -1], [4, 6], [-7, -5]] (b) [[5, -3], [-8, 18], [3, -15]]",
+      "exemplo_incorreto": "(a) [[3, -1], [4, 6], [-7, -5]] (b) [[5, -3], [-8, 18], [3, 15]]",
+      "dica_erro": "Em (JC)_32, calcule -7*0 + (-5)*3 = -15."
+    },
+    "A05-E04": {
+      "tipo_resposta": "vetor",
+      "esperado": [3, 2],
+      "exemplo_correto": "(3, 2)",
+      "exemplo_incorreto": "(2, 3)",
+      "dica_erro": "Compare a segunda linha de AB ([x, y]) com a segunda linha de BA ([3, 2])."
+    },
+    "A05-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [12, 3],
+            [9, 3]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [18, -1],
+            [3, -3]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[12, 3], [9, 3]] (b) [[18, -1], [3, -3]]",
+      "exemplo_incorreto": "(a) [[18, -1], [3, -3]] (b) [[18, -1], [3, -3]]",
+      "dica_erro": "Em matrizes, (A+B)^2 = A^2 + AB + BA + B^2, diferente de A^2 + 2AB + B^2 pois AB != BA."
+    },
+    "A05-C01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [6, 14],
+            [8, 22]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [2, -4],
+            [-8, 26]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[6, 14], [8, 22]] (b) [[2, -4], [-8, 26]]",
+      "exemplo_incorreto": "(a) [[6, 14], [8, 22]] (b) [[2, 4], [-8, 26]]",
+      "dica_erro": "Atencao aos sinais negativos: em (BA)_12, 0*3 + (-1)*4 = -4."
+    },
+    "A05-C02": {
+      "tipo_resposta": "vetor",
+      "esperado": [5, 2],
+      "exemplo_correto": "(5, 2)",
+      "exemplo_incorreto": "(2, 5)",
+      "dica_erro": "Iguale 2x + y = 2x + 2 para achar y = 2 e 7 = x + 2 para achar x = 5."
+    },
+    "A05-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [0, 0],
+            [0, 0]
+          ]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [
+            [3, -2],
+            [-6, 4]
+          ]
+        }
+      },
+      "exemplo_correto": "(a) [[0, 0], [0, 0]] (b) [[3, -2], [-6, 4]]",
+      "exemplo_incorreto": "(a) [[0, 0], [0, 0]] (b) [[3, 2], [-6, 4]]",
+      "dica_erro": "Use A(B + C) = AB + AC = O + AC = AC."
+    }
+  }
+}

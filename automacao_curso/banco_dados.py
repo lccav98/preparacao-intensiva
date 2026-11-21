@@ -442,6 +442,46 @@ def redefinir_pin_aluno(aluno_id: int, nova_senha: str = "") -> Optional[Dict[st
         return _sanitizar_aluno(dict(row), incluir_pin=True) if row else None
 
 
+def excluir_aluno(aluno_id: int) -> Optional[Dict[str, Any]]:
+    """Exclui permanentemente um aluno e todos os seus registros vinculados em transacao unica."""
+    inicializar_banco()
+    with conectar() as conn:
+        row = conn.execute("SELECT * FROM alunos WHERE id = ?", (aluno_id,)).fetchone()
+        if not row:
+            return None
+        sub_ids = [
+            int(r["id"])
+            for r in conn.execute(
+                "SELECT id FROM submissoes WHERE aluno_id = ?", (aluno_id,)
+            ).fetchall()
+        ]
+        itens_rem = 0
+        if sub_ids:
+            ph = ",".join("?" for _ in sub_ids)
+            cur_it = conn.execute(
+                f"DELETE FROM itens_submissao WHERE submissao_id IN ({ph})", sub_ids
+            )
+            itens_rem = cur_it.rowcount
+        sub_rem = conn.execute("DELETE FROM submissoes WHERE aluno_id = ?", (aluno_id,)).rowcount
+        prov_rem = conn.execute(
+            "DELETE FROM provas_emitidas WHERE aluno_id = ?", (aluno_id,)
+        ).rowcount
+        mat_rem = conn.execute("DELETE FROM matriculas WHERE aluno_id = ?", (aluno_id,)).rowcount
+        conn.execute("DELETE FROM alunos WHERE id = ?", (aluno_id,))
+        conn.commit()
+        return {
+            "id": int(row["id"]),
+            "nome": row["nome"],
+            "email": row["email"],
+            "removidos": {
+                "matriculas": mat_rem,
+                "provas_emitidas": prov_rem,
+                "submissoes": sub_rem,
+                "itens_submissao": itens_rem,
+            },
+        }
+
+
 def listar_alunos(incluir_pin: bool = False, disciplina: Optional[str] = None) -> List[Dict[str, Any]]:
     inicializar_banco()
     with conectar() as conn:

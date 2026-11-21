@@ -1,0 +1,96 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "B08",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "B08-E01": {
+      "tipo_resposta": "classificacao",
+      "esperado": "X = D^{-1}BC",
+      "sinonimos": [
+        "X = D^{-1}BC",
+        "X = D^(-1)BC",
+        "X = D^{-1} B C",
+        "X = D^(-1) B C",
+        "D^{-1}BC",
+        "D^(-1)BC",
+        "D^{-1} B C",
+        "D^(-1) B C",
+        "X = D^{-1}*B*C",
+        "X = D^(-1)*B*C"
+      ],
+      "exemplo_correto": "X = D^{-1}BC",
+      "exemplo_incorreto": "X = BCD^{-1}",
+      "dica_erro": "Multiplique primeiro por A^{-1} a esquerda (DX = BC) e depois por D^{-1} tambem a esquerda (X = D^{-1}BC)."
+    },
+    "B08-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": {
+          "tipo_resposta": "matriz",
+          "esperado": [[4, -5], [-4, 8]]
+        },
+        "b": {
+          "tipo_resposta": "matriz",
+          "esperado": [[6, -8], [-3, 6]]
+        }
+      },
+      "exemplo_correto": "(a) [[4, -5], [-4, 8]] (b) [[6, -8], [-3, 6]]",
+      "exemplo_incorreto": "(a) [[4, -5], [-4, 8]] (b) [[4, -5], [-4, 8]]",
+      "dica_erro": "Como o produto matricial nao comuta, AX = B da X = A^{-1}B, enquanto YA = B da Y = B A^{-1}."
+    },
+    "B08-E03": {
+      "tipo_resposta": "matriz",
+      "esperado": [[2, -6], [6, -4]],
+      "exemplo_correto": "[[2, -6], [6, -4]]",
+      "exemplo_incorreto": "[[5, -3], [6, 2]]",
+      "dica_erro": "Transponha ambos os lados para obter AX = B^T e multiplique a esquerda por A^{-1}: X = A^{-1} * B^T."
+    },
+    "B08-E04": {
+      "tipo_resposta": "matriz",
+      "esperado": [[7, -9], [2, -2]],
+      "exemplo_correto": "[[7, -9], [2, -2]]",
+      "exemplo_incorreto": "[[1, -2], [0, 4]]",
+      "dica_erro": "De D^{-1} X D = A segue X = D * A * D^{-1} (D a esquerda e D^{-1} a direita)."
+    },
+    "B08-E05": {
+      "tipo_resposta": "matriz",
+      "esperado": [["5/2", -1], ["-1/2", 2]],
+      "exemplo_correto": "[[5/2, -1], [-1/2, 2]]",
+      "exemplo_incorreto": "[[11/4, 3/2], [-1/4, 2]]",
+      "dica_erro": "Fatore (A+B)X = C e multiplique pela inversa de (A+B) a esquerda: X = (A+B)^{-1} * C."
+    },
+    "B08-C01": {
+      "tipo_resposta": "classificacao",
+      "esperado": "X = DACD^{-1}",
+      "sinonimos": [
+        "X = DACD^{-1}",
+        "X = DACD^(-1)",
+        "X = D A C D^{-1}",
+        "X = D A C D^(-1)",
+        "DACD^{-1}",
+        "DACD^(-1)",
+        "D A C D^{-1}",
+        "D A C D^(-1)",
+        "X = D*A*C*D^{-1}",
+        "X = D*A*C*D^(-1)"
+      ],
+      "exemplo_correto": "X = DACD^{-1}",
+      "exemplo_incorreto": "X = D^{-1}ACD",
+      "dica_erro": "Multiplique por D a esquerda para cancelar D^{-1} e por D^{-1} a direita para cancelar D."
+    },
+    "B08-C02": {
+      "tipo_resposta": "matriz",
+      "esperado": [["1/2", -1], ["3/2", 2]],
+      "exemplo_correto": "[[1/2, -1], [3/2, 2]]",
+      "exemplo_incorreto": "[[1/2, 1], [-3/2, 2]]",
+      "dica_erro": "Reescreva AX - 2IX = B, logo (A - 2I)X = B, e multiplique pela inversa de (A - 2I) a esquerda."
+    },
+    "B08-C03": {
+      "tipo_resposta": "matriz",
+      "esperado": [[-2, -4], [13, -2]],
+      "exemplo_correto": "[[-2, -4], [13, -2]]",
+      "exemplo_incorreto": "[[4, 8], [-5, 4]]",
+      "dica_erro": "Lembre-se de transpor B antes de multiplicar por A^{-1} a esquerda: X = A^{-1} * B^T."
+    }
+  }
+}

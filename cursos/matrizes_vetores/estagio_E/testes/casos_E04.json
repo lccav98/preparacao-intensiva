@@ -1,0 +1,63 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "E04",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "E04-E01": {
+      "tipo_resposta": "texto",
+      "esperado": "x + 2y - 2z + 6 = 0",
+      "exemplo_correto": "x + 2y - 2z + 6 = 0",
+      "exemplo_incorreto": "x + 2y - 2z - 6 = 0",
+      "dica_erro": "1(x-2) + 2(y+1) - 2(z-3) = 0 => x + 2y - 2z + 6 = 0."
+    },
+    "E04-E02": {
+      "tipo_resposta": "texto",
+      "esperado": "x - y + 1 = 0",
+      "exemplo_correto": "x - y + 1 = 0",
+      "exemplo_incorreto": "x - y - 1 = 0",
+      "dica_erro": "Normal eh (3, -3, 0) ~ (1, -1, 0). Plano: (x-1) - (y-2) = 0 => x - y + 1 = 0."
+    },
+    "E04-E03": {
+      "tipo_resposta": "texto",
+      "esperado": "x + y + z - 12 = 0",
+      "exemplo_correto": "x + y + z - 12 = 0",
+      "exemplo_incorreto": "x + y + z - 10 = 0",
+      "dica_erro": "Ponto medio (3, 4, 5), normal (1, 1, 1). (x-3)+(y-4)+(z-5)=0 => x+y+z-12=0."
+    },
+    "E04-E04": {
+      "tipo_resposta": "texto",
+      "esperado": "x - y + z - 1 = 0",
+      "exemplo_correto": "x - y + z - 1 = 0",
+      "exemplo_incorreto": "x + y + z - 1 = 0",
+      "dica_erro": "Normal eh (1, 1, 0)x(-1, 0, 1) = (1, -1, 1). Plano: (x-1) - y + z = 0."
+    },
+    "E04-E05": {
+      "tipo_resposta": "texto",
+      "esperado": "x = 3 + h, y = 2h + 3t, z = t",
+      "exemplo_correto": "x = 3 + h, y = 2h + 3t, z = t",
+      "exemplo_incorreto": "x = 3 + h, y = h + t, z = t",
+      "dica_erro": "Diretores no plano: (1, 2, 0) e (0, 3, 1), ponto (3, 0, 0)."
+    },
+    "E04-C01": {
+      "tipo_resposta": "texto",
+      "esperado": "2x + y + z - 1 = 0",
+      "exemplo_correto": "2x + y + z - 1 = 0",
+      "exemplo_incorreto": "2x + y + z + 1 = 0",
+      "dica_erro": "2(x-1/2) + (y-1) + (z+1) = 0 => 2x + y + z - 1 = 0."
+    },
+    "E04-C02": {
+      "tipo_resposta": "texto",
+      "esperado": "nao",
+      "exemplo_correto": "nao",
+      "exemplo_incorreto": "sim",
+      "dica_erro": "3(2) - 2(1) + 2 - 5 = 1 != 0. Nao pertence."
+    },
+    "E04-C03": {
+      "tipo_resposta": "texto",
+      "esperado": "x - y + z = 0",
+      "exemplo_correto": "x - y + z = 0",
+      "exemplo_incorreto": "x - y + z + 1 = 0",
+      "dica_erro": "Normal (1, -1, 1), ponto origem (0,0,0). x - y + z = 0."
+    }
+  }
+}

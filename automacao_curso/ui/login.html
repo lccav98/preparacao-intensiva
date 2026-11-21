@@ -240,7 +240,7 @@
           Sou Aluno
         </button>
         <button type="button" class="tab-btn" id="tab-admin" aria-pressed="false" onclick="selecionarPerfil('admin')">
-          Sou Professora
+          Sou Professor
         </button>
       </div>
 
@@ -480,6 +480,7 @@
             perfil: document.getElementById("perfil-input").value,
             email: document.getElementById("email").value.trim(),
             senha: document.getElementById("senha").value,
+            next: new URLSearchParams(window.location.search).get("next") || "",
           }),
         });
         const data = await res.json();

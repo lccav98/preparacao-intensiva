@@ -1,0 +1,76 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "F06",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "F06-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "(2, -3)" },
+        "b": { "tipo_resposta": "texto", "esperado": "(7, -3) e (-3, -3)" },
+        "c": { "tipo_resposta": "texto", "esperado": "y+3 = +-3/4(x-2)" }
+      },
+      "exemplo_correto": "(a) (2, -3) (b) (7, -3) e (-3, -3) (c) y+3 = +-3/4(x-2)",
+      "exemplo_incorreto": "(a) (2, -3) (b) (2, 2) e (2, -8) (c) y+3 = +-3/4(x-2)",
+      "dica_erro": "Eixo horizontal (a²=16 sob x). Focos (2±5, -3). c=√(16+9)=5."
+    },
+    "F06-E02": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "hipérbole" },
+        "b": { "tipo_resposta": "texto", "esperado": "(y-2)²/4 - (x-1)²/9 = 1" }
+      },
+      "exemplo_correto": "(a) hipérbole (b) (y-2)²/4 - (x-1)²/9 = 1",
+      "exemplo_incorreto": "(a) elipse (b) (y-2)²/4 - (x-1)²/9 = 1",
+      "dica_erro": "Lado direito negativo → multiplicar por -1. Termo positivo sob (y-2)² → hipérbole vertical."
+    },
+    "F06-E03": {
+      "tipo_resposta": "texto",
+      "esperado": "elipse",
+      "exemplo_correto": "elipse",
+      "exemplo_incorreto": "circunferencia",
+      "dica_erro": "A=4, C=9, mesmo sinal, A≠C → elipse."
+    },
+    "F06-E04": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "(-1, 4)" },
+        "b": { "tipo_resposta": "texto", "esperado": "(-1, 4+-√41)" }
+      },
+      "exemplo_correto": "(a) (-1, 4) (b) (-1, 4+-√41)",
+      "exemplo_incorreto": "(a) (-1, 4) (b) (4, -1+-√41)",
+      "dica_erro": "Eixo vertical (a²=25 sob y). Focos (-1, 4±√41). c=√(25+16)=√41."
+    },
+    "F06-E05": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "a": { "tipo_resposta": "texto", "esperado": "(y-2)²/1 - (x-1)²/4 = 1" },
+        "b": { "tipo_resposta": "texto", "esperado": "hipérbole" }
+      },
+      "exemplo_correto": "(a) (y-2)²/1 - (x-1)²/4 = 1 (b) hipérbole",
+      "exemplo_incorreto": "(a) (x-1)²/4 - (y-2)²/1 = 1 (b) hipérbole",
+      "dica_erro": "Lado direito -4 → multiplicar por -1. Termo positivo sob (y-2)²."
+    },
+    "F06-C01": {
+      "tipo_resposta": "texto",
+      "esperado": "hiperbole",
+      "exemplo_correto": "hiperbole",
+      "exemplo_incorreto": "elipse",
+      "dica_erro": "A=1, C=-1, sinais opostos → hipérbole."
+    },
+    "F06-C02": {
+      "tipo_resposta": "texto",
+      "esperado": "(y-3)²/9 - (x+2)²/4 = 1",
+      "exemplo_correto": "(y-3)²/9 - (x+2)²/4 = 1",
+      "exemplo_incorreto": "(x+2)²/4 - (y-3)²/9 = 1",
+      "dica_erro": "Lado direito -36 → multiplicar por -1. Termo positivo sob (y-3)²."
+    },
+    "F06-C03": {
+      "tipo_resposta": "texto",
+      "esperado": "(10, -2) e (0, -2)",
+      "exemplo_correto": "(10, -2) e (0, -2)",
+      "exemplo_incorreto": "(5, 3) e (5, -7)",
+      "dica_erro": "Eixo horizontal. c=5. Focos (5±5, -2) = (10, -2) e (0, -2)."
+    }
+  }
+}

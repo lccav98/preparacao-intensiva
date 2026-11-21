@@ -1,0 +1,133 @@
+{
+  "bloco": "C08",
+  "titulo": "Revisao Cumulativa do Estagio C",
+  "disciplina": "MAT121",
+  "tolerancia_numerica": 0.001,
+  "questoes": [
+    {
+      "questao_id": "C08-E01",
+      "secao": "pratica",
+      "titulo": "Gauss-Jordan 3x3 com fracoes",
+      "tipo_resposta": "vetor",
+      "esperado": ["-11/8", "17/8", 3],
+      "dica_erro": "Permute L12 para usar pivo 1 e zere ate [I | X]; resultam -11/8, 17/8 e 3.",
+      "exemplo_correto": "(-11/8, 17/8, 3)",
+      "exemplo_incorreto": "(11/8, 17/8, 3)"
+    },
+    {
+      "questao_id": "C08-E02",
+      "secao": "pratica",
+      "titulo": "Inversa 3x3 e solucao de dois vetores B",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [["2/3", "-2/3", "1/3"], ["1/3", "2/3", "-1/3"], ["-1/3", "1/3", "1/3"]]
+        },
+        "solucao1": { "tipo_resposta": "vetor", "esperado": [1, 2, 3] },
+        "solucao2": { "tipo_resposta": "vetor", "esperado": ["4/3", "-1/3", "1/3"] }
+      },
+      "dica_erro": "Confira A * A^{-1} = I_3 antes de multiplicar por B^{(1)} e B^{(2)}.",
+      "exemplo_correto": "inversa: [[2/3, -2/3, 1/3], [1/3, 2/3, -1/3], [-1/3, 1/3, 1/3]]; solucao1: (1, 2, 3); solucao2: (4/3, -1/3, 1/3)",
+      "exemplo_incorreto": "inversa: [[2/3, -2/3, 1/3], [1/3, 2/3, -1/3], [-1/3, 1/3, 1/3]]; solucao1: (1, 2, 3); solucao2: (4/3, 1/3, 1/3)"
+    },
+    {
+      "questao_id": "C08-E03",
+      "secao": "pratica",
+      "titulo": "Sistema sobredeterminado 4x3 e posto",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 3 },
+        "cv": { "tipo_resposta": "numero", "esperado": 3 },
+        "g": { "tipo_resposta": "numero", "esperado": 0 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPD",
+          "sinonimos": ["spd", "compativel e determinado", "sistema compativel e determinado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": ["11/3", 0, "2/3"] }
+      },
+      "dica_erro": "Uma linha zera e as tres restantes formam I_3 na submatriz V (C=3=n, g=0).",
+      "exemplo_correto": "ca: 3; cv: 3; g: 0; classificacao: SPD; solucao: (11/3, 0, 2/3)",
+      "exemplo_incorreto": "ca: 4; cv: 3; g: 0; classificacao: SI; solucao: (11/3, 0, 2/3)"
+    },
+    {
+      "questao_id": "C08-E04",
+      "secao": "pratica",
+      "titulo": "Homogeneo simetrico 3x3 com parametro k",
+      "tipo_resposta": "conjunto_numeros",
+      "esperado": ["-2", "1"],
+      "dica_erro": "det(A) = (k - 1)^2 * (k + 2) = 0 possui duas raizes reais distintas: -2 e 1.",
+      "exemplo_correto": "k = -2 ou k = 1",
+      "exemplo_incorreto": "k = 1"
+    },
+    {
+      "questao_id": "C08-E05",
+      "secao": "pratica",
+      "titulo": "Condicao de compatibilidade simbolica sobre a, b, c",
+      "tipo_resposta": "equacao_algebrica",
+      "esperado": {
+        "variaveis": ["a", "b", "c"],
+        "expr": "2*a + b - c",
+        "pontos_teste": [
+          [1, 3, 5],
+          [0, 2, 2],
+          [2, -1, 3],
+          [-1, 4, 2]
+        ]
+      },
+      "dica_erro": "Como 2*L1 + L2 = (4, 1, -3) nos coeficientes, a compatibilidade exige 2a + b = c.",
+      "exemplo_correto": "2a + b - c = 0",
+      "exemplo_incorreto": "2a - b - c = 0"
+    },
+    {
+      "questao_id": "C08-C01",
+      "secao": "checagem",
+      "titulo": "Escalonamento, posto, g e solucao particular",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "ca": { "tipo_resposta": "numero", "esperado": 2 },
+        "cv": { "tipo_resposta": "numero", "esperado": 2 },
+        "g": { "tipo_resposta": "numero", "esperado": 1 },
+        "classificacao": {
+          "tipo_resposta": "classificacao",
+          "esperado": "SPI",
+          "sinonimos": ["spi", "compativel e indeterminado", "sistema compativel e indeterminado"]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [2, 0, 1] }
+      },
+      "dica_erro": "De x - (1/2)z = 3/2 e y - (5/2)z = -5/2, substituindo z = 1 obtem-se (2, 0, 1).",
+      "exemplo_correto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (2, 0, 1)",
+      "exemplo_incorreto": "ca: 2; cv: 2; g: 1; classificacao: SPI; solucao: (1, 0, 1)"
+    },
+    {
+      "questao_id": "C08-C02",
+      "secao": "checagem",
+      "titulo": "Inversa 3x3 e X = A^{-1}B",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "inversa": {
+          "tipo_resposta": "matriz",
+          "esperado": [[2, -3, 1], [-3, 6, -2], [1, -2, 1]]
+        },
+        "solucao": { "tipo_resposta": "vetor", "esperado": [1, 2, 0] }
+      },
+      "dica_erro": "Permute L12 para usar pivo 1 e multiplique A^{-1} * [4, 3, 2]^T pela esquerda.",
+      "exemplo_correto": "inversa: [[2, -3, 1], [-3, 6, -2], [1, -2, 1]]; solucao: (1, 2, 0)",
+      "exemplo_incorreto": "inversa: [[2, -3, 1], [-3, 6, -2], [1, -2, 1]]; solucao: (1, -2, 0)"
+    },
+    {
+      "questao_id": "C08-C03",
+      "secao": "checagem",
+      "titulo": "Discussao completa de k em 3x3",
+      "tipo_resposta": "composta",
+      "esperado": {
+        "spi": { "tipo_resposta": "numero", "esperado": 2 },
+        "si": { "tipo_resposta": "numero", "esperado": -1 }
+      },
+      "dica_erro": "Na 3a linha reduzida surge [0, 0, (k-2)(k+1) | k-2]; teste k = 2 e k = -1.",
+      "exemplo_correto": "spi: 2; si: -1",
+      "exemplo_incorreto": "spi: -1; si: 2"
+    }
+  ]
+}

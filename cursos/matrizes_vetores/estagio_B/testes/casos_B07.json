@@ -1,0 +1,64 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "B07",
+  "tolerancia_numerica": 0.001,
+  "questoes": {
+    "B07-E01": {
+      "tipo_resposta": "matriz",
+      "esperado": [["3/14", "1/7"], ["-1/14", "2/7"]],
+      "exemplo_correto": "[[3/14, 1/7], [-1/14, 2/7]]",
+      "exemplo_incorreto": "[[3/14, -1/7], [1/14, 2/7]]",
+      "dica_erro": "Na etapa final L1' = L1 - 3*L2, subtraia 3*(-1/14) = +3/14 e 3*(2/7) = 6/7 de [0, 1]."
+    },
+    "B07-E02": {
+      "tipo_resposta": "matriz",
+      "esperado": [[7, 1, -3], [-4, -1, 2], [2, 1, -1]],
+      "exemplo_correto": "[[7, 1, -3], [-4, -1, 2], [2, 1, -1]]",
+      "exemplo_incorreto": "[[-7, -1, 3], [4, 1, -2], [-2, -1, 1]]",
+      "dica_erro": "Nao esqueca de multiplicar L3 por -1 antes de zerar a 3a coluna acima do pivo."
+    },
+    "B07-E03": {
+      "tipo_resposta": "matriz",
+      "esperado": [[3, -1, 1], ["-6/5", "3/5", "-2/5"], ["-2/5", "1/5", "1/5"]],
+      "exemplo_correto": "[[3, -1, 1], [-6/5, 3/5, -2/5], [-2/5, 1/5, 1/5]]",
+      "exemplo_incorreto": "[[3, -1, 1], [6/5, 3/5, 2/5], [-2/5, 1/5, 1/5]]",
+      "dica_erro": "Confira L2' = L2 - 2*L3 na 2a linha: -2 - 2*(-2/5) = -6/5 e 1 - 2*(1/5) = 3/5."
+    },
+    "B07-E04": {
+      "tipo_resposta": "classificacao",
+      "esperado": "singular",
+      "sinonimos": ["singular", "nao inversivel", "nao possui inversa", "nao tem inversa"],
+      "exemplo_correto": "singular",
+      "exemplo_incorreto": "inversivel",
+      "dica_erro": "Ao fazer L2' = L2 - 2*L1 no bloco esquerdo de [D | I3], a 2a linha zera completamente (L2 = 2*L1)."
+    },
+    "B07-E05": {
+      "tipo_resposta": "matriz",
+      "esperado": [[3, 0, -2, 0], [0, 1, 0, -1], [-1, 0, 1, 0], [0, -1, 0, 2]],
+      "exemplo_correto": "[[3, 0, -2, 0], [0, 1, 0, -1], [-1, 0, 1, 0], [0, -1, 0, 2]]",
+      "exemplo_incorreto": "[[3, 0, 2, 0], [0, 1, 0, 1], [-1, 0, 1, 0], [0, -1, 0, 2]]",
+      "dica_erro": "Confira o sinal das operacoes L1' = L1 - 2*L3 e L2' = L2 - L4 aplicadas tambem ao bloco da direita."
+    },
+    "B07-C01": {
+      "tipo_resposta": "matriz",
+      "esperado": [["2/7", "-1/7"], ["1/14", "3/14"]],
+      "exemplo_correto": "[[2/7, -1/7], [1/14, 3/14]]",
+      "exemplo_incorreto": "[[2/7, 1/7], [-1/14, 3/14]]",
+      "dica_erro": "Verifique que det(M) = 14 e teste o produto M * M^{-1} = I2."
+    },
+    "B07-C02": {
+      "tipo_resposta": "matriz",
+      "esperado": [[1, -1, 1], [-5, 4, -2], [3, -2, 1]],
+      "exemplo_correto": "[[1, -1, 1], [-5, 4, -2], [3, -2, 1]]",
+      "exemplo_incorreto": "[[1, -1, 1], [5, -4, 2], [3, -2, 1]]",
+      "dica_erro": "Troque L1 <-> L2 logo no inicio no bloco esquerdo E no bloco da identidade simultaneamente."
+    },
+    "B07-C03": {
+      "tipo_resposta": "matriz",
+      "esperado": [[3, -2, 0, 0], [-1, 1, 0, 0], [0, 0, 1, -1], [0, 0, -1, 2]],
+      "exemplo_correto": "[[3, -2, 0, 0], [-1, 1, 0, 0], [0, 0, 1, -1], [0, 0, -1, 2]]",
+      "exemplo_incorreto": "[[3, 2, 0, 0], [1, 1, 0, 0], [0, 0, 1, 1], [0, 0, 1, 2]]",
+      "dica_erro": "Os dois blocos diagonais 2x2 reduzem-se independentemente ate I4."
+    }
+  }
+}

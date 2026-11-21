@@ -1,0 +1,69 @@
+{
+  "disciplina": "matrizes_vetores",
+  "bloco_id": "E03",
+  "tolerancia_numerica": 0.01,
+  "questoes": {
+    "E03-E01": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "produto_misto": { "tipo_resposta": "numero", "esperado": 0 },
+        "coplanares": { "tipo_resposta": "texto", "esperado": "sim" }
+      },
+      "exemplo_correto": "produto_misto = 0, coplanares = sim",
+      "exemplo_incorreto": "produto_misto = 1, coplanares = nao",
+      "dica_erro": "Produto misto eh 0, entao as retas sao coplanares."
+    },
+    "E03-E02": {
+      "tipo_resposta": "texto",
+      "esperado": "sim",
+      "exemplo_correto": "sim",
+      "exemplo_incorreto": "nao",
+      "dica_erro": "(2,4,6) = 2*(1,2,3), diretores proporcionais => paralelas."
+    },
+    "E03-E03": {
+      "tipo_resposta": "texto",
+      "esperado": "nao_intersectam",
+      "exemplo_correto": "nao_intersectam",
+      "exemplo_incorreto": "(2, 3)",
+      "dica_erro": "Sistema t+s=2 e t+s=-2 eh incompatível. As retas nao intersectam."
+    },
+    "E03-E04": {
+      "tipo_resposta": "texto",
+      "esperado": "concorrentes",
+      "exemplo_correto": "concorrentes",
+      "exemplo_incorreto": "reversas",
+      "dica_erro": "Coplanares e nao paralelas => concorrentes. Se intersectam em (0,0,0)."
+    },
+    "E03-E05": {
+      "tipo_resposta": "vetor_ponto",
+      "esperado": ["5", "1"],
+      "exemplo_correto": "(5, 1)",
+      "exemplo_incorreto": "(3, 2)",
+      "dica_erro": "Resolvendo o sistema: t1=2, t2=0. Ponto: x=1+2*2=5, y=3-2=1."
+    },
+    "E03-C01": {
+      "tipo_resposta": "texto",
+      "esperado": "paralelas",
+      "exemplo_correto": "paralelas",
+      "exemplo_incorreto": "concorrentes",
+      "dica_erro": "Diretores proporcionais (v2 = 2*v1). Sao paralelas (coincidentes, na verdade)."
+    },
+    "E03-C02": {
+      "tipo_resposta": "vetor_ponto",
+      "esperado": ["1", "2"],
+      "exemplo_correto": "(1, 2)",
+      "exemplo_incorreto": "(2, 3)",
+      "dica_erro": "Resolvendo: t1=0, t2=2. Ponto: (1, 2)."
+    },
+    "E03-C03": {
+      "tipo_resposta": "composta",
+      "esperado": {
+        "valor_misto": { "tipo_resposta": "numero", "esperado": 1 },
+        "classificacao": { "tipo_resposta": "texto", "esperado": "reversas" }
+      },
+      "exemplo_correto": "1, reversas",
+      "exemplo_incorreto": "0, coplanares",
+      "dica_erro": "Produto misto eh 1 (nao zero), entao nao sao coplanares => reversas."
+    }
+  }
+}
