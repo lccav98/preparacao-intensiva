@@ -15,7 +15,6 @@ import subprocess
 import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
-import requests
 
 import banco_dados
 import config
@@ -268,53 +267,7 @@ def _comparar_semantica_codigo(resp: str, ref: str, bloco: BlocoCurricular, q: Q
 
 
 def _chamar_jev_exam(questao: Questao, resposta: str, categoria_preliminar: str) -> Tuple[str, str, float]:
-    """
-    Camada 1 (JEV System One / modulo exam): classifica a resposta e gera diagnostico.
-    Usa a API TypeSafe se JEV_API_KEY estiver configurada; caso contrario, aplica o
-    classificador estruturado deterministico equivalente e registra metrica JEV.
-    """
-    if config.JEV_API_KEY:
-        try:
-            payload = {
-                "model": "jev-latest",
-                "state": {
-                    "questao_id": questao.questao_id,
-                    "rubrica": questao.gabarito_md[:1500],
-                    "resposta_aluno": resposta[:1500],
-                },
-                "questions": {
-                    "veredito": {
-                        "type": "choice",
-                        "instructions": "Avalie a resposta do aluno pela rubrica fornecida.",
-                        "criteria": {
-                            "correto": "Atende integralmente todos os criterios da rubrica.",
-                            "parcial": "Acerto parcial com falha em caso de borda ou justificativa.",
-                            "incorreto": "Erro conceitual, sintatico ou logico relevante.",
-                            "uncertain": "Evidencia insuficiente.",
-                        },
-                    }
-                },
-            }
-            r = requests.post(
-                config.JEV_API_URL,
-                headers={
-                    "Authorization": f"Bearer {config.JEV_API_KEY}",
-                    "Content-Type": "application/json",
-                },
-                json=payload,
-                timeout=8,
-            )
-            if r.status_code == 200:
-                ans = r.json().get("answers", {}).get("veredito", {})
-                choice = ans.get("choice", "uncertain")
-                conf = float(ans.get("confidence", 0.0))
-                if choice in ("correto", "parcial", "incorreto") and conf >= config.JEV_CONFIDENCE_THRESHOLD:
-                    banco_dados.registrar_metrica_jev("jev", "exam", conf, questao.questao_id)
-                    return choice, "jev", conf
-        except Exception:
-            pass
-
-    # Classificacao estruturada na camada leve JEV (exam)
+    """Classificador local determinístico, sem chamadas a APIs de inferência."""
     if categoria_preliminar == "sem_erro":
         banco_dados.registrar_metrica_jev("jev", "exam", 0.92, questao.questao_id)
         return "correto", "jev", 0.92
@@ -963,7 +916,7 @@ class OrquestradorCurso:
         reconhecidas = esperadas.intersection(respostas_ocr)
         if not any(respostas_ocr[qid].strip() for qid in reconhecidas):
             raise ValueError("Nenhuma resposta da prova foi reconhecida. Revise a digitalização antes de corrigir.")
-        if ocr["imagem_info"]["fonte_ocr"] == "gemini_vision_api":
+        if ocr["imagem_info"]["fonte_ocr"] == "ollama_local":
             revisar = esperadas - reconhecidas
             revisar.update(qid for qid in reconhecidas if "[ILEGIVEL]" in respostas_ocr[qid].upper())
             if revisar:
@@ -975,7 +928,14 @@ class OrquestradorCurso:
 
         for q in questoes:
             resp_q = respostas_ocr.get(q.questao_id, "")
-            it = corrigir_item(q, resp_q, bloco)
+            para_avaliar = resp_q
+            if (ocr["imagem_info"]["fonte_ocr"] == "ollama_local" and resp_q.strip()
+                    and disc_id == "matrizes_vetores" and q.spec_matematica):
+                para_avaliar = extrator_ocr.formatar_resposta_matematica(resp_q, q.spec_matematica)
+                if not para_avaliar.strip() or "[ILEGIVEL]" in para_avaliar.upper():
+                    raise ValueError(f"Confira a resposta manuscrita de {q.questao_id} antes de corrigir.")
+            it = corrigir_item(q, para_avaliar, bloco)
+            it["resposta_extraida"] = resp_q
             itens_corrigidos.append(it)
             camadas_usadas.append(it["camada_avaliacao"])
             if it["status_correcao"] != "correto" and it["categoria_erro"]:
@@ -984,6 +944,8 @@ class OrquestradorCurso:
         total_q = len(itens_corrigidos)
         acertos = sum(1 for it in itens_corrigidos if it["status_correcao"] == "correto")
         pct = round((acertos / total_q) * 100.0, 1) if total_q > 0 else 0.0
+        if acertos == 0 and ocr["imagem_info"]["fonte_ocr"] == "ollama_local":
+            raise ValueError("A leitura automática resultaria em zero. Confira a transcrição antes de registrar a nota.")
         aprovado = total_q > 0 and acertos == total_q
 
         # Maquina de Estados de Preparacao Intensiva (Avanco / Variante V2 / Recuo de Pre-requisito)

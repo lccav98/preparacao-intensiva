@@ -2,6 +2,12 @@
 
 Sistema de **Preparação Intensiva** com acesso remoto: o aluno entra no seu painel de qualquer computador ou celular, em casa ou em qualquer lugar, para acompanhar o progresso, abrir folhas de prova, enviar respostas digitalizadas e ver feedback.
 
+## Leitura local das provas
+
+O painel usa o modelo visual `qwen3.5:4b` pelo Ollama na porta 11434 da própria máquina. Instale o Ollama, execute `ollama pull qwen3.5:4b` e mantenha o serviço disponível enquanto o painel recebe provas. Para PDFs, instale o Poppler e disponibilize `pdftoppm` no PATH do processo do painel. Em contêiner, o serviço Ollama deve estar acessível no loopback do contêiner.
+
+A inferência usa o hardware local. Se a leitura falhar, o painel interrompe a correção. Uma transcrição revisada em `nome.pdf.ocr.txt` ao lado do PDF continua disponível como alternativa.
+
 ---
 
 ## 📁 O que está aqui
