@@ -1123,7 +1123,7 @@
       ` : "";
 
       const atalhoEnvioDireto = (situacao === "disponivel" || situacao === "em_andamento") ? `
-        <details class="quiet-details">
+        <details class="quiet-details"${(selectedFile || (jobAtivo && jobAtivo.etapa === "erro")) ? " open" : ""}>
           <summary>Já resolveu no papel? Enviar respostas diretamente</summary>
           <div style="margin-top:12px;">
             <p style="margin:0 0 10px;font-size:0.86rem;color:var(--muted);">Se você cronometrou direto no papel, pode enviar a foto ou PDF agora sem reiniciar o cronômetro.</p>

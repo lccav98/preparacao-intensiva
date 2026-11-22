@@ -6,14 +6,17 @@ e gerador de imagens de prova simuladas para demonstracao e testes E2E.
 """
 
 import base64
+import hashlib
 import io
 import json
 import os
 import re
 import subprocess
 import tempfile
+import threading
+import time
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from PIL import Image, ImageDraw, ImageOps, PngImagePlugin
 import requests
@@ -116,21 +119,174 @@ def formatar_resposta_matematica(texto: str, spec: dict) -> str:
     return valores["resultado"]
 
 
+GEMINI_MODELO_PADRAO = "gemini-2.5-flash"
+GEMINI_MODELOS_FALLBACK_PADRAO = ("gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.5-pro")
+GEMINI_STATUS_RETENTAVEIS = {429, 500, 502, 503, 504}
+_GEMINI_MODELO_EXCLUIR = (
+    "embedding",
+    "aqa",
+    "imagen",
+    "veo",
+    "tts",
+    "audio",
+    "live",
+    "image",
+    "robotics",
+    "computer-use",
+    "customtools",
+    "deep-research",
+    "nano-banana",
+    "omni",
+    "transcribe",
+    "decision",
+    "learnlm",
+    "thinking-exp",
+    "vision",
+    "gemini-1.",
+)
+_GEMINI_CACHE_LOCK = threading.Lock()
+_GEMINI_MODELOS_CACHE: Dict[str, tuple[float, List[str]]] = {}
+_GEMINI_MODELO_COOLDOWN: Dict[str, float] = {}
+_GEMINI_ULTIMO_MODELO_OK: Dict[str, str] = {}
+
+
+def _limpar_cache_gemini() -> None:
+    """Limpa caches e cooldowns de modelos Gemini (usado em testes)."""
+    with _GEMINI_CACHE_LOCK:
+        _GEMINI_MODELOS_CACHE.clear()
+        _GEMINI_MODELO_COOLDOWN.clear()
+        _GEMINI_ULTIMO_MODELO_OK.clear()
+
+
+def _prioridade_modelo_gemini(mid: str) -> tuple[int, int, str]:
+    pen = 1 if ("-preview" in mid or "-exp" in mid) else 0
+    if mid == "gemini-2.5-flash":
+        tier = 0
+    elif mid == "gemini-2.5-flash-lite":
+        tier = 10
+    elif mid in (
+        "gemini-4-hydrogen",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3-flash",
+        "gemini-3-flash-preview",
+    ):
+        tier = 15
+    elif mid in ("gemini-3.5-flash-lite", "gemini-3.1-flash-lite"):
+        tier = 20
+    elif mid in ("gemini-2.0-flash", "gemini-2.0-flash-lite"):
+        tier = 30
+    elif "flash" in mid:
+        tier = 40
+    elif mid in ("gemini-2.5-pro", "gemini-4-argon", "gemini-3-pro", "gemini-3-pro-preview"):
+        tier = 50
+    elif "pro" in mid:
+        tier = 60
+    else:
+        tier = 70
+    return (tier, pen, mid)
+
+
+def _descobrir_modelos_gemini(key_limpa: str, key_hash: str) -> List[str]:
+    agora = time.monotonic()
+    with _GEMINI_CACHE_LOCK:
+        cached = _GEMINI_MODELOS_CACHE.get(key_hash)
+        if cached and agora < cached[0]:
+            return list(cached[1])
+    try:
+        resp = requests.get(
+            "https://generativelanguage.googleapis.com/v1beta/models",
+            headers={"x-goog-api-key": key_limpa},
+            timeout=(4, 8),
+        )
+        resp.raise_for_status()
+        dados = resp.json() or {}
+        encontrados: List[str] = []
+        vistos = set()
+        for m in (dados.get("models") or []):
+            if not isinstance(m, dict):
+                continue
+            metodos = m.get("supportedGenerationMethods") or []
+            if "generateContent" not in metodos:
+                continue
+            nome_raw = str(m.get("name") or "").strip()
+            mid = nome_raw[len("models/"):] if nome_raw.startswith("models/") else nome_raw
+            if not mid.startswith("gemini-"):
+                continue
+            if any(ex in mid for ex in _GEMINI_MODELO_EXCLUIR):
+                continue
+            if mid not in vistos:
+                vistos.add(mid)
+                encontrados.append(mid)
+        encontrados.sort(key=_prioridade_modelo_gemini)
+        if encontrados:
+            with _GEMINI_CACHE_LOCK:
+                _GEMINI_MODELOS_CACHE[key_hash] = (time.monotonic() + 900.0, list(encontrados))
+        return encontrados
+    except Exception:
+        return []
+
+
+def _montar_fallbacks_gemini(key_limpa: str, key_hash: str, modelo_primario: str) -> List[str]:
+    env_raw = os.environ.get("PREP_GEMINI_FALLBACK_MODELS", "")
+    env_modelos = [x.strip() for x in env_raw.split(",") if x.strip()]
+    descobertos = _descobrir_modelos_gemini(key_limpa, key_hash)
+    combinados = env_modelos + descobertos + list(GEMINI_MODELOS_FALLBACK_PADRAO)
+    resultado: List[str] = []
+    vistos = {modelo_primario}
+    for mid in combinados:
+        if mid and mid not in vistos:
+            vistos.add(mid)
+            resultado.append(mid)
+    return resultado[:4]
+
+
+def _extrair_json_resposta_gemini(dados: dict) -> dict:
+    cand = (dados.get("candidates") or [{}])[0]
+    partes_resp = ((cand.get("content") or {}).get("parts") or [])
+    texto = ""
+    for p in reversed(partes_resp):
+        if isinstance(p, dict) and not p.get("thought") and p.get("text"):
+            texto = str(p["text"]).strip()
+            break
+    if not texto and partes_resp and isinstance(partes_resp[0], dict):
+        texto = str(partes_resp[0].get("text") or "").strip()
+    if not texto:
+        raise ValueError("Resposta vazia da API Gemini.")
+    if texto.startswith("```"):
+        texto = re.sub(r"^```(?:json)?\s*", "", texto, flags=re.IGNORECASE)
+        texto = re.sub(r"\s*```$", "", texto).strip()
+    return json.loads(texto)
+
+
+def _calcular_espera_retry(resp: Any, padrao: float, maximo: float) -> float:
+    hdrs = getattr(resp, "headers", None)
+    if hdrs:
+        try:
+            bruto = hdrs.get("Retry-After") or hdrs.get("retry-after")
+            if bruto is not None:
+                val = float(str(bruto).strip())
+                if val > 0:
+                    return min(max(0.2, val), maximo)
+        except (TypeError, ValueError, AttributeError):
+            pass
+    return padrao
+
+
 def _consultar_modelo_gemini(
     mensagem: dict, formato: dict, api_key: str, modelo_override: str = ""
 ) -> dict:
-    """Consulta a API Gemini Vision REST quando executando na nuvem sem Ollama local."""
+    """Consulta a API Gemini Vision REST com retry/backoff e fallback entre modelos."""
     key_limpa = (api_key or "").strip()
     if not re.fullmatch(r"(?:AQ\.|AIza)[0-9A-Za-z._-]{16,}", key_limpa):
         raise ValueError(
             "Chave da API Gemini invalida no servidor. Atualize o campo 'Gemini API Key' (formato AQ.... ou AIza...) em Configurar E-mail & IA no Painel Gerencial."
         )
-    modelo = (
+    modelo_primario = (
         os.environ.get("PREP_GEMINI_MODEL", "").strip()
         or modelo_override.strip()
-        or "gemini-2.5-flash"
+        or GEMINI_MODELO_PADRAO
     )
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent"
     partes = [{"text": mensagem.get("content", "")}]
     for img_b64 in (mensagem.get("images") or []):
         partes.append({"inline_data": {"mime_type": "image/jpeg", "data": img_b64}})
@@ -142,36 +298,125 @@ def _consultar_modelo_gemini(
             "responseSchema": formato,
         },
     }
-    try:
-        resp = requests.post(
-            url,
-            headers={
-                "x-goog-api-key": key_limpa,
-                "Content-Type": "application/json",
-            },
-            json=payload,
-            timeout=(10, 120),
-        )
-        resp.raise_for_status()
-        dados = resp.json()
-        cand = (dados.get("candidates") or [{}])[0]
-        texto = (((cand.get("content") or {}).get("parts") or [{}])[0]).get("text", "")
-        if not texto:
-            raise ValueError("Resposta vazia da API Gemini.")
-        return json.loads(texto)
-    except requests.HTTPError as exc:
-        status = exc.response.status_code if exc.response is not None else "HTTP"
-        detalhe = ""
-        if exc.response is not None:
+
+    key_hash = hashlib.sha256(key_limpa.encode("utf-8")).hexdigest()[:16]
+    agora = time.monotonic()
+    with _GEMINI_CACHE_LOCK:
+        primario_cooldown = _GEMINI_MODELO_COOLDOWN.get(modelo_primario, 0.0) > agora
+        ultimo_ok = _GEMINI_ULTIMO_MODELO_OK.get(key_hash, "")
+        if ultimo_ok and (
+            ultimo_ok == modelo_primario
+            or _GEMINI_MODELO_COOLDOWN.get(ultimo_ok, 0.0) > agora
+        ):
+            ultimo_ok = ""
+
+    fallbacks_carregados = False
+    if primario_cooldown:
+        fallbacks = _montar_fallbacks_gemini(key_limpa, key_hash, modelo_primario)
+        fallbacks_carregados = True
+        agora_cand = time.monotonic()
+        with _GEMINI_CACHE_LOCK:
+            livres = [m for m in fallbacks if _GEMINI_MODELO_COOLDOWN.get(m, 0.0) <= agora_cand and m != ultimo_ok]
+            em_cooldown = [m for m in fallbacks if m not in livres and m != ultimo_ok]
+        candidatos: List[str] = []
+        if ultimo_ok:
+            candidatos.append(ultimo_ok)
+        candidatos.extend(livres)
+        candidatos.extend(em_cooldown)
+        candidatos.append(modelo_primario)
+    else:
+        candidatos = [modelo_primario]
+
+    ultimo_modelo = modelo_primario
+    ultimo_status: Any = ""
+    ultima_msg = "Falha desconhecida"
+
+    idx = 0
+    while idx < len(candidatos):
+        modelo = candidatos[idx]
+        idx += 1
+        eh_primario = modelo == modelo_primario
+        espera_padrao = 1.5 if eh_primario else 1.0
+        espera_max = 4.0 if eh_primario else 3.0
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent"
+
+        for tentativa in range(2):
             try:
-                err_json = exc.response.json().get("error") or {}
-                detalhe = str(err_json.get("message") or "").strip()
-            except Exception:
+                resp = requests.post(
+                    url,
+                    headers={
+                        "x-goog-api-key": key_limpa,
+                        "Content-Type": "application/json",
+                    },
+                    json=payload,
+                    timeout=(10, 120),
+                )
+                resp.raise_for_status()
+                resultado = _extrair_json_resposta_gemini(resp.json())
+                with _GEMINI_CACHE_LOCK:
+                    _GEMINI_ULTIMO_MODELO_OK[key_hash] = modelo
+                    _GEMINI_MODELO_COOLDOWN.pop(modelo, None)
+                return resultado
+            except requests.HTTPError as exc:
+                status = exc.response.status_code if exc.response is not None else "HTTP"
                 detalhe = ""
-        msg_limpa = f"Erro {status}" + (f": {detalhe}" if detalhe else "")
-        raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {msg_limpa}") from exc
-    except (requests.RequestException, KeyError, IndexError, ValueError) as exc:
-        raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {exc.__class__.__name__}") from exc
+                if exc.response is not None:
+                    try:
+                        err_json = exc.response.json().get("error") or {}
+                        detalhe = str(err_json.get("message") or "").strip()
+                    except Exception:
+                        detalhe = ""
+                msg_limpa = f"Erro {status}" + (f": {detalhe}" if detalhe else "")
+                ultimo_modelo = modelo
+                ultimo_status = status
+                ultima_msg = msg_limpa
+
+                if status in (401, 403) or (status == 400 and eh_primario):
+                    raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {msg_limpa}") from exc
+                if status == 404 or status == 400:
+                    break
+                if status in GEMINI_STATUS_RETENTAVEIS:
+                    if tentativa == 0:
+                        time.sleep(_calcular_espera_retry(exc.response, espera_padrao, espera_max))
+                        continue
+                    if status in (429, 503):
+                        with _GEMINI_CACHE_LOCK:
+                            _GEMINI_MODELO_COOLDOWN[modelo] = time.monotonic() + 120.0
+                    break
+                raise ValueError(f"Falha de leitura na API Gemini ({modelo}): {msg_limpa}") from exc
+            except (requests.Timeout, requests.ConnectionError) as exc:
+                ultimo_modelo = modelo
+                ultimo_status = exc.__class__.__name__
+                ultima_msg = exc.__class__.__name__
+                if tentativa == 0:
+                    time.sleep(espera_padrao)
+                    continue
+                break
+            except (requests.RequestException, KeyError, IndexError, ValueError, json.JSONDecodeError) as exc:
+                ultimo_modelo = modelo
+                ultimo_status = exc.__class__.__name__
+                ultima_msg = exc.__class__.__name__
+                break
+
+        if not fallbacks_carregados:
+            fallbacks_carregados = True
+            agora_fb = time.monotonic()
+            fallbacks = _montar_fallbacks_gemini(key_limpa, key_hash, modelo_primario)
+            with _GEMINI_CACHE_LOCK:
+                livres_fb = [m for m in fallbacks if _GEMINI_MODELO_COOLDOWN.get(m, 0.0) <= agora_fb]
+                restantes_fb = [m for m in fallbacks if m not in livres_fb]
+            existentes = set(candidatos)
+            for m in livres_fb + restantes_fb:
+                if m not in existentes:
+                    candidatos.append(m)
+                    existentes.add(m)
+
+    if ultimo_status in (429, 503):
+        raise ValueError(
+            f"Falha de leitura na API Gemini ({ultimo_modelo}): {ultima_msg}. "
+            "Os servidores do Google estao com alta demanda temporaria; aguarde alguns instantes e clique em 'Enviar respostas' novamente."
+        )
+    raise ValueError(f"Falha de leitura na API Gemini ({ultimo_modelo}): {ultima_msg}")
 
 
 def _consultar_modelo(mensagem: dict, formato: dict) -> dict:
