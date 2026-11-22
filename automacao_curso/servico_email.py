@@ -622,9 +622,9 @@ def testar_conexao_email(cfg: Dict[str, Any]) -> Dict[str, Any]:
 
     gem_key = str(cfg.get("gemini_api_key", "") or "").strip()
     if gem_key:
-        if not re.fullmatch(r"AIza[0-9A-Za-z_-]{20,}", gem_key):
+        if not re.fullmatch(r"(?:AQ\.|AIza)[0-9A-Za-z._-]{16,}", gem_key):
             res["gemini_ok"] = False
-            res["gemini_erro"] = "Formato invalido (deve comecar com AIza...)."
+            res["gemini_erro"] = "Formato invalido (deve comecar com AQ. ou AIza...)."
         else:
             try:
                 r_g = requests.get(

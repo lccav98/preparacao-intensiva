@@ -1244,10 +1244,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 }
                 filtrados = {k: v for k, v in body.items() if k in campos_permitidos}
                 gem_raw = str(filtrados.get("gemini_api_key", "") or "").strip()
-                if gem_raw and not re.fullmatch(r"AIza[0-9A-Za-z_-]{20,}", gem_raw):
+                if gem_raw and not re.fullmatch(r"(?:AQ\.|AIza)[0-9A-Za-z._-]{16,}", gem_raw):
                     self._enviar_json(
                         {
-                            "erro": "Gemini API Key invalida. Cole apenas a chave gerada no Google AI Studio (comeca com AIza..., sem espacos)."
+                            "erro": "Gemini API Key invalida. Cole apenas a chave gerada no Google AI Studio (comeca com AQ. ou AIza..., sem espacos)."
                         },
                         status=400,
                     )
