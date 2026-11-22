@@ -56,7 +56,10 @@ def _atualizar_job_correcao(job_id: str, **campos: Any) -> None:
 
 
 def _garantir_csv_inicial() -> None:
-    for disc in config.DISCIPLINAS.values():
+    for did in ("algoritmos", "matrizes_vetores"):
+        disc = config.DISCIPLINAS.get(did)
+        if not disc:
+            continue
         alvo = disc["csv_path"]
         if not os.path.isfile(alvo):
             os.makedirs(os.path.dirname(os.path.abspath(alvo)), exist_ok=True)
@@ -258,11 +261,14 @@ def montar_payload_aluno(
         if any(m["disciplina"] == disc_req for m in mats):
             disc_id = disc_req
         else:
-            disc_id = mats[0]["disciplina"] if mats else disc_req
+            ativas = [m["disciplina"] for m in mats if m.get("status_curso") != "CONCLUIDO"]
+            candidatos = ativas or [m["disciplina"] for m in mats]
+            disc_id = candidatos[0] if candidatos else disc_req
     else:
-        # Sem disciplina explicita: prioriza a disciplina padrao do servidor
-        # (MAT121) quando o aluno esta matriculado nela; senao, a primeira.
-        matriculadas = [m["disciplina"] for m in mats]
+        # Sem disciplina explicita: prioriza disciplinas ativas (nao concluidas),
+        # preferindo a disciplina padrao quando em andamento.
+        ativas = [m["disciplina"] for m in mats if m.get("status_curso") != "CONCLUIDO"]
+        matriculadas = ativas or [m["disciplina"] for m in mats]
         if config.DISCIPLINA_PADRAO in matriculadas:
             disc_id = config.DISCIPLINA_PADRAO
         else:
@@ -439,6 +445,21 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._enviar_json({"disciplinas": config.listar_disciplinas()})
             return
 
+        if path == "/api/disciplinas/blocos":
+            if not self._exigir_sessao_api():
+                return
+            disc_qs = (qs.get("disciplina") or [config.DISCIPLINA_PADRAO])[0]
+            disc_id = config.normalizar_disciplina_id(disc_qs)
+            disc_meta = config.obter_disciplina(disc_id)
+            self._enviar_json(
+                {
+                    "disciplina": disc_id,
+                    "estagios_meta": disc_meta["estagios_meta"],
+                    "blocos": _resumo_mapa_seguro(obter_orquestrador(), disc_id),
+                }
+            )
+            return
+
         if path == "/api/auth-status":
             sess_raw = self._obter_sessao()
             self._enviar_json(
@@ -579,7 +600,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
             disc_qs = (qs.get("disciplina") or [config.DISCIPLINA_PADRAO])[0]
             disc_meta = config.obter_disciplina(disc_qs)
             alvo_csv = disc_meta["csv_path"]
-            fname_csv = "00_acompanhamento_mv.csv" if disc_meta["id"] == "matrizes_vetores" else "00_acompanhamento.csv"
+            if not os.path.isfile(alvo_csv):
+                os.makedirs(os.path.dirname(os.path.abspath(alvo_csv)), exist_ok=True)
+                with open(alvo_csv, "w", encoding="utf-8", newline="") as f:
+                    csv.writer(f).writerow(banco_dados.CSV_COLUNAS)
+            fname_csv = disc_meta.get("csv_filename") or os.path.basename(alvo_csv)
             with open(alvo_csv, "rb") as f:
                 data = f.read()
             self.send_response(200)
@@ -618,6 +643,20 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._enviar_json({"erro": "Acesso negado a este processamento."}, status=403)
                 return
             self._enviar_json(job)
+            return
+
+        if path == "/api/curriculo-bcc":
+            sess_cur = self._exigir_sessao_api()
+            if not sess_cur:
+                return
+            if sess_cur["role"] == "aluno":
+                aid_cur: Optional[int] = int(sess_cur["aluno_id"])
+            elif "aluno_id" in qs and qs["aluno_id"][0].isdigit():
+                aid_cur = int(qs["aluno_id"][0])
+            else:
+                als_cur = banco_dados.listar_alunos(incluir_pin=False)
+                aid_cur = int(als_cur[0]["id"]) if als_cur else None
+            self._enviar_json(banco_dados.obter_resumo_curriculo_aluno(aid_cur))
             return
 
         if path.startswith("/folha/"):
@@ -955,44 +994,323 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 nome = str(body.get("nome", "")).strip()
                 email = str(body.get("email", "")).strip()
                 bloco = str(body.get("bloco_inicial", "A01")).strip().upper()
+                modo_ini = str(body.get("modo_inicial", "pratica")).strip().lower()
+                status_ini = str(body.get("status_curso", "EM_ANDAMENTO")).strip().upper()
                 senha_ini = str(body.get("senha_inicial", "")).strip()
-                disc_req = config.normalizar_disciplina_id(body.get("disciplina", config.DISCIPLINA_PADRAO))
+                emitir_agora = bool(body.get("emitir_prova", False))
+                periodo_raw = body.get("periodo")
+                disciplinas_lote = body.get("disciplinas")
+                concluir_ant_flag = bool(body.get("concluir_periodos_anteriores", False))
+                concluir_ate = int(body.get("concluir_periodos_anteriores_ate") or 0)
                 if not nome or not email:
                     self._enviar_json({"erro": "Nome e e-mail sao obrigatorios."}, status=400)
                     return
-                al = banco_dados.obter_ou_criar_aluno(
-                    nome,
-                    email,
-                    bloco_inicial=bloco,
-                    senha_inicial=senha_ini,
-                    disciplina=disc_req,
-                )
-                gerar_snapshot_dashboard(al["id"], disciplina=disc_req)
-                self._enviar_json(al, status=201)
+
+                try:
+                    if periodo_raw is not None and str(periodo_raw).strip() != "":
+                        periodo_num = int(periodo_raw)
+                        discs_per = [
+                            d
+                            for d in config.listar_disciplinas()
+                            if int(d.get("periodo", 1)) == periodo_num
+                        ]
+                        if not discs_per:
+                            raise ValueError(f"Periodo invalido: {periodo_raw}")
+                        disc_base = discs_per[0]["id"]
+                        bloco_base = banco_dados._validar_bloco_disciplina(
+                            disc_base, bloco, fallback_a01=True
+                        )
+                        al = banco_dados.obter_ou_criar_aluno(
+                            nome,
+                            email,
+                            bloco_inicial=bloco_base,
+                            modo_inicial=modo_ini,
+                            senha_inicial=senha_ini,
+                            disciplina=disc_base,
+                        )
+                        if concluir_ant_flag and periodo_num > 1 and concluir_ate <= 0:
+                            concluir_ate = periodo_num - 1
+                        if concluir_ate > 0:
+                            banco_dados.marcar_periodos_anteriores_concluidos(
+                                int(al["id"]),
+                                concluir_ate,
+                                excluir_disciplinas=[d["id"] for d in discs_per],
+                            )
+                        mats_res = banco_dados.matricular_aluno_periodo(
+                            int(al["id"]),
+                            periodo=periodo_num,
+                            bloco_inicial=bloco,
+                            modo_inicial=modo_ini,
+                            atualizar_existente=True,
+                        )
+                        disc_dest = disc_base
+                    elif isinstance(disciplinas_lote, list) and disciplinas_lote:
+                        primeiro_item = disciplinas_lote[0]
+                        first_id = (
+                            primeiro_item.get("disciplina")
+                            if isinstance(primeiro_item, dict)
+                            else str(primeiro_item)
+                        )
+                        disc_base = config.normalizar_disciplina_id(first_id)
+                        bloco_first = (
+                            primeiro_item.get("bloco_inicial")
+                            if isinstance(primeiro_item, dict) and primeiro_item.get("bloco_inicial")
+                            else bloco
+                        )
+                        bloco_base = banco_dados._validar_bloco_disciplina(
+                            disc_base,
+                            str(bloco_first),
+                            fallback_a01=not isinstance(primeiro_item, dict),
+                        )
+                        al = banco_dados.obter_ou_criar_aluno(
+                            nome,
+                            email,
+                            bloco_inicial=bloco_base,
+                            modo_inicial=modo_ini,
+                            senha_inicial=senha_ini,
+                            disciplina=disc_base,
+                            status_curso=status_ini,
+                        )
+                        mats_res = banco_dados.matricular_aluno_lote(
+                            int(al["id"]),
+                            disciplinas=disciplinas_lote,
+                            bloco_inicial=bloco,
+                            modo_inicial=modo_ini,
+                            status_curso=status_ini,
+                            atualizar_existente=True,
+                            concluir_anteriores_ate=concluir_ate,
+                        )
+                        disc_dest = mats_res[0]["disciplina"]
+                    else:
+                        disc_req = config.normalizar_disciplina_id(
+                            body.get("disciplina", config.DISCIPLINA_PADRAO)
+                        )
+                        if concluir_ant_flag and concluir_ate <= 0:
+                            per_d = int(config.obter_disciplina(disc_req).get("periodo", 1))
+                            if per_d > 1:
+                                concluir_ate = per_d - 1
+                        al = banco_dados.obter_ou_criar_aluno(
+                            nome,
+                            email,
+                            bloco_inicial=bloco,
+                            modo_inicial=modo_ini,
+                            senha_inicial=senha_ini,
+                            disciplina=disc_req,
+                            status_curso=status_ini,
+                        )
+                        if concluir_ate > 0:
+                            banco_dados.marcar_periodos_anteriores_concluidos(
+                                int(al["id"]), concluir_ate, excluir_disciplinas=[disc_req]
+                            )
+                        mats_res = [
+                            banco_dados.obter_matricula(int(al["id"]), disciplina=disc_req)
+                        ]
+                        disc_dest = disc_req
+                except ValueError as exc:
+                    self._enviar_json({"erro": str(exc)}, status=400)
+                    return
+
+                prova_emit = None
+                if emitir_agora and status_ini != "CONCLUIDO":
+                    prova_emit = orq.emitir_e_enviar_prova(
+                        int(al["id"]),
+                        modo=modo_ini if modo_ini in ("pratica", "checagem") else None,
+                        disciplina=disc_dest,
+                    )
+                gerar_snapshot_dashboard(int(al["id"]), disciplina=disc_dest)
+                al_out = dict(al)
+                al_out["disciplina_destino"] = disc_dest
+                al_out["matriculas"] = mats_res
+                al_out["emissao"] = prova_emit
+                self._enviar_json(al_out, status=201)
                 return
 
             if path == "/api/matriculas":
                 if not self._exigir_admin_api():
                     return
                 aid = int(body["aluno_id"])
-                disc_req = config.normalizar_disciplina_id(body.get("disciplina", "matrizes_vetores"))
                 bloco = str(body.get("bloco_inicial", "A01")).strip().upper()
                 modo_ini = str(body.get("modo_inicial", "pratica")).strip().lower()
+                status_ini = str(body.get("status_curso", "EM_ANDAMENTO")).strip().upper()
+                atualizar_ex = bool(body.get("atualizar_existente", False))
                 emitir_agora = bool(body.get("emitir_prova", False))
-                mat = banco_dados.matricular_aluno(
-                    aid,
-                    disciplina=disc_req,
-                    bloco_inicial=bloco,
-                    modo_inicial=modo_ini,
-                )
+                concluir_ant_flag = bool(body.get("concluir_periodos_anteriores", False))
+                concluir_ate = int(body.get("concluir_periodos_anteriores_ate") or 0)
+                disciplinas_lote = body.get("disciplinas")
+
+                try:
+                    if body.get("periodo") is not None and str(body.get("periodo")).strip() != "":
+                        periodo_num = int(body["periodo"])
+                        if concluir_ant_flag and periodo_num > 1 and concluir_ate <= 0:
+                            concluir_ate = periodo_num - 1
+                        mats_res = banco_dados.matricular_aluno_periodo(
+                            aid,
+                            periodo=periodo_num,
+                            bloco_inicial=bloco,
+                            modo_inicial=modo_ini,
+                            atualizar_existente=atualizar_ex,
+                            concluir_anteriores=(concluir_ate > 0),
+                        )
+                        if concluir_ate > 0 and concluir_ate != periodo_num - 1:
+                            discs_ex = [m["disciplina"] for m in mats_res]
+                            banco_dados.marcar_periodos_anteriores_concluidos(
+                                aid, concluir_ate, excluir_disciplinas=discs_ex
+                            )
+                        alvo_novos = [m for m in mats_res if m.get("recem_criada")] or mats_res
+                        disc_dest = alvo_novos[0]["disciplina"]
+                        prova_emit = None
+                        if emitir_agora:
+                            prova_emit = orq.emitir_e_enviar_prova(
+                                aid,
+                                modo=modo_ini if modo_ini in ("pratica", "checagem") else None,
+                                disciplina=disc_dest,
+                            )
+                        gerar_snapshot_dashboard(aid, disciplina=disc_dest)
+                        self._enviar_json(
+                            {
+                                "ok": True,
+                                "periodo": periodo_num,
+                                "matriculas": mats_res,
+                                "matricula": mats_res[0],
+                                "emissao": prova_emit,
+                            },
+                            status=201,
+                        )
+                        return
+
+                    if isinstance(disciplinas_lote, list) and disciplinas_lote:
+                        if concluir_ant_flag and concluir_ate <= 0:
+                            max_p = max(
+                                int(
+                                    config.obter_disciplina(
+                                        x.get("disciplina") if isinstance(x, dict) else str(x)
+                                    ).get("periodo", 1)
+                                )
+                                for x in disciplinas_lote
+                            )
+                            if max_p > 1:
+                                concluir_ate = max_p - 1
+                        mats_res = banco_dados.matricular_aluno_lote(
+                            aid,
+                            disciplinas=disciplinas_lote,
+                            bloco_inicial=bloco,
+                            modo_inicial=modo_ini,
+                            status_curso=status_ini,
+                            atualizar_existente=atualizar_ex,
+                            concluir_anteriores_ate=concluir_ate,
+                        )
+                        alvo_ativos = [
+                            m for m in mats_res if m.get("status_curso") != "CONCLUIDO"
+                        ] or mats_res
+                        disc_dest = alvo_ativos[0]["disciplina"]
+                        prova_emit = None
+                        if emitir_agora and status_ini != "CONCLUIDO":
+                            prova_emit = orq.emitir_e_enviar_prova(
+                                aid,
+                                modo=modo_ini if modo_ini in ("pratica", "checagem") else None,
+                                disciplina=disc_dest,
+                            )
+                        gerar_snapshot_dashboard(aid, disciplina=disc_dest)
+                        self._enviar_json(
+                            {
+                                "ok": True,
+                                "matriculas": mats_res,
+                                "matricula": mats_res[0],
+                                "emissao": prova_emit,
+                            },
+                            status=201,
+                        )
+                        return
+
+                    disc_req = config.normalizar_disciplina_id(
+                        body.get("disciplina", "matrizes_vetores")
+                    )
+                    if concluir_ant_flag and concluir_ate <= 0:
+                        per_d = int(config.obter_disciplina(disc_req).get("periodo", 1))
+                        if per_d > 1:
+                            concluir_ate = per_d - 1
+                    if concluir_ate > 0:
+                        banco_dados.marcar_periodos_anteriores_concluidos(
+                            aid, concluir_ate, excluir_disciplinas=[disc_req]
+                        )
+                    mat = banco_dados.matricular_aluno(
+                        aid,
+                        disciplina=disc_req,
+                        bloco_inicial=bloco,
+                        modo_inicial=modo_ini,
+                        status_curso=status_ini,
+                        atualizar_existente=atualizar_ex,
+                    )
+                except ValueError as exc:
+                    self._enviar_json({"erro": str(exc)}, status=400)
+                    return
+
                 prova_emit = None
-                if emitir_agora:
-                    prova_emit = orq.emitir_e_enviar_prova(aid, disciplina=disc_req)
+                if emitir_agora and status_ini != "CONCLUIDO":
+                    prova_emit = orq.emitir_e_enviar_prova(
+                        aid,
+                        modo=modo_ini if modo_ini in ("pratica", "checagem") else None,
+                        disciplina=disc_req,
+                    )
                 gerar_snapshot_dashboard(aid, disciplina=disc_req)
                 self._enviar_json(
                     {"ok": True, "matricula": mat, "emissao": prova_emit},
                     status=201,
                 )
+                return
+
+            if path == "/api/matriculas/fase":
+                if not self._exigir_admin_api():
+                    return
+                aid = int(body["aluno_id"])
+                disc_req = config.normalizar_disciplina_id(
+                    body.get("disciplina", config.DISCIPLINA_PADRAO)
+                )
+                bloco_alvo = str(body.get("bloco_atual") or body.get("bloco") or "A01").strip().upper()
+                modo_alvo = str(body.get("modo_atual", "pratica")).strip().lower()
+                var_alvo = str(body.get("variante_atual", "V1")).strip().upper()
+                tent_alvo = int(body.get("tentativa_bloco", 1) or 1)
+                status_alvo = str(body.get("status_curso", "EM_ANDAMENTO")).strip().upper()
+                emitir_agora = bool(body.get("emitir_prova", False))
+                try:
+                    mat = banco_dados.atualizar_fase_aluno(
+                        aluno_id=aid,
+                        disciplina=disc_req,
+                        bloco_atual=bloco_alvo,
+                        modo_atual=modo_alvo,
+                        variante_atual=var_alvo,
+                        tentativa_bloco=tent_alvo,
+                        status_curso=status_alvo,
+                    )
+                except ValueError as exc:
+                    self._enviar_json({"erro": str(exc)}, status=400)
+                    return
+                prova_emit = None
+                if emitir_agora and status_alvo != "CONCLUIDO":
+                    prova_emit = orq.emitir_e_enviar_prova(
+                        aid,
+                        modo=modo_alvo if modo_alvo in ("pratica", "checagem") else None,
+                        disciplina=disc_req,
+                    )
+                gerar_snapshot_dashboard(aid, disciplina=disc_req)
+                self._enviar_json({"ok": True, "matricula": mat, "emissao": prova_emit})
+                return
+
+            if path == "/api/admin/integralizacao":
+                if not self._exigir_admin_api():
+                    return
+                aid = int(body["aluno_id"])
+                comp_key = str(body.get("componente_key", "")).strip()
+                horas = float(body.get("horas_cumpridas", 0))
+                obs = str(body.get("observacoes", "")).strip()
+                lista_int = banco_dados.atualizar_integralizacao_aluno(
+                    aluno_id=aid,
+                    componente_key=comp_key,
+                    horas_cumpridas=horas,
+                    observacoes=obs,
+                )
+                gerar_snapshot_dashboard(aid)
+                self._enviar_json({"ok": True, "aluno_id": aid, "integralizacao": lista_int})
                 return
 
             if path == "/api/alunos/reset-pin":
@@ -1303,9 +1621,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 assunto = str(body.get("assunto", "")).strip()
                 prot_bruto = str(body.get("protocolo", "")).strip()
                 if not prot_bruto:
-                    m_p = re.search(r"(PREP-(?:MV-)?[A-H]\d{2}-V\d+-T\d+-[A-F0-9]+)", assunto, re.IGNORECASE)
-                    if m_p:
-                        prot_bruto = m_p.group(1).upper()
+                    prot_bruto = config.extrair_protocolo(assunto)
                 prot_resolvido = servico_email.resolver_protocolo_entrada(prot_bruto, remetente)
                 b64 = str(body.get("arquivo_base64") or body.get("imagem_base64") or "").strip()
                 if not b64:

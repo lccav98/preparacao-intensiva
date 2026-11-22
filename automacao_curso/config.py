@@ -6,7 +6,8 @@ Configuracoes centrais do sistema de automacao do Curso de Preparação Intensiv
 
 import json
 import os
-from typing import Any, Dict, List
+import re
+from typing import Any, Dict, List, Optional
 
 
 def _carregar_arquivo_env(caminho: str) -> None:
@@ -123,42 +124,160 @@ elif _DISCIPLINA_PADRAO_ENV in ("algoritmos", "cc61a", "c", "alg"):
 else:
     DISCIPLINA_PADRAO = "algoritmos"
 
-DISCIPLINAS: Dict[str, Dict[str, Any]] = {
+BCC_CURRICULO_DIR = os.path.join(CURSO_DIR, "cursos", "bcc_matriz_826")
+BCC_MATRIZ_PATH = os.path.join(BCC_CURRICULO_DIR, "matriz_826.json")
+
+
+def _carregar_matriz_bcc() -> Dict[str, Any]:
+    if not os.path.isfile(BCC_MATRIZ_PATH):
+        return {}
+    try:
+        with open(BCC_MATRIZ_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+BCC_MATRIZ_META: Dict[str, Any] = _carregar_matriz_bcc()
+COMPONENTES_INTEGRALIZACAO: List[Dict[str, Any]] = list(
+    BCC_MATRIZ_META.get("componentes_integralizacao") or []
+)
+COMPONENTES_INTEGRALIZACAO_MAP: Dict[str, Dict[str, Any]] = {
+    str(c["key"]): c for c in COMPONENTES_INTEGRALIZACAO if c.get("key")
+}
+
+_DISCIPLINAS_PADRAO_BUILTIN: Dict[str, Dict[str, Any]] = {
     "algoritmos": {
         "id": "algoritmos",
         "codigo": "CC61A",
         "nome": "Algoritmos e Programacao em C",
-        "nome_curto": "Algoritmos C (CC61A)",
+        "nome_curto": "1º Per. • Algoritmos (CC61A)",
         "tag_email": "Algoritmos C - UTFPR",
         "prefixo_protocolo": "PREP",
+        "periodo": 1,
+        "carga_horaria": 90,
+        "pre_requisitos": [],
         "curso_dir": CURSO_DIR,
         "csv_path": CSV_ACOMPANHAMENTO_PATH,
+        "csv_filename": "00_acompanhamento.csv",
         "estagios_meta": ESTAGIOS_META,
         "total_blocos": sum(x[2] for x in ESTAGIOS_META),
         "tipo_avaliacao": "codigo_c",
+        "fonte": "markdown",
+        "objetivos": [],
+        "material_apoio": [],
     },
     "matrizes_vetores": {
         "id": "matrizes_vetores",
         "codigo": "MAT121",
         "nome": "Matrizes e Vetores",
-        "nome_curto": "Matrizes e Vetores (MAT121)",
+        "nome_curto": "1º Per. • Matrizes e Vetores (MAT121)",
         "tag_email": "Matrizes e Vetores - UTFPR",
         "prefixo_protocolo": "PREP-MV",
+        "periodo": 1,
+        "carga_horaria": 45,
+        "pre_requisitos": [],
         "curso_dir": CURSO_MV_DIR,
         "csv_path": CSV_ACOMPANHAMENTO_MV_PATH,
+        "csv_filename": "00_acompanhamento_mv.csv",
         "estagios_meta": ESTAGIOS_META_MV,
         "total_blocos": sum(x[2] for x in ESTAGIOS_META_MV),
         "tipo_avaliacao": "matematica",
+        "fonte": "markdown",
+        "objetivos": [],
+        "material_apoio": [],
     },
 }
 
 
+def _construir_disciplinas() -> Dict[str, Dict[str, Any]]:
+    raw_lista = BCC_MATRIZ_META.get("disciplinas") or []
+    if not raw_lista:
+        return dict(_DISCIPLINAS_PADRAO_BUILTIN)
+
+    out: Dict[str, Dict[str, Any]] = {}
+    for item in sorted(raw_lista, key=lambda x: int(x.get("periodo", 1))):
+        did = str(item["id"]).strip().lower()
+        fonte = str(item.get("fonte", "json")).strip().lower()
+        est_meta = [tuple(x) for x in (item.get("estagios_meta") or [])]
+        if did == "algoritmos":
+            base = dict(_DISCIPLINAS_PADRAO_BUILTIN["algoritmos"])
+            base.update({
+                "nome": item.get("nome", base["nome"]),
+                "nome_curto": item.get("nome_curto", base["nome_curto"]),
+                "objetivos": list(item.get("objetivos") or []),
+                "material_apoio": list(item.get("material_apoio") or []),
+            })
+            out[did] = base
+        elif did == "matrizes_vetores":
+            base = dict(_DISCIPLINAS_PADRAO_BUILTIN["matrizes_vetores"])
+            base.update({
+                "nome": item.get("nome", base["nome"]),
+                "nome_curto": item.get("nome_curto", base["nome_curto"]),
+                "objetivos": list(item.get("objetivos") or []),
+                "material_apoio": list(item.get("material_apoio") or []),
+            })
+            out[did] = base
+        else:
+            csv_fn = f"00_acompanhamento_{did}.csv"
+            arq_json = os.path.join(BCC_CURRICULO_DIR, str(item.get("arquivo", "periodo_1.json")))
+            out[did] = {
+                "id": did,
+                "codigo": str(item["codigo"]).strip(),
+                "nome": str(item["nome"]).strip(),
+                "nome_curto": str(item.get("nome_curto") or item["nome"]).strip(),
+                "tag_email": str(item.get("tag_email") or item["codigo"]).strip(),
+                "prefixo_protocolo": str(item["prefixo_protocolo"]).strip().upper(),
+                "periodo": int(item.get("periodo", 1)),
+                "carga_horaria": int(item.get("carga_horaria", 60)),
+                "pre_requisitos": [str(p).strip().lower() for p in (item.get("pre_requisitos") or [])],
+                "curso_dir": BCC_CURRICULO_DIR,
+                "arquivo_json": arq_json,
+                "csv_path": os.path.join(DADOS_DIR, csv_fn),
+                "csv_filename": csv_fn,
+                "estagios_meta": est_meta,
+                "total_blocos": sum(int(x[2]) for x in est_meta),
+                "tipo_avaliacao": str(item.get("tipo_avaliacao", "conceitual_textual")).strip(),
+                "fonte": fonte,
+                "objetivos": list(item.get("objetivos") or []),
+                "material_apoio": list(item.get("material_apoio") or []),
+            }
+    return out
+
+
+DISCIPLINAS: Dict[str, Dict[str, Any]] = _construir_disciplinas()
+DISCIPLINAS_ORDEM: List[str] = list(DISCIPLINAS.keys())
+
+_DISCIPLINA_ALIASES: Dict[str, str] = {
+    "": "algoritmos",
+    "alg": "algoritmos",
+    "c": "algoritmos",
+    "cc61a": "algoritmos",
+    "mv": "matrizes_vetores",
+    "mat121": "matrizes_vetores",
+    "matrizes": "matrizes_vetores",
+    "re42b": "matrizes_vetores",
+}
+PREFIXO_PARA_DISCIPLINA: Dict[str, str] = {"": "algoritmos"}
+
+for _did, _meta in DISCIPLINAS.items():
+    _DISCIPLINA_ALIASES[_did.lower()] = _did
+    _DISCIPLINA_ALIASES[_meta["codigo"].lower()] = _did
+    _pref = str(_meta["prefixo_protocolo"]).upper()
+    if _pref.startswith("PREP-"):
+        _sig = _pref[5:]
+        _DISCIPLINA_ALIASES[_sig.lower()] = _did
+        PREFIXO_PARA_DISCIPLINA[_sig] = _did
+
+PROTOCOLO_REGEX = r"PREP-(?:(?P<sigla>[A-Z0-9]{2,5})-)?(?P<bloco>[A-H]\d{2})-(?P<variante>V\d+)-T(?P<tentativa>\d+)-(?P<sufixo>[A-F0-9]+)"
+_PROTOCOLO_RE = re.compile(PROTOCOLO_REGEX, re.IGNORECASE)
+
+
 def normalizar_disciplina_id(disciplina_id: str = "") -> str:
     d = str(disciplina_id or "").strip().lower()
-    if d in ("matrizes_vetores", "mv", "mat121", "matrizes", "re42b"):
-        return "matrizes_vetores"
-    if d in ("algoritmos", "cc61a", "c", "alg", ""):
-        return "algoritmos"
+    if d in _DISCIPLINA_ALIASES:
+        return _DISCIPLINA_ALIASES[d]
     if d in DISCIPLINAS:
         return d
     raise ValueError(f"Disciplina desconhecida: '{disciplina_id}'")
@@ -170,26 +289,92 @@ def obter_disciplina(disciplina_id: str = DISCIPLINA_PADRAO) -> Dict[str, Any]:
 
 def listar_disciplinas() -> List[Dict[str, Any]]:
     out = []
-    for k in ("algoritmos", "matrizes_vetores"):
+    for k in DISCIPLINAS_ORDEM:
         d = DISCIPLINAS[k]
+        disp = os.path.isdir(d["curso_dir"])
+        if d.get("fonte") == "json":
+            disp = disp and os.path.isfile(d.get("arquivo_json", ""))
         out.append(
             {
                 "id": d["id"],
                 "codigo": d["codigo"],
                 "nome": d["nome"],
                 "nome_curto": d["nome_curto"],
+                "periodo": int(d.get("periodo", 1)),
+                "carga_horaria": int(d.get("carga_horaria", 60)),
+                "pre_requisitos": list(d.get("pre_requisitos") or []),
                 "total_blocos": d["total_blocos"],
                 "prefixo_protocolo": d["prefixo_protocolo"],
-                "disponivel": os.path.isdir(d["curso_dir"]),
+                "tipo_avaliacao": d["tipo_avaliacao"],
+                "csv_filename": d.get("csv_filename", "00_acompanhamento.csv"),
+                "objetivos": list(d.get("objetivos") or []),
+                "material_apoio": list(d.get("material_apoio") or []),
+                "disponivel": disp,
             }
         )
     return out
 
 
+def obter_estrutura_bcc() -> Dict[str, Any]:
+    discs = listar_disciplinas()
+    por_periodo: Dict[int, List[Dict[str, Any]]] = {}
+    for d in discs:
+        por_periodo.setdefault(int(d["periodo"]), []).append(d)
+    periodos = [
+        {
+            "periodo": p,
+            "titulo": f"{p}º Período",
+            "disciplinas": por_periodo[p],
+        }
+        for p in sorted(por_periodo.keys())
+    ]
+    return {
+        "curso": BCC_MATRIZ_META.get("curso", "Bacharelado em Ciência da Computação"),
+        "instituicao": BCC_MATRIZ_META.get("instituicao", "UTFPR — Câmpus Ponta Grossa"),
+        "matriz": BCC_MATRIZ_META.get("matriz", "826"),
+        "ppc_ano": BCC_MATRIZ_META.get("ppc_ano", 2022),
+        "fontes_curriculares": list(BCC_MATRIZ_META.get("fontes_curriculares") or []),
+        "roteiro_apoio_por_area": dict(BCC_MATRIZ_META.get("roteiro_apoio_por_area") or {}),
+        "componentes_integralizacao": list(COMPONENTES_INTEGRALIZACAO),
+        "total_disciplinas": len(discs),
+        "total_blocos_geral": sum(int(d["total_blocos"]) for d in discs),
+        "periodos": periodos,
+    }
+
+
+def extrair_protocolo(texto: str) -> str:
+    m = _PROTOCOLO_RE.search(str(texto or ""))
+    return m.group(0).upper() if m else ""
+
+
+def parse_protocolo(protocolo: str) -> Optional[Dict[str, Any]]:
+    m = _PROTOCOLO_RE.search(str(protocolo or "").strip())
+    if not m:
+        return None
+    sigla = (m.group("sigla") or "").upper()
+    if sigla and sigla not in PREFIXO_PARA_DISCIPLINA:
+        return None
+    disc_id = PREFIXO_PARA_DISCIPLINA.get(sigla, "algoritmos")
+    return {
+        "protocolo": m.group(0).upper(),
+        "sigla": sigla,
+        "disciplina": disc_id,
+        "bloco": m.group("bloco").upper(),
+        "variante": m.group("variante").upper(),
+        "tentativa": int(m.group("tentativa")),
+        "sufixo": m.group("sufixo").upper(),
+    }
+
+
 def disciplina_por_protocolo(protocolo: str) -> str:
+    parsed = parse_protocolo(protocolo)
+    if parsed:
+        return parsed["disciplina"]
     p = str(protocolo or "").strip().upper()
-    if p.startswith("PREP-MV-"):
-        return "matrizes_vetores"
+    if p.startswith("PREP-"):
+        partes = p.split("-")
+        if len(partes) >= 2 and partes[1] in PREFIXO_PARA_DISCIPLINA:
+            return PREFIXO_PARA_DISCIPLINA[partes[1]]
     return "algoritmos"
 
 # Configuracoes opcionais de SMTP / IMAP (se ausentes, opera via Spool local deterministico)

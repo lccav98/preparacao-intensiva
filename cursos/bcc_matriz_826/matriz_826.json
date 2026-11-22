@@ -1,0 +1,951 @@
+{
+  "curso": "Bacharelado em Ciência da Computação",
+  "instituicao": "UTFPR — Câmpus Ponta Grossa",
+  "matriz": "826",
+  "ppc_ano": 2022,
+  "fontes_curriculares": [
+    {
+      "titulo": "Projeto Pedagógico do Curso (PPC BCC 2022 — Matriz 826)",
+      "url": "https://dainf.pg.utfpr.edu.br/sites/default/files/PPC_BCC_2022_matriz_826.pdf"
+    },
+    {
+      "titulo": "Fluxograma Curricular (Matriz 826)",
+      "url": "https://dainf.pg.utfpr.edu.br/sites/default/files/Matriz_826_0.pdf"
+    },
+    {
+      "titulo": "Página Oficial do Curso e Matriz e Docentes",
+      "url": "https://www.utfpr.edu.br/cursos/coordenacoes/graduacao/ponta-grossa/pg-ciencia-da-computacao/matriz-e-docentes"
+    }
+  ],
+  "roteiro_apoio_por_area": {
+    "Matemática e estatística": "Selecionar no acervo institucional capítulos correspondentes a limites, álgebra, EDOs (Cálculo 2 abrange Laplace e EDOs), probabilidade e métodos numéricos.",
+    "Algoritmos e teoria": "Usar material do docente sobre estruturas, complexidade, linguagens formais e compilação, acompanhando definições e análise formal dos métodos.",
+    "Hardware e sistemas": "Consultar manuais da arquitetura e do microcontrolador efetivamente utilizados na turma e documentação do sistema operacional.",
+    "Engenharia de software, bancos e OO": "Relacionar a leitura aos modelos, notações (UML, MER) e ferramentas adotadas na turma.",
+    "Redes e distribuição": "Relacionar os protocolos estudados aos modelos de camadas (OSI e TCP/IP) e aos mecanismos de comunicação e coordenação.",
+    "Humanidades, pesquisa e empreendedorismo": "Usar referências do plano de ensino e guias institucionais da UTFPR/ABNT para trabalhos acadêmicos."
+  },
+  "componentes_integralizacao": [
+    {
+      "key": "estagio_obrigatorio",
+      "nome": "Estágio Obrigatório",
+      "horas_exigidas": 360,
+      "descricao": "Planejamento com supervisão, atividades técnicas, acompanhamento e documentação formal."
+    },
+    {
+      "key": "extensao",
+      "nome": "Atividades de Extensão",
+      "horas_exigidas": 330,
+      "descricao": "Participação em ações e componentes extensionistas reconhecidos (conferir enquadramento no PPC para evitar dupla contagem)."
+    },
+    {
+      "key": "atividades_complementares",
+      "nome": "Atividades Complementares",
+      "horas_exigidas": 180,
+      "descricao": "Registro de participação acadêmica, científica, cultural e profissional com comprovação conforme regulamento."
+    },
+    {
+      "key": "tcc",
+      "nome": "Trabalho de Conclusão de Curso (TCC)",
+      "horas_exigidas": 120,
+      "descricao": "Delimitação do problema, fundamentação, método, execução e defesa conforme normas do curso."
+    },
+    {
+      "key": "optativas_complementares",
+      "nome": "Optativas de Formação Complementar",
+      "horas_exigidas": 600,
+      "descricao": "Linhas do Quadro 10 / Apêndice B do PPC (bancos de dados, IA, Web, redes, sistemas etc.) entre o 5º e 8º períodos."
+    },
+    {
+      "key": "optativas_humanidades",
+      "nome": "Optativas de Humanidades",
+      "horas_exigidas": 150,
+      "descricao": "Componentes optativos da área de Humanidades integralizados até o 8º período."
+    }
+  ],
+  "disciplinas": [
+    {
+      "id": "algoritmos",
+      "codigo": "CC61A",
+      "nome": "Algoritmos e Programação em C",
+      "nome_curto": "1º Per. • Algoritmos (CC61A)",
+      "tag_email": "Algoritmos C - UTFPR",
+      "prefixo_protocolo": "PREP",
+      "periodo": 1,
+      "carga_horaria": 90,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "codigo_c",
+      "fonte": "markdown",
+      "estagios_meta": [
+        ["estagio_A", "A", 10, "Estágio A - Fundamentos, Variáveis, E/S e Binário"],
+        ["estagio_B", "B", 10, "Estágio B - Expressões, Operadores e Condicionais"],
+        ["estagio_C", "C", 10, "Estágio C - Estruturas de Repetição e Séries"],
+        ["estagio_D", "D", 10, "Estágio D - Vetores Unidimensionais e Strings"],
+        ["estagio_E", "E", 8, "Estágio E - Matrizes Bidimensionais e PGM P2"],
+        ["estagio_F", "F", 10, "Estágio F - Modularização, Funções e Ponteiros"],
+        ["estagio_G", "G", 9, "Estágio G - Recursividade e Pilha de Execução"],
+        ["estagio_H", "H", 6, "Estágio H - Integração Geral e Projeto PGM"]
+      ],
+      "objetivos": [
+        "Analisar problemas computacionais e identificar entradas, processamento e saídas.",
+        "Implementar soluções estruturadas em linguagem C respeitando sintaxe, tipos e modularização.",
+        "Rastrear a execução de programas e localizar erros de lógica e de sintaxe."
+      ],
+      "material_apoio": [
+        "Documentação C — https://en.cppreference.com/w/c",
+        "GNU Compiler Collection — https://gcc.gnu.org/onlinedocs/",
+        "Python Brasil (apoio de lógica) — https://python.org.br/"
+      ]
+    },
+    {
+      "id": "matematica_discreta",
+      "codigo": "BCC1MD",
+      "nome": "Matemática Discreta",
+      "nome_curto": "1º Per. • Matemática Discreta",
+      "tag_email": "Mat. Discreta - UTFPR",
+      "prefixo_protocolo": "PREP-MD",
+      "periodo": 1,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "logica_matematica",
+      "fonte": "json",
+      "arquivo": "periodo_1.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 4, "Estágio A - Lógica proposicional"],
+        ["estagio_B", "B", 4, "Estágio B - Predicados e demonstrações"],
+        ["estagio_C", "C", 4, "Estágio C - Conjuntos, relações e funções"],
+        ["estagio_D", "D", 4, "Estágio D - Contagem e indução"],
+        ["estagio_E", "E", 4, "Estágio E - Grafos"]
+      ],
+      "objetivos": [
+        "Utilizar lógica proposicional e de predicados.",
+        "Trabalhar com conjuntos, relações e funções.",
+        "Aplicar técnicas de demonstração, contagem, indução e representar relações por grafos."
+      ],
+      "material_apoio": [
+        "MIT OCW 6.042J Mathematics for Computer Science — https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/",
+        "OpenStax Mathematics — https://openstax.org/subjects/math"
+      ]
+    },
+    {
+      "id": "pre_calculo",
+      "codigo": "BCC1PC",
+      "nome": "Pré-Cálculo",
+      "nome_curto": "1º Per. • Pré-Cálculo",
+      "tag_email": "Pré-Cálculo - UTFPR",
+      "prefixo_protocolo": "PREP-PC",
+      "periodo": 1,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "matematica_geral",
+      "fonte": "json",
+      "arquivo": "periodo_1.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 3, "Estágio A - Fundamentos algébricos"],
+        ["estagio_B", "B", 4, "Estágio B - Funções"],
+        ["estagio_C", "C", 3, "Estágio C - Funções especiais"]
+      ],
+      "objetivos": [
+        "Operar com expressões algébricas, equações, inequações e sistemas lineares.",
+        "Interpretar funções polinomiais, racionais, exponenciais, logarítmicas e trigonométricas."
+      ],
+      "material_apoio": [
+        "Khan Academy Pré-Cálculo — https://pt.khanacademy.org/math/precalculus",
+        "OpenStax Precalculus — https://openstax.org/details/books/precalculus-2e",
+        "Desmos — https://www.desmos.com/calculator?lang=pt-BR"
+      ]
+    },
+    {
+      "id": "matrizes_vetores",
+      "codigo": "MAT121",
+      "nome": "Matrizes e Vetores",
+      "nome_curto": "1º Per. • Matrizes e Vetores (MAT121)",
+      "tag_email": "Matrizes e Vetores - UTFPR",
+      "prefixo_protocolo": "PREP-MV",
+      "periodo": 1,
+      "carga_horaria": 45,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "matematica",
+      "fonte": "markdown",
+      "estagios_meta": [
+        ["estagio_A", "A", 9, "Estágio A - Matrizes, Operações, Transposta e Especiais"],
+        ["estagio_B", "B", 9, "Estágio B - Determinantes, Inversa [A|I] e Equações Matriciais"],
+        ["estagio_C", "C", 8, "Estágio C - Sistemas Lineares, Escalonamento, Posto e Parametros"],
+        ["estagio_D", "D", 10, "Estágio D - Vetores no R2/R3, Produtos, Áreas e Volumes"],
+        ["estagio_E", "E", 10, "Estágio E - Retas, Planos e Distâncias no R3"],
+        ["estagio_F", "F", 8, "Estágio F - Seções Cônicas e Quádricas Canônicas"],
+        ["estagio_G", "G", 6, "Estágio G - Simulados Integradores P1, P2, P3 e Reavaliação"]
+      ],
+      "objetivos": [
+        "Operar com vetores, matrizes, determinantes e resolver sistemas lineares.",
+        "Interpretar retas, planos, cônicas e relacionar álgebra linear à computação."
+      ],
+      "material_apoio": [
+        "MIT OCW 18.06 Linear Algebra — https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+        "3Blue1Brown Linear Algebra — https://www.3blue1brown.com/topics/linear-algebra",
+        "NumPy linalg — https://numpy.org/doc/stable/reference/routines.linalg.html"
+      ]
+    },
+    {
+      "id": "comunicacao_linguistica",
+      "codigo": "BCC1CL",
+      "nome": "Comunicação Linguística",
+      "nome_curto": "1º Per. • Comunicação Linguística",
+      "tag_email": "Com. Linguística - UTFPR",
+      "prefixo_protocolo": "PREP-CL",
+      "periodo": 1,
+      "carga_horaria": 30,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_1.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 3, "Estágio A - Leitura e organização textual"],
+        ["estagio_B", "B", 4, "Estágio B - Escrita acadêmica e técnica"],
+        ["estagio_C", "C", 3, "Estágio C - Comunicação oral"]
+      ],
+      "objetivos": [
+        "Ler e interpretar textos acadêmicos e técnicos com síntese, coerência e coesão.",
+        "Produzir relatórios técnicos, documentação de software, citações ABNT e apresentações orais."
+      ],
+      "material_apoio": [
+        "Sistema de Bibliotecas UTFPR — https://www.utfpr.edu.br/biblioteca",
+        "ABNT Catálogo — https://www.abntcatalogo.com.br/",
+        "PlainLanguage.gov — https://www.plainlanguage.gov/"
+      ]
+    },
+    {
+      "id": "estrutura_dados_1",
+      "codigo": "BCC2ED1",
+      "nome": "Estrutura de Dados 1",
+      "nome_curto": "2º Per. • Estrutura de Dados 1",
+      "tag_email": "ED1 - UTFPR",
+      "prefixo_protocolo": "PREP-ED1",
+      "periodo": 2,
+      "carga_horaria": 90,
+      "pre_requisitos": ["algoritmos"],
+      "tipo_avaliacao": "codigo_c",
+      "fonte": "json",
+      "arquivo": "periodo_2.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (22.5h) - Representação e memória"],
+        ["estagio_B", "B", 2, "Unidade 2 (22.5h) - Estruturas sequenciais"],
+        ["estagio_C", "C", 2, "Unidade 3 (22.5h) - Organização de acesso"],
+        ["estagio_D", "D", 2, "Unidade 4 (22.5h) - Busca e ordenação"]
+      ],
+      "objetivos": [
+        "Projetar TADs com alocação estática e dinâmica em C mantendo invariantes de memória.",
+        "Implementar listas encadeadas, pilhas, filas, matrizes esparsas, busca binária e ordenação interna."
+      ],
+      "material_apoio": [
+        "PPC BCC UTFPR-PG (seção 5.4.2) e planos de ensino da turma.",
+        "Síntese técnica das quatro unidades com análise de custos."
+      ]
+    },
+    {
+      "id": "circuitos_digitais",
+      "codigo": "BCC2CD",
+      "nome": "Circuitos Digitais",
+      "nome_curto": "2º Per. • Circuitos Digitais",
+      "tag_email": "Circuitos Digitais - UTFPR",
+      "prefixo_protocolo": "PREP-CD",
+      "periodo": 2,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "logica_matematica",
+      "fonte": "json",
+      "arquivo": "periodo_2.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Representação numérica e aritmética computacional"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Lógica digital e álgebra booleana"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Circuitos combinacionais"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Circuitos sequenciais e FSMs"]
+      ],
+      "objetivos": [
+        "Converter bases numéricas, complemento de dois, códigos binários e ponto flutuante.",
+        "Simplificar funções booleanas e analisar circuitos combinacionais e sequenciais."
+      ],
+      "material_apoio": [
+        "PPC BCC UTFPR-PG (seção 5.4.2) — Circuitos Digitais.",
+        "Manuais de hardware e portas lógicas indicados pelo docente."
+      ]
+    },
+    {
+      "id": "logica_computacao",
+      "codigo": "BCC2LC",
+      "nome": "Lógica para Computação",
+      "nome_curto": "2º Per. • Lógica para Computação",
+      "tag_email": "Lógica Computação - UTFPR",
+      "prefixo_protocolo": "PREP-LC",
+      "periodo": 2,
+      "carga_horaria": 60,
+      "pre_requisitos": ["matematica_discreta"],
+      "tipo_avaliacao": "logica_matematica",
+      "fonte": "json",
+      "arquivo": "periodo_2.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Linguagens lógicas (sintaxe e semântica)"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Dedução natural e construção de provas"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Sistemas de prova e cálculo de sequentes"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Aplicações: lógica modal, temporal e formalização"]
+      ],
+      "objetivos": [
+        "Formalizar propriedades em lógica proposicional, predicados, modal e temporal.",
+        "Construir derivações em dedução natural e cálculo de sequentes."
+      ],
+      "material_apoio": [
+        "PPC BCC UTFPR-PG (seção 5.4.2) — Lógica para Computação."
+      ]
+    },
+    {
+      "id": "etica_profissional",
+      "codigo": "BCC2EP",
+      "nome": "Fundamentos da Ética Profissional",
+      "nome_curto": "2º Per. • Ética Profissional",
+      "tag_email": "Ética Profissional - UTFPR",
+      "prefixo_protocolo": "PREP-EP",
+      "periodo": 2,
+      "carga_horaria": 30,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_2.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (7.5h) - Ética, trabalho, cidadania e responsabilidade"],
+        ["estagio_B", "B", 2, "Unidade 2 (7.5h) - Relações profissionais e direitos"],
+        ["estagio_C", "C", 2, "Unidade 3 (7.5h) - Autoria e propriedade intelectual"],
+        ["estagio_D", "D", 2, "Unidade 4 (7.5h) - Sociedade, cultura digital e sustentabilidade"]
+      ],
+      "objetivos": [
+        "Analisar responsabilidade profissional, direitos de consumo e propriedade intelectual em computação.",
+        "Avaliar impactos socioambientais, inclusão, privacidade e democracia na cultura digital."
+      ],
+      "material_apoio": [
+        "PPC BCC UTFPR-PG (seção 5.4.2) — Fundamentos da Ética Profissional."
+      ]
+    },
+    {
+      "id": "calculo_1",
+      "codigo": "BCC2C1",
+      "nome": "Cálculo 1",
+      "nome_curto": "2º Per. • Cálculo 1",
+      "tag_email": "Cálculo 1 - UTFPR",
+      "prefixo_protocolo": "PREP-C1",
+      "periodo": 2,
+      "carga_horaria": 60,
+      "pre_requisitos": ["pre_calculo"],
+      "tipo_avaliacao": "matematica_geral",
+      "fonte": "json",
+      "arquivo": "periodo_2.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Limites e continuidade"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Derivação e aproximação linear"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Extremos, gráficos e otimização"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Integração, áreas e volumes de revolução"]
+      ],
+      "objetivos": [
+        "Calcular limites, derivadas, retas tangentes e resolver problemas de otimização.",
+        "Aplicar o Teorema Fundamental do Cálculo em integrais definidas, áreas e volumes."
+      ],
+      "material_apoio": [
+        "PPC BCC UTFPR-PG (seção 5.4.2) e acervo institucional de Cálculo."
+      ]
+    },
+    {
+      "id": "algebra_linear",
+      "codigo": "BCC2AL",
+      "nome": "Álgebra Linear",
+      "nome_curto": "2º Per. • Álgebra Linear",
+      "tag_email": "Álgebra Linear - UTFPR",
+      "prefixo_protocolo": "PREP-AL",
+      "periodo": 2,
+      "carga_horaria": 60,
+      "pre_requisitos": ["matrizes_vetores"],
+      "tipo_avaliacao": "matematica_geral",
+      "fonte": "json",
+      "arquivo": "periodo_2.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Espaços e subespaços vetoriais"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Transformações lineares, núcleo e imagem"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Complexos, autovalores, autovetores e diagonalização"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Equações diferenciais e sistemas lineares"]
+      ],
+      "objetivos": [
+        "Determinar bases, dimensão, núcleo, imagem e representação matricial de transformações lineares.",
+        "Calcular autovalores, autovetores, diagonalização e resolver sistemas lineares de EDOs."
+      ],
+      "material_apoio": [
+        "PPC BCC UTFPR-PG (seção 5.4.2) e roteiro de Matemática e Estatística."
+      ]
+    },
+    {
+      "id": "estrutura_dados_2",
+      "codigo": "BCC3ED2",
+      "nome": "Estrutura de Dados 2",
+      "nome_curto": "3º Per. • Estrutura de Dados 2",
+      "tag_email": "ED2 - UTFPR",
+      "prefixo_protocolo": "PREP-ED2",
+      "periodo": 3,
+      "carga_horaria": 60,
+      "pre_requisitos": ["estrutura_dados_1"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_3.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Árvores de busca binária"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Balanceamento e filas de prioridade"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Indexação, pesquisa digital e hashing"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Armazenamento externo e árvores B/B+"]
+      ],
+      "objetivos": [
+        "Analisar e operar árvores binárias de busca, AVL/Rubro-Negra e heaps binários.",
+        "Projetar tabelas hash, tries e estruturas eficientes em memória secundária."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.3) — Estrutura de Dados 2."]
+    },
+    {
+      "id": "organizacao_computadores",
+      "codigo": "BCC3OC",
+      "nome": "Organização de Computadores",
+      "nome_curto": "3º Per. • Organização de Computadores",
+      "tag_email": "Org. Computadores - UTFPR",
+      "prefixo_protocolo": "PREP-OC",
+      "periodo": 3,
+      "carga_horaria": 60,
+      "pre_requisitos": ["circuitos_digitais"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_3.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Arquiteturas e linguagem de máquina"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Processador, ULA e caminho de dados"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Pipeline e hierarquia de memória cache"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Interrupções, periféricos e multicore"]
+      ],
+      "objetivos": [
+        "Relacionar ISA, datapath, controle e ciclo de instrução à execução de programas.",
+        "Calcular impacto de pipeline, hazards, taxa de acerto em cache e paralelismo multicore."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.3) e manuais da arquitetura adotada."]
+    },
+    {
+      "id": "banco_dados_1",
+      "codigo": "BCC3BD1",
+      "nome": "Banco de Dados 1",
+      "nome_curto": "3º Per. • Banco de Dados 1",
+      "tag_email": "Banco de Dados 1 - UTFPR",
+      "prefixo_protocolo": "PREP-BD1",
+      "periodo": 3,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_3.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Fundamentos de SGBDs e independência de dados"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Modelagem conceitual (MER/EER) e cardinalidades"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Implementação lógica, física e normalização"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Programação SQL, visões, triggers e segurança"]
+      ],
+      "objetivos": [
+        "Elaborar modelos ER e traduzi-los para esquemas relacionais normalizados.",
+        "Escrever consultas e comandos SQL com integridade referencial e controle de acesso."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.3) — Banco de Dados 1."]
+    },
+    {
+      "id": "engenharia_software_1",
+      "codigo": "BCC3ES1",
+      "nome": "Engenharia de Software 1",
+      "nome_curto": "3º Per. • Engenharia de Software 1",
+      "tag_email": "Eng. Software 1 - UTFPR",
+      "prefixo_protocolo": "PREP-ES1",
+      "periodo": 3,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_3.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Processos e modelos de ciclo de vida"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Requisitos e arquitetura inicial"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Gestão, estimativas, riscos e qualidade"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Verificação, validação e testes de software"]
+      ],
+      "objetivos": [
+        "Comparar processos tradicionais e ágeis e especificar requisitos funcionais e não funcionais.",
+        "Planejar estimativas e definir casos de teste caixa-preta e caixa-branca."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.3) — Engenharia de Software 1."]
+    },
+    {
+      "id": "calculo_2",
+      "codigo": "BCC3C2",
+      "nome": "Cálculo 2",
+      "nome_curto": "3º Per. • Cálculo 2",
+      "tag_email": "Cálculo 2 - UTFPR",
+      "prefixo_protocolo": "PREP-C2",
+      "periodo": 3,
+      "carga_horaria": 60,
+      "pre_requisitos": ["calculo_1"],
+      "tipo_avaliacao": "matematica_geral",
+      "fonte": "json",
+      "arquivo": "periodo_3.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Funções multivariáveis, domínio e limites"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Derivadas parciais, gradiente e extremos"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Transformada de Laplace e EDOs lineares"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - EDOs não lineares de 1ª ordem e análise qualitativa"]
+      ],
+      "objetivos": [
+        "Analisar funções de várias variáveis via derivadas parciais, gradiente e pontos críticos.",
+        "Resolver EDOs lineares por Transformada de Laplace e analisar qualitativamente EDOs não lineares."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.3) — Cálculo 2 (Multivariáveis + Laplace + EDOs)."]
+    },
+    {
+      "id": "probabilidade_estatistica",
+      "codigo": "BCC3PE",
+      "nome": "Probabilidade e Estatística",
+      "nome_curto": "3º Per. • Probabilidade e Estatística",
+      "tag_email": "Prob. Estatística - UTFPR",
+      "prefixo_protocolo": "PREP-PE",
+      "periodo": 3,
+      "carga_horaria": 60,
+      "pre_requisitos": ["calculo_1"],
+      "tipo_avaliacao": "matematica_geral",
+      "fonte": "json",
+      "arquivo": "periodo_3.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Estatística descritiva e gráficos"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Probabilidade condicional e distribuições"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Amostragem, estimação e intervalos de confiança"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Testes de hipóteses e ANOVA"]
+      ],
+      "objetivos": [
+        "Calcular medidas de tendência/dispersão, probabilidade condicional, Bayes e esperança/variância.",
+        "Construir intervalos de confiança, testes de hipóteses e interpretar ANOVA."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.3) — Probabilidade e Estatística."]
+    },
+    {
+      "id": "linguagens_formais",
+      "codigo": "BCC4LFA",
+      "nome": "Linguagens Formais e Autômatos",
+      "nome_curto": "4º Per. • Linguagens Formais e Autômatos",
+      "tag_email": "LFA - UTFPR",
+      "prefixo_protocolo": "PREP-LFA",
+      "periodo": 4,
+      "carga_horaria": 60,
+      "pre_requisitos": ["logica_computacao"],
+      "tipo_avaliacao": "logica_matematica",
+      "fonte": "json",
+      "arquivo": "periodo_4.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Alfabetos, linguagens e Hierarquia de Chomsky"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Autômatos finitos, expressões regulares e Lema do Bombeamento"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - GLC, autômatos de pilha e sensíveis ao contexto"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Máquinas de Turing, decidibilidade e computabilidade"]
+      ],
+      "objetivos": [
+        "Projetar AFDs/AFNs, expressões regulares e provar regularidade ou não regularidade.",
+        "Construir GLCs, autômatos de pilha e máquinas de Turing compreendendo decidibilidade."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.4) — Linguagens Formais e Autômatos."]
+    },
+    {
+      "id": "sistemas_operacionais",
+      "codigo": "BCC4SO",
+      "nome": "Sistemas Operacionais",
+      "nome_curto": "4º Per. • Sistemas Operacionais",
+      "tag_email": "Sist. Operacionais - UTFPR",
+      "prefixo_protocolo": "PREP-SO",
+      "periodo": 4,
+      "carga_horaria": 60,
+      "pre_requisitos": ["organizacao_computadores"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_4.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Estrutura do SO, chamadas de sistema e processos"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Escalonamento, concorrência e deadlocks"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Gerenciamento de memória, paginação e substituição"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Sistemas de arquivos, E/S e integração"]
+      ],
+      "objetivos": [
+        "Comparar políticas de escalonamento de CPU e mecanismos de sincronização sem deadlock.",
+        "Calcular tradução de endereços virtuais, page faults e alocação de blocos em disco."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.4) — Sistemas Operacionais."]
+    },
+    {
+      "id": "sistemas_microcontrolados",
+      "codigo": "BCC4SM",
+      "nome": "Sistemas Microcontrolados",
+      "nome_curto": "4º Per. • Sistemas Microcontrolados",
+      "tag_email": "Microcontrolados - UTFPR",
+      "prefixo_protocolo": "PREP-SM",
+      "periodo": 4,
+      "carga_horaria": 60,
+      "pre_requisitos": ["circuitos_digitais"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_4.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Arquitetura de microcontroladores e memória"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Conjunto de instruções, assembly e GPIO"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Interrupções, timers e PWM"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - UART/SPI/I2C, ADC e integração de sensores"]
+      ],
+      "objetivos": [
+        "Configurar registradores, máscaras de bits, interrupções e temporizadores em hardware embarcado.",
+        "Integrar protocolos seriais e conversão A/D em projetos com microcontroladores."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.4) e datasheet do microcontrolador da turma."]
+    },
+    {
+      "id": "programacao_oo",
+      "codigo": "BCC4POO",
+      "nome": "Programação Orientada a Objetos",
+      "nome_curto": "4º Per. • Programação Orientada a Objetos",
+      "tag_email": "POO - UTFPR",
+      "prefixo_protocolo": "PREP-POO",
+      "periodo": 4,
+      "carga_horaria": 60,
+      "pre_requisitos": ["algoritmos"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_4.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Abstração, classes, objetos e estado"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Encapsulamento, composição e interfaces"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Herança, polimorfismo e classes abstratas"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Exceções, coleções e iteradores"]
+      ],
+      "objetivos": [
+        "Modelar e implementar sistemas orientados a objetos com encapsulamento e interfaces.",
+        "Aplicar herança, polimorfismo dinâmico, tratamento de exceções e coleções."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.4) — Programação Orientada a Objetos."]
+    },
+    {
+      "id": "computacao_grafica",
+      "codigo": "BCC4CG",
+      "nome": "Computação Gráfica",
+      "nome_curto": "4º Per. • Computação Gráfica",
+      "tag_email": "Comp. Gráfica - UTFPR",
+      "prefixo_protocolo": "PREP-CG",
+      "periodo": 4,
+      "carga_horaria": 60,
+      "pre_requisitos": ["algebra_linear", "estrutura_dados_2"],
+      "tipo_avaliacao": "matematica_geral",
+      "fonte": "json",
+      "arquivo": "periodo_4.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Dispositivos raster, primitivas e coordenadas"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Transformações geométricas 2D/3D em coordenadas homogêneas"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Pipeline de visualização, recorte e z-buffer"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Iluminação de Phong, modelos de cor e realidade virtual"]
+      ],
+      "objetivos": [
+        "Compor matrizes de transformação 2D/3D em coordenadas homogêneas e aplicar recorte/rasterização.",
+        "Explicar projeções perspectiva/ortográfica, visibilidade e iluminação local."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.4) — Computação Gráfica."]
+    },
+    {
+      "id": "calculo_numerico",
+      "codigo": "BCC4CN",
+      "nome": "Cálculo Numérico",
+      "nome_curto": "4º Per. • Cálculo Numérico",
+      "tag_email": "Cálculo Numérico - UTFPR",
+      "prefixo_protocolo": "PREP-CN",
+      "periodo": 4,
+      "carga_horaria": 60,
+      "pre_requisitos": ["algebra_linear"],
+      "tipo_avaliacao": "matematica_geral",
+      "fonte": "json",
+      "arquivo": "periodo_4.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Aritmética finita, erros e condicionamento"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Zero de funções (Bisseção/Newton) e métodos iterativos lineares"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Interpolação polinomial e mínimos quadrados"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Quadratura (Trapézios/Simpson) e Euler/Runge-Kutta para EDOs"]
+      ],
+      "objetivos": [
+        "Analisar propagação de erros em ponto flutuante e aplicar Bisseção, Newton-Raphson e Jacobi/Gauss-Seidel.",
+        "Ajustar dados por interpolação/mínimos quadrados e integrar numericamente funções e EDOs."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.4) — Cálculo Numérico."]
+    },
+    {
+      "id": "compiladores",
+      "codigo": "BCC5CMP",
+      "nome": "Compiladores",
+      "nome_curto": "5º Per. • Compiladores",
+      "tag_email": "Compiladores - UTFPR",
+      "prefixo_protocolo": "PREP-CMP",
+      "periodo": 5,
+      "carga_horaria": 60,
+      "pre_requisitos": ["linguagens_formais"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_5.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Análise léxica, tokens e tabela de símbolos"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Análise sintática LL(1)/LR e recuperação de erros"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Análise semântica, escopos e checagem de tipos"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Código intermediário de três endereços e geração de código"]
+      ],
+      "objetivos": [
+        "Construir especificações léxicas e analisar conflitos/conjuntos FIRST e FOLLOW em parsers LL(1).",
+        "Verificar compatibilidade de tipos, escopos e traduzir construções para código de três endereços."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.5) — Compiladores."]
+    },
+    {
+      "id": "analise_projeto_algoritmos",
+      "codigo": "BCC5APA",
+      "nome": "Análise e Projeto de Algoritmos",
+      "nome_curto": "5º Per. • Análise e Projeto de Algoritmos",
+      "tag_email": "APA - UTFPR",
+      "prefixo_protocolo": "PREP-APA",
+      "periodo": 5,
+      "carga_horaria": 60,
+      "pre_requisitos": ["estrutura_dados_2"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_5.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Complexidade assintótica e recorrências (Teorema Mestre)"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Algoritmos aleatorizados, hashing e limites inferiores"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Divisão e conquista, gulosos e programação dinâmica"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Grafos: caminhos mínimos, MST, ordenação topológica e fluxo"]
+      ],
+      "objetivos": [
+        "Resolver recorrências pelo Teorema Mestre e provar corretude/complexidade.",
+        "Aplicar algoritmos gulosos, programação dinâmica e algoritmos clássicos em grafos ponderados."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.5) — Análise e Projeto de Algoritmos."]
+    },
+    {
+      "id": "redes_computadores_1",
+      "codigo": "BCC5RC1",
+      "nome": "Redes de Computadores 1",
+      "nome_curto": "5º Per. • Redes de Computadores 1",
+      "tag_email": "Redes 1 - UTFPR",
+      "prefixo_protocolo": "PREP-RC1",
+      "periodo": 5,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_5.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Comunicação, meios físicos e redes locais"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Arquiteturas OSI e TCP/IP e encapsulamento"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Endereçamento IP, sub-redes CIDR e roteamento"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Transporte TCP/UDP, DNS/HTTP e redes sem fio"]
+      ],
+      "objetivos": [
+        "Calcular máscaras CIDR, sub-redes e roteamento IP.",
+        "Analisar funcionamento de TCP, UDP, ARP, DNS, HTTP e Wi-Fi nas camadas OSI/TCP-IP."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.5) — Redes de Computadores 1."]
+    },
+    {
+      "id": "analise_projeto_oo",
+      "codigo": "BCC5APOO",
+      "nome": "Análise e Projeto Orientados a Objetos",
+      "nome_curto": "5º Per. • Análise e Projeto OO",
+      "tag_email": "APOO - UTFPR",
+      "prefixo_protocolo": "PREP-APOO",
+      "periodo": 5,
+      "carga_horaria": 60,
+      "pre_requisitos": ["programacao_oo"],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_5.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Análise de domínio e atribuição de responsabilidades"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Modelagem estrutural UML (classes e componentes)"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Modelos comportamentais (sequência e estados)"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Princípios GRASP/SOLID e padrões de projeto GoF"]
+      ],
+      "objetivos": [
+        "Produzir diagramas UML estruturais e comportamentais consistentes entre si.",
+        "Aplicar padrões de projeto (Strategy, Observer, Factory, Singleton) mantendo baixo acoplamento."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.5) — APOO."]
+    },
+    {
+      "id": "interacao_humano_computador",
+      "codigo": "BCC5IHC",
+      "nome": "Interação Humano-Computador",
+      "nome_curto": "5º Per. • Interação Humano-Computador",
+      "tag_email": "IHC - UTFPR",
+      "prefixo_protocolo": "PREP-IHC",
+      "periodo": 5,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_5.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Usabilidade, comunicabilidade e acessibilidade (WCAG)"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Fatores humanos, engenharia cognitiva e semiótica"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Concepção de interfaces e diretrizes Web"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Métodos de avaliação heurística e testes com usuários"]
+      ],
+      "objetivos": [
+        "Projetar fluxos acessíveis com base em heurísticas de Nielsen e engenharia semiótica.",
+        "Conduzir e interpretar avaliações heurísticas e ensaios de interação."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.5) — Interação Humano-Computador."]
+    },
+    {
+      "id": "inteligencia_artificial",
+      "codigo": "BCC6IA",
+      "nome": "Inteligência Artificial",
+      "nome_curto": "6º Per. • Inteligência Artificial",
+      "tag_email": "IA - UTFPR",
+      "prefixo_protocolo": "PREP-IA",
+      "periodo": 6,
+      "carga_horaria": 60,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_6.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Fundamentos, agentes racionais e problemas de IA"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Busca cega, heurística (A*) e jogos (Minimax)"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Representação de conhecimento e inferência sob incerteza"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Aprendizado de máquina e aplicações"]
+      ],
+      "objetivos": [
+        "Formular problemas como espaço de estados e executar busca A* e poda alfa-beta.",
+        "Aplicar inferência lógica/bayesiana e avaliação básica de modelos de aprendizado."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.6) — Inteligência Artificial."]
+    },
+    {
+      "id": "metodologia_pesquisa",
+      "codigo": "BCC6MPC",
+      "nome": "Metodologia de Pesquisa para Computação",
+      "nome_curto": "6º Per. • Metodologia de Pesquisa",
+      "tag_email": "Metodologia Pesquisa - UTFPR",
+      "prefixo_protocolo": "PREP-MPC",
+      "periodo": 6,
+      "carga_horaria": 30,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_6.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (7.5h) - Pesquisa científica e delimitação do problema"],
+        ["estagio_B", "B", 2, "Unidade 2 (7.5h) - Métodos experimentais, estudo de caso e revisão sistemática"],
+        ["estagio_C", "C", 2, "Unidade 3 (7.5h) - Pré-projeto de pesquisa, objetivos e cronograma"],
+        ["estagio_D", "D", 2, "Unidade 4 (7.5h) - Redação científica, ética e normas acadêmicas"]
+      ],
+      "objetivos": [
+        "Definir pergunta de pesquisa, hipóteses, protocolo de busca e desenho metodológico.",
+        "Redigir pré-projeto de TCC estruturado com integridade científica e citações."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.6) e guias institucionais da UTFPR."]
+    },
+    {
+      "id": "sistemas_distribuidos",
+      "codigo": "BCC6SD",
+      "nome": "Sistemas Distribuídos",
+      "nome_curto": "6º Per. • Sistemas Distribuídos",
+      "tag_email": "Sist. Distribuídos - UTFPR",
+      "prefixo_protocolo": "PREP-SD",
+      "periodo": 6,
+      "carga_horaria": 60,
+      "pre_requisitos": ["redes_computadores_1"],
+      "tipo_avaliacao": "computacao_tecnica",
+      "fonte": "json",
+      "arquivo": "periodo_6.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (15h) - Modelos distribuídos e falhas"],
+        ["estagio_B", "B", 2, "Unidade 2 (15h) - Processos, threads e cliente-servidor RPC/REST"],
+        ["estagio_C", "C", 2, "Unidade 3 (15h) - Middleware, replicação e tolerância a falhas"],
+        ["estagio_D", "D", 2, "Unidade 4 (15h) - Relógios lógicos de Lamport, eleição e consenso"]
+      ],
+      "objetivos": [
+        "Ordenar eventos com relógios de Lamport/vetoriais e analisar teorema CAP.",
+        "Projetar comunicação RPC/mensageria, exclusão mútua distribuída e eleição de líder."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.6) — Sistemas Distribuídos."]
+    },
+    {
+      "id": "empreendedorismo",
+      "codigo": "BCC6EMP",
+      "nome": "Empreendedorismo",
+      "nome_curto": "6º Per. • Empreendedorismo",
+      "tag_email": "Empreendedorismo - UTFPR",
+      "prefixo_protocolo": "PREP-EMP",
+      "periodo": 6,
+      "carga_horaria": 30,
+      "pre_requisitos": [],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_6.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 2, "Unidade 1 (7.5h) - Perfil empreendedor e economia de mercado"],
+        ["estagio_B", "B", 2, "Unidade 2 (7.5h) - Validação de oportunidades e proposta de valor"],
+        ["estagio_C", "C", 2, "Unidade 3 (7.5h) - Plano de negócios e viabilidade"],
+        ["estagio_D", "D", 2, "Unidade 4 (7.5h) - Posicionamento, pitch e qualidade"]
+      ],
+      "objetivos": [
+        "Identificar oportunidades tecnológicas e validar segmento de clientes e proposta de valor.",
+        "Estruturar modelo/plano de negócios, métricas financeiras básicas e comunicação executiva."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.4.6) — Empreendedorismo."]
+    },
+    {
+      "id": "planejamento_tcc_optativas",
+      "codigo": "BCC7TCC",
+      "nome": "7º Período — Optativas e Planejamento de TCC",
+      "nome_curto": "7º Per. • Planejamento TCC & Optativas",
+      "tag_email": "TCC e Optativas 7P - UTFPR",
+      "prefixo_protocolo": "PREP-P7",
+      "periodo": 7,
+      "carga_horaria": 60,
+      "pre_requisitos": ["metodologia_pesquisa"],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_7_8.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 5, "Etapas 7º Período — Escolha de Optativas, Escopo, Fundamentação, Método e Início do TCC"]
+      ],
+      "objetivos": [
+        "Selecionar optativas compatíveis com pré-requisitos e integralização do PPC (Quadro 10).",
+        "Delimitar problema, revisão bibliográfica, método e protótipo inicial do TCC."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (Quadro 10, Apêndice B e seção 5.9)."]
+    },
+    {
+      "id": "conclusao_tcc_integralizacao",
+      "codigo": "BCC8TCC",
+      "nome": "8º Período — Conclusão do TCC e Integralização",
+      "nome_curto": "8º Per. • Conclusão TCC & Integralização",
+      "tag_email": "TCC Conclusão 8P - UTFPR",
+      "prefixo_protocolo": "PREP-P8",
+      "periodo": 8,
+      "carga_horaria": 60,
+      "pre_requisitos": ["planejamento_tcc_optativas"],
+      "tipo_avaliacao": "conceitual_textual",
+      "fonte": "json",
+      "arquivo": "periodo_7_8.json",
+      "estagios_meta": [
+        ["estagio_A", "A", 5, "Etapas 8º Período — Pendências, Execução, Análise, Defesa do TCC e Integralização"]
+      ],
+      "objetivos": [
+        "Executar e avaliar criticamente o TCC, preparando texto final e apresentação de defesa.",
+        "Conferir estágio (360h), extensão (330h), atividades complementares (180h) e optativas."
+      ],
+      "material_apoio": ["PPC BCC UTFPR-PG (seção 5.9 e regulamentos de estágio/TCC/extensão)."]
+    }
+  ]
+}

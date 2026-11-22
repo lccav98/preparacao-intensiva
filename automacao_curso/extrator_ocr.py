@@ -69,7 +69,7 @@ def _transcrever_pagina(imagem: Image.Image) -> str:
         "Busque o resultado também no desenvolvimento quando a linha final estiver incompleta. "
         "Omita índices simbólicos, contas e rótulos de linha. Copie valores sem recalcular. "
         "Use (a), (b) e, para uma matriz, listas numéricas por linha como [[1, 2], [3, 4]]. "
-        "Para algoritmos preserve a sequência e as justificativas manuscritas. "
+        "Para algoritmos, codigo C/SQL, expressoes de calculo, logica formal ou redacao tecnica, preserve codigo, simbolos, formulas e justificativas manuscritas fielmente. "
         "Deixe o bloco vazio se realmente em branco. Marque escrita indecifravel com [ILEGIVEL]."
     )
     item = {"type": "object", "properties": {"id": {"type": "string"},
@@ -476,12 +476,7 @@ def _ocr_local(caminho: str) -> tuple[str, int]:
 
 def parse_texto_ocr(texto_bruto: str, protocolo_fallback: str = "") -> Dict[str, Any]:
     """Extrai protocolo, tempo declarado (ou diferenca HORA INICIO/TERMINO) e respostas por ID."""
-    m_prot = re.search(
-        r"(?:\[?PROTOCOLO\s*:\s*)?(PREP-(?:MV-)?[A-H]\d{2}-V\d+-T\d+-[A-F0-9]+)\]?",
-        texto_bruto,
-        re.IGNORECASE,
-    )
-    protocolo = m_prot.group(1).upper() if m_prot else protocolo_fallback
+    protocolo = config.extrair_protocolo(texto_bruto) or protocolo_fallback
 
     cabecalho = re.split(r"\[QUESTAO\s*:", texto_bruto, maxsplit=1, flags=re.IGNORECASE)[0]
 

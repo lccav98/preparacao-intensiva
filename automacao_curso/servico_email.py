@@ -261,11 +261,17 @@ def enviar_prova_por_email(
         f'<td style="padding: 6px; border: 1px solid #cbd5e1;"><a href="{html.escape(url_portal)}">{html.escape(url_portal)}</a></td></tr>'
     )
     modo_txt = "Checagem Independente (Sem Consulta)" if modo == "checagem" else "Sessao de Pratica Guiada"
-    instrucao_papel = (
-        "Resolva tudo a caneta no papel (escalonamentos, desenvolvimentos e resposta final exata em fracoes/radicais sem calculadora)."
-        if disc_id == "matrizes_vetores"
-        else "Resolva tudo a caneta no papel (sem compilador nas questoes de mesa/lacuna e escrevendo C99 a mao nas questoes de codigo)."
-    )
+    tipo_av = str(disc.get("tipo_avaliacao") or "codigo_c")
+    if tipo_av in ("matematica", "matematica_geral"):
+        instrucao_papel = "Resolva tudo a caneta no papel (desenvolvimento passo a passo e resposta final exata em fracoes/radicais/simbolos sem calculadora)."
+    elif tipo_av == "logica_matematica":
+        instrucao_papel = "Resolva tudo a caneta no papel (tabelas-verdade, derivacoes, diagramas ou calculos com notacao formal clara)."
+    elif tipo_av == "computacao_tecnica":
+        instrucao_papel = "Resolva tudo a caneta no papel (desenhando passos, algoritmos, SQL/codigo ou calculos tecnicos de forma legivel)."
+    elif tipo_av == "conceitual_textual":
+        instrucao_papel = "Redija as respostas a caneta de forma estruturada, objetiva e fundamentada diretamente na folha."
+    else:
+        instrucao_papel = "Resolva tudo a caneta no papel (sem compilador nas questoes de mesa/lacuna e escrevendo C99 a mao nas questoes de codigo)."
 
     assunto = (
         f"[{disc['tag_email']}] Prova {bloco.bloco_id} ({variante} - Tentativa #{tentativa}) "
@@ -489,9 +495,7 @@ def coletar_respostas_por_email() -> List[Dict[str, str]]:
                         prot_hdr = str(msg.get("X-Prep-Protocolo", ""))
                         remetente = str(msg.get("From", ""))
                         rem_clean = email.utils.parseaddr(remetente)[1].strip().lower()
-                        tem_prot = bool(
-                            re.search(r"PREP-(?:MV-)?[A-H]\d{2}-V\d+-T\d+-[A-F0-9]+", f"{prot_hdr} {assunto}", re.IGNORECASE)
-                        )
+                        tem_prot = bool(config.extrair_protocolo(f"{prot_hdr} {assunto}"))
                         pend_aluno = banco_dados.obter_prova_pendente_por_email(rem_clean)
 
                         # So baixa automaticamente e-mails que sejam do curso (protocolo PREP- ou aluno com prova pendente)
@@ -539,8 +543,7 @@ def coletar_respostas_por_email() -> List[Dict[str, str]]:
         assunto = str(msg.get("Subject", ""))
         prot_hdr = str(msg.get("X-Prep-Protocolo", ""))
         remetente = str(msg.get("From", ""))
-        m_prot = re.search(r"(PREP-(?:MV-)?[A-H]\d{2}-V\d+-T\d+-[A-F0-9]+)", f"{prot_hdr} {assunto}", re.IGNORECASE)
-        prot_bruto = m_prot.group(1).upper() if m_prot else ""
+        prot_bruto = config.extrair_protocolo(f"{prot_hdr} {assunto}")
         protocolo = resolver_protocolo_entrada(prot_bruto, remetente)
 
         anexo = _extrair_anexo_resposta(msg)

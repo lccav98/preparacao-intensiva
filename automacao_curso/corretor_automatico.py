@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import unicodedata
 from typing import Any, Dict, List, Optional, Tuple
 
 
@@ -42,6 +43,151 @@ CATEGORIAS_ERRO = {
 
 def _normalizar_espacos(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
+
+
+def _normalizar_sem_acentos(s: str) -> str:
+    nfkd = unicodedata.normalize("NFKD", str(s or ""))
+    sem_ac = "".join(ch for ch in nfkd if not unicodedata.combining(ch))
+    return re.sub(r"\s+", " ", sem_ac).strip().lower()
+
+
+def _avaliar_semantica_gemini_opcional(
+    questao: Questao, resp: str, bloco: BlocoCurricular
+) -> Optional[Tuple[str, str]]:
+    """Avalia respostas conceituais/tecnicas longas via Gemini somente quando ha chave configurada."""
+    if os.environ.get("PREP_DESATIVAR_GEMINI_RUBRICA", "").strip():
+        return None
+    if len((resp or "").strip()) < 35:
+        return None
+    cfg = config.obter_integracoes()
+    gem_key = (
+        os.environ.get("GEMINI_API_KEY", "").strip()
+        or os.environ.get("PREP_GEMINI_API_KEY", "").strip()
+        or str(cfg.get("gemini_api_key", "") or "").strip()
+    )
+    if not gem_key:
+        return None
+    prompt = (
+        f"Voce e avaliador da disciplina '{bloco.disciplina}', bloco '{bloco.titulo}', questao {questao.questao_id}.\n"
+        f"Enunciado: {questao.enunciado_md[:900]}\n"
+        f"Gabarito de referencia: {questao.gabarito_md[:1100]}\n"
+        f"Resposta do aluno: {resp[:1500]}\n"
+        "Compare semanticamente a resposta do aluno com o gabarito. "
+        "Retorne JSON com veredito ('correto', 'parcial' ou 'incorreto') e feedback curto em portugues."
+    )
+    formato = {
+        "type": "object",
+        "properties": {
+            "veredito": {"type": "string"},
+            "feedback": {"type": "string"},
+        },
+        "required": ["veredito", "feedback"],
+    }
+    try:
+        res = extrator_ocr._consultar_modelo_gemini(
+            {"role": "user", "content": prompt},
+            formato,
+            gem_key,
+            modelo_override=str(cfg.get("gemini_model", "") or ""),
+        )
+        ver = str(res.get("veredito", "")).strip().lower()
+        fb = str(res.get("feedback", "")).strip()
+        if ver in ("correto", "parcial", "incorreto") and fb:
+            return ver, fb
+    except Exception:
+        return None
+    return None
+
+
+def _avaliar_por_rubrica_estruturada(
+    questao: Questao, resp: str, bloco: BlocoCurricular
+) -> Dict[str, Any]:
+    """Avalia resposta contra rubrica estruturada com criterios objetivos e dica socratica."""
+    qid = questao.questao_id
+    rub = questao.rubrica or {}
+    norm = _normalizar_sem_acentos(resp)
+    dica_socratica = str(rub.get("dica_socratica") or "").strip()
+
+    for tp in (rub.get("termos_proibidos") or []):
+        tp_norm = _normalizar_sem_acentos(str(tp))
+        if tp_norm and tp_norm in norm:
+            banco_dados.registrar_metrica_jev("local", "rubrica_bcc", 0.96, f"{qid}:termo_proibido")
+            return {
+                "questao_id": qid,
+                "tipo_questao": questao.tipo,
+                "resposta_extraida": resp,
+                "status_correcao": "incorreto",
+                "categoria_erro": "violacao_escopo_estagio",
+                "feedback_item": f"[{qid}] Termo ou abordagem nao permitida detectada ('{tp}'). {dica_socratica}".strip(),
+                "camada_avaliacao": "local",
+                "confianca": 0.96,
+            }
+
+    criterios = list(rub.get("criterios") or [])
+    atendidos = 0
+    faltantes_obrig: List[str] = []
+    faltantes_opc: List[str] = []
+
+    for crit in criterios:
+        nome = str(crit.get("nome") or "Criterio").strip()
+        termos = [_normalizar_sem_acentos(str(t)) for t in (crit.get("termos_any") or []) if str(t).strip()]
+        ok_crit = any(t in norm for t in termos) if termos else True
+        if ok_crit:
+            atendidos += 1
+        else:
+            if crit.get("obrigatorio", False):
+                faltantes_obrig.append(nome)
+            else:
+                faltantes_opc.append(nome)
+
+    min_req = min(int(rub.get("min_criterios_aprovacao", max(1, len(criterios)))), max(1, len(criterios)))
+    if not faltantes_obrig and atendidos >= min_req:
+        banco_dados.registrar_metrica_jev("local", "rubrica_bcc", 0.95, qid)
+        return {
+            "questao_id": qid,
+            "tipo_questao": questao.tipo,
+            "resposta_extraida": resp,
+            "status_correcao": "correto",
+            "categoria_erro": "sem_erro",
+            "feedback_item": f"[{qid}] Correto! Todos os criterios essenciais de {bloco.bloco_id} foram atendidos ({atendidos}/{len(criterios)}).",
+            "camada_avaliacao": "local",
+            "confianca": 0.95,
+        }
+
+    sem = _avaliar_semantica_gemini_opcional(questao, resp, bloco)
+    if sem and sem[0] == "correto":
+        banco_dados.registrar_metrica_jev("escalate", "rubrica_gemini", 0.88, qid)
+        return {
+            "questao_id": qid,
+            "tipo_questao": questao.tipo,
+            "resposta_extraida": resp,
+            "status_correcao": "correto",
+            "categoria_erro": "sem_erro",
+            "feedback_item": f"[{qid}] {sem[1]}",
+            "camada_avaliacao": "escalate",
+            "confianca": 0.88,
+        }
+
+    faltantes = faltantes_obrig + faltantes_opc
+    status = "parcial" if atendidos > 0 else "incorreto"
+    cat = "resposta_incompleta" if atendidos > 0 else "erro_logico_ou_borda"
+    _, camada_jev, conf_jev = _chamar_jev_exam(questao, resp, cat)
+    det_falt = "; ".join(faltantes[:4]) if faltantes else "elementos esperados pela rubrica"
+    msg_fb = f"[{qid}] Criterios pendentes ({atendidos}/{len(criterios)} atendidos): {det_falt}."
+    if sem and sem[1]:
+        msg_fb += f" Observacao: {sem[1]}"
+    elif dica_socratica:
+        msg_fb += f" Pista: {dica_socratica}"
+    return {
+        "questao_id": qid,
+        "tipo_questao": questao.tipo,
+        "resposta_extraida": resp,
+        "status_correcao": status,
+        "categoria_erro": cat,
+        "feedback_item": msg_fb,
+        "camada_avaliacao": camada_jev,
+        "confianca": conf_jev,
+    }
 
 
 def _normalizar_codigo_tokens(code: str) -> str:
@@ -609,6 +755,42 @@ def corrigir_item(questao: Questao, resposta_aluno: str, bloco: BlocoCurricular)
             "confianca": conf,
         }
 
+    # --- Avaliacao para demais disciplinas do BCC Matriz 826 ---
+    disc_bloco = getattr(bloco, "disciplina", "algoritmos")
+    if disc_bloco not in ("algoritmos", "matrizes_vetores"):
+        if questao.spec_matematica:
+            ok_mat, cat_mat, msg_mat, conf_mat = oraculo_matematico.avaliar_resposta_matematica(
+                resp,
+                questao.spec_matematica,
+                questao.questao_id,
+                tol=bloco.tolerancia_numerica,
+            )
+            if ok_mat:
+                banco_dados.registrar_metrica_jev("local", "oraculo_matematico_bcc", conf_mat, questao.questao_id)
+                return {
+                    "questao_id": questao.questao_id,
+                    "tipo_questao": questao.tipo,
+                    "resposta_extraida": resp,
+                    "status_correcao": "correto",
+                    "categoria_erro": "sem_erro",
+                    "feedback_item": msg_mat,
+                    "camada_avaliacao": "local",
+                    "confianca": conf_mat,
+                }
+            _, camada_jev, conf_jev = _chamar_jev_exam(questao, resp, cat_mat)
+            return {
+                "questao_id": questao.questao_id,
+                "tipo_questao": questao.tipo,
+                "resposta_extraida": resp,
+                "status_correcao": "incorreto",
+                "categoria_erro": cat_mat,
+                "feedback_item": msg_mat,
+                "camada_avaliacao": camada_jev,
+                "confianca": conf_jev,
+            }
+        if getattr(questao, "rubrica", None):
+            return _avaliar_por_rubrica_estruturada(questao, resp, bloco)
+
     # --- Avaliacao para blocos 100% conceituais / portugues estruturado (sem codigo C) ---
     eh_nao_c = (
         bloco.bloco_id in ("A01", "F09", "G01")
@@ -971,7 +1153,7 @@ class OrquestradorCurso:
             resp_q = respostas_ocr.get(q.questao_id, "")
             para_avaliar = resp_q
             if (ocr["imagem_info"]["fonte_ocr"] == "ollama_local" and resp_q.strip()
-                    and disc_id == "matrizes_vetores" and q.spec_matematica):
+                    and q.spec_matematica):
                 para_avaliar = extrator_ocr.formatar_resposta_matematica(resp_q, q.spec_matematica)
                 if not para_avaliar.strip() or "[ILEGIVEL]" in para_avaliar.upper():
                     raise ValueError(f"Confira a resposta manuscrita de {q.questao_id} antes de corrigir.")

@@ -848,7 +848,11 @@
         return "corrigindo";
       }
       const prova = ESTADO && ESTADO.prova_atual;
+      const alSt = ESTADO && ESTADO.aluno && ESTADO.aluno.status_curso;
       if (!prova || prova.status === "corrigida") {
+        if (alSt === "CONCLUIDO") {
+          return "disciplina_concluida";
+        }
         return ESTADO && ESTADO.ultima_submissao ? "concluida_sem_nova" : "sem_atividade";
       }
       if (prova.tempo_cronometrado_min > 0 || prova.fim_cronometro_em) {
@@ -911,9 +915,19 @@
       const discs = ESTADO.disciplinas_disponiveis || [];
       if (discs.length > 1) {
         selDisc.hidden = false;
-        selDisc.innerHTML = discs.map(d => {
-          const sel = d.id === DISCIPLINA_ATIVA ? "selected" : "";
-          return `<option value="${escapeHtml(d.id)}" ${sel}>${escapeHtml(d.nome_curto || d.nome)} (${escapeHtml(d.bloco_atual || "")})</option>`;
+        const porPer = {};
+        discs.forEach(d => {
+          const p = Number(d.periodo || 1);
+          if (!porPer[p]) porPer[p] = [];
+          porPer[p].push(d);
+        });
+        selDisc.innerHTML = Object.keys(porPer).map(Number).sort((a, b) => a - b).map(p => {
+          const opts = porPer[p].map(d => {
+            const sel = d.id === DISCIPLINA_ATIVA ? "selected" : "";
+            const sufixo = d.status_curso === "CONCLUIDO" ? "Concluída" : (d.bloco_atual || "");
+            return `<option value="${escapeHtml(d.id)}" ${sel}>${escapeHtml(d.nome_curto || d.nome)} (${escapeHtml(sufixo)})</option>`;
+          }).join("");
+          return `<optgroup label="${p}º Período">${opts}</optgroup>`;
         }).join("");
       } else {
         selDisc.hidden = true;
@@ -1046,6 +1060,19 @@
             <p style="margin:0;font-size:0.85rem;color:var(--muted);">A próxima atividade aparecerá aqui assim que for liberada.</p>
           </div>
         `;
+      } else if (situacao === "disciplina_concluida") {
+        acaoHtml = `
+          <div class="action-stage">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span class="pill pill-ok">Disciplina concluída / aproveitada</span>
+            </div>
+            <p class="stage-lead">Esta disciplina já consta como concluída no seu histórico. Escolha uma disciplina em andamento no seletor acima para continuar suas folhas ou consulte seus resultados.</p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-secondary" onclick="ativarAba('progresso')">Ver grade do curso</button>
+              <button type="button" class="btn btn-secondary" onclick="ativarAba('resultados')">Ver resultados</button>
+            </div>
+          </div>
+        `;
       } else if (situacao === "sem_atividade") {
         acaoHtml = `
           <div class="action-stage">
@@ -1110,15 +1137,26 @@
         </div>
       ` : "";
 
+      const discAtiva = ESTADO.disciplina_ativa || {};
+      const matApoioHtml = (discAtiva.material_apoio || []).length ? `
+        <div style="margin-top:10px;font-size:0.84rem;color:var(--muted);">
+          <strong>Material de apoio:</strong>
+          <ul style="margin:4px 0 0 18px;padding:0;">
+            ${discAtiva.material_apoio.map(m => `<li>${escapeHtml(m)}</li>`).join("")}
+          </ul>
+        </div>
+      ` : "";
       const detalhesHtml = prova ? `
         <details class="quiet-details">
-          <summary>Detalhes da atividade</summary>
+          <summary>Detalhes da atividade e apoio</summary>
           <div class="details-grid">
             <div class="detail-kv"><span>Bloco / Variante</span><strong>${escapeHtml(prova.bloco)} (${escapeHtml(prova.variante)})</strong></div>
             <div class="detail-kv"><span>Tentativa</span><strong>#${prova.tentativa}</strong></div>
             <div class="detail-kv"><span>Modalidade</span><strong>${escapeHtml(traduzirModo(prova.modo, prova.variante))}</strong></div>
             <div class="detail-kv"><span>Código da folha</span><strong class="mono">${escapeHtml(prova.protocolo)}</strong></div>
+            <div class="detail-kv"><span>Período / Carga</span><strong>${Number(discAtiva.periodo || 1)}º Período &bull; ${Number(discAtiva.carga_horaria || 60)}h</strong></div>
           </div>
+          ${matApoioHtml}
         </details>
       ` : "";
 
@@ -1352,6 +1390,43 @@
             </details>
           ` : ""}
         </article>
+
+        ${(ESTADO.grade_bcc && (ESTADO.grade_bcc.periodos || []).length) ? `
+          <article class="card">
+            <details class="quiet-details" style="margin-top:0;border-top:0;padding-top:0;">
+              <summary>Grade Completa BCC (1º ao 8º período) e Integralização (${ESTADO.grade_bcc.disciplinas_matriculadas_qtd || 0}/${ESTADO.grade_bcc.total_disciplinas || 34} mat.)</summary>
+              <div style="margin-top:10px;display:grid;gap:8px;">
+                ${(ESTADO.grade_bcc.periodos || []).map(p => `
+                  <div style="padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);">
+                    <div style="display:flex;justify-content:space-between;font-size:0.86rem;font-weight:700;margin-bottom:4px;">
+                      <span>${escapeHtml(p.titulo)}</span>
+                      <span style="color:var(--muted);">${p.concluidas}/${p.total} concluídas (${p.matriculadas} mat.)</span>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                      ${(p.disciplinas || []).map(d => {
+                        const cls = d.status_aluno === "concluida" ? "pill-ok" : (d.matriculada ? "pill-primary" : "");
+                        return `<span class="pill ${cls}" style="font-size:0.75rem;">${escapeHtml(d.nome)} (${d.matriculada ? escapeHtml(d.bloco_atual) : d.carga_horaria + "h"})</span>`;
+                      }).join("")}
+                    </div>
+                  </div>
+                `).join("")}
+                ${(ESTADO.integralizacao || []).length ? `
+                  <div style="padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);">
+                    <strong style="font-size:0.86rem;display:block;margin-bottom:6px;">Integralização Curricular (PPC 2022)</strong>
+                    <div style="display:grid;gap:4px;font-size:0.82rem;">
+                      ${(ESTADO.integralizacao || []).map(c => `
+                        <div style="display:flex;justify-content:space-between;gap:8px;">
+                          <span>${escapeHtml(c.nome)}</span>
+                          <strong>${c.horas_cumpridas} / ${c.horas_exigidas}h (${c.percentual}%)</strong>
+                        </div>
+                      `).join("")}
+                    </div>
+                  </div>
+                ` : ""}
+              </div>
+            </details>
+          </article>
+        ` : ""}
       `;
     }
 

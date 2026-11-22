@@ -66,11 +66,42 @@ _LATEX_SIMBOLOS = [
     (r"\\equiv", " ≡ "),
     (r"\\sim", " ~ "),
     (r"\\pm", "±"),
-    (r"\\Rightarrow", " ⇒ "),
-    (r"\\Leftrightarrow", " ⇔ "),
-    (r"\\rightarrow", " → "),
-    (r"\\to", " → "),
+    (r"\\Longleftrightarrow|\\Leftrightarrow", " ⇔ "),
+    (r"\\Longrightarrow|\\Rightarrow|\\implies", " ⇒ "),
+    (r"\\rightarrow|\\to", " → "),
     (r"\\leftarrow", " ← "),
+    (r"\\leftrightarrow|\\iff", " ↔ "),
+    (r"\\land|\\wedge", " ∧ "),
+    (r"\\lor|\\vee", " ∨ "),
+    (r"\\lnot|\\neg", "¬"),
+    (r"\\forall", "∀"),
+    (r"\\exists", "∃"),
+    (r"\\subseteq", " ⊆ "),
+    (r"\\subset", " ⊂ "),
+    (r"\\supseteq", " ⊇ "),
+    (r"\\cup", " ∪ "),
+    (r"\\cap", " ∩ "),
+    (r"\\setminus", " ∖ "),
+    (r"\\vdash", " ⊢ "),
+    (r"\\models", " ⊨ "),
+    (r"\\approx", " ≈ "),
+    (r"\\cong", " ≅ "),
+    (r"\\propto", " ∝ "),
+    (r"\\sum", "∑"),
+    (r"\\prod", "∏"),
+    (r"\\int", "∫"),
+    (r"\\lim", "lim"),
+    (r"\\partial", "∂"),
+    (r"\\nabla", "∇"),
+    (r"\\Theta", "Θ"),
+    (r"\\Omega", "Ω"),
+    (r"\\rho", "ρ"),
+    (r"\\omega", "ω"),
+    (r"\\sigma", "σ"),
+    (r"\\mathbb\{Q\}", "ℚ"),
+    (r"\\mathbb\{C\}", "ℂ"),
+    (r"\\mathcal\{O\}", "O"),
+    (r"\\overline\{([^{}]+)\}", r'<span style="text-decoration:overline;">\1</span>'),
     (r"\\emptyset", "∅"),
     (r"\\infty", "∞"),
     (r"\\quad", "&nbsp;&nbsp;"),
@@ -213,7 +244,11 @@ def _render_md_matematica(texto: str) -> str:
 
 
 def _render_md(texto: str, disciplina: str = "algoritmos") -> str:
-    if disciplina == "matrizes_vetores" or ("$" in (texto or "")):
+    try:
+        tipo_av = config.obter_disciplina(disciplina).get("tipo_avaliacao", "")
+    except Exception:
+        tipo_av = ""
+    if tipo_av in ("matematica", "matematica_geral", "logica_matematica") or ("$" in (texto or "")):
         return _render_md_matematica(texto)
     return markdown.markdown(
         texto,
@@ -222,6 +257,10 @@ def _render_md(texto: str, disciplina: str = "algoritmos") -> str:
 
 
 def _bloco_resposta_html(q: Questao, disciplina: str = "algoritmos") -> str:
+    try:
+        tipo_av = config.obter_disciplina(disciplina).get("tipo_avaliacao", "")
+    except Exception:
+        tipo_av = ""
     if disciplina == "matrizes_vetores":
         linhas = "".join(
             '<div class="linha-texto"><span class="traco"></span></div>'
@@ -242,13 +281,53 @@ def _bloco_resposta_html(q: Questao, disciplina: str = "algoritmos") -> str:
             f'<div class="linha-codigo"><span class="num-linha">{i:02d}</span><span class="traco"></span></div>'
             for i in range(1, 19)
         )
-        dica = "Escreva o programa completo em C99 a caneta (inclua #include, int main(void), return 0; e scanf/printf exatamente conforme pedido)."
+        dica = "Escreva o programa ou algoritmo completo a caneta mantendo sintaxe, tipos e casos de borda."
+    elif q.tipo == "sql":
+        linhas = "".join(
+            f'<div class="linha-codigo"><span class="num-linha">{i:02d}</span><span class="traco"></span></div>'
+            for i in range(1, 13)
+        )
+        dica = "Escreva os comandos SQL (DDL/DML/consultas) a caneta respeitando chaves, juncoes e restricoes."
     elif q.tipo == "bug":
         linhas = "".join(
             f'<div class="linha-codigo"><span class="num-linha">{i:02d}</span><span class="traco"></span></div>'
             for i in range(1, 11)
         )
-        dica = "Identifique o erro do codigo acima e reescreva a versao corrigida."
+        dica = "Identifique o erro da solucao acima e reescreva a versao corrigida."
+    elif q.spec_matematica or tipo_av == "matematica_geral" or q.tipo in ("calculo", "matriz", "vetor"):
+        linhas = "".join(
+            '<div class="linha-texto"><span class="traco"></span></div>'
+            for _ in range(1, 9)
+        )
+        dica = "Desenvolva passo a passo e destaque a Resposta Final na linha abaixo."
+        return f"""
+        <div class="caixa-resposta caixa-mv">
+          <div class="marcador-ocr">[QUESTAO: {html.escape(q.questao_id)}] &bull; {html.escape(dica)}</div>
+          <div class="area-manuscrita">{linhas}</div>
+          <div class="resposta-final-box"><strong>Resposta Final:</strong> ____________________________________________________________</div>
+          <div class="marcador-ocr-fim">[/QUESTAO]</div>
+        </div>
+        """
+    elif tipo_av == "logica_matematica" or q.tipo == "logica":
+        linhas = "".join(
+            '<div class="linha-texto"><span class="traco"></span></div>'
+            for _ in range(1, 9)
+        )
+        dica = "Desenvolva passos, tabela/derivacao ou representacao formal e registre a conclusao abaixo."
+        return f"""
+        <div class="caixa-resposta">
+          <div class="marcador-ocr">[QUESTAO: {html.escape(q.questao_id)}] &bull; {html.escape(dica)}</div>
+          <div class="area-manuscrita">{linhas}</div>
+          <div class="resposta-final-box"><strong>Conclusao / Resposta Final:</strong> ________________________________________________</div>
+          <div class="marcador-ocr-fim">[/QUESTAO]</div>
+        </div>
+        """
+    elif tipo_av == "conceitual_textual" or q.tipo in ("conceitual", "redacao", "projeto"):
+        linhas = "".join(
+            '<div class="linha-texto"><span class="traco"></span></div>'
+            for _ in range(1, 9)
+        )
+        dica = "Redija sua resposta estruturada, objetiva e fundamentada nas linhas abaixo."
     else:
         linhas = "".join(
             '<div class="linha-texto"><span class="traco"></span></div>'
@@ -631,7 +710,7 @@ def gerar_folha_prova(
       </div>
       <div class="grid-meta">
         <div><strong>Aluno:</strong> {html.escape(aluno["nome"])} ({html.escape(aluno["email"])})</div>
-        <div><strong>Bloco:</strong> {html.escape(bloco.bloco_id)} | <strong>Variante:</strong> {html.escape(variante)} | <strong>Tentativa:</strong> #{tentativa}</div>
+        <div><strong>Bloco:</strong> {html.escape(bloco.bloco_id)} | <strong>Variante:</strong> {html.escape(variante)} | <strong>Tentativa:</strong> #{tentativa} | <strong>{int(disc.get('periodo', 1))}º Per. ({int(disc.get('carga_horaria', 60))}h)</strong></div>
         <div><strong>Tema:</strong> {html.escape(bloco.titulo)}</div>
         <div><strong>Meta de Tempo:</strong> {tempo_alvo} min &bull; <strong>Criterio:</strong> 100% sem consulta</div>
       </div>

@@ -85,9 +85,15 @@ def _disciplina_publica(disciplina: str) -> Dict[str, Any]:
         "codigo": d["codigo"],
         "nome": d["nome"],
         "nome_curto": d["nome_curto"],
+        "periodo": int(d.get("periodo", 1)),
+        "carga_horaria": int(d.get("carga_horaria", 60)),
+        "pre_requisitos": list(d.get("pre_requisitos") or []),
         "prefixo_protocolo": d["prefixo_protocolo"],
         "total_blocos": d["total_blocos"],
         "tipo_avaliacao": d["tipo_avaliacao"],
+        "csv_filename": d.get("csv_filename", "00_acompanhamento.csv"),
+        "objetivos": list(d.get("objetivos") or []),
+        "material_apoio": list(d.get("material_apoio") or []),
     }
 
 
@@ -255,6 +261,16 @@ def inicializar_banco() -> None:
                 detalhes TEXT DEFAULT '',
                 processado_em TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS componentes_integralizacao (
+                aluno_id INTEGER NOT NULL,
+                componente_key TEXT NOT NULL,
+                horas_cumpridas REAL NOT NULL DEFAULT 0,
+                observacoes TEXT DEFAULT '',
+                atualizado_em TEXT NOT NULL,
+                PRIMARY KEY (aluno_id, componente_key),
+                FOREIGN KEY (aluno_id) REFERENCES alunos(id)
+            );
             """
         )
         cols_provas = [r["name"] for r in conn.execute("PRAGMA table_info(provas_emitidas)").fetchall()]
@@ -291,6 +307,36 @@ def obter_matricula(aluno_id: int, disciplina: str = config.DISCIPLINA_PADRAO) -
         return dict(row) if row else None
 
 
+def _ordem_blocos_meta(disc_id: str) -> List[str]:
+    disc = config.obter_disciplina(disc_id)
+    ordem: List[str] = []
+    for _dir, pref, qtd, _tit in disc["estagios_meta"]:
+        for i in range(1, int(qtd) + 1):
+            ordem.append(f"{pref}{i:02d}")
+    return ordem
+
+
+def _validar_bloco_disciplina(
+    disc_id: str, bloco_id: str, fallback_a01: bool = False
+) -> str:
+    ordem = _ordem_blocos_meta(disc_id)
+    bloco_norm = (bloco_id or (ordem[0] if ordem else "A01")).strip().upper()
+    if not ordem:
+        return bloco_norm
+    if bloco_norm in ordem:
+        return bloco_norm
+    if fallback_a01:
+        return ordem[0]
+    raise ValueError(
+        f"Bloco '{bloco_norm}' invalido para disciplina '{disc_id}'. Blocos validos: {ordem[0]}..{ordem[-1]}."
+    )
+
+
+def _ultimo_bloco_disciplina(disc_id: str) -> str:
+    ordem = _ordem_blocos_meta(disc_id)
+    return ordem[-1] if ordem else "A01"
+
+
 def listar_matriculas_aluno(aluno_id: int) -> List[Dict[str, Any]]:
     inicializar_banco()
     with conectar() as conn:
@@ -306,11 +352,14 @@ def matricular_aluno(
     disciplina: str = config.DISCIPLINA_PADRAO,
     bloco_inicial: str = "A01",
     modo_inicial: str = "pratica",
+    status_curso: str = "EM_ANDAMENTO",
+    atualizar_existente: bool = False,
 ) -> Dict[str, Any]:
     inicializar_banco()
     disc_id = config.normalizar_disciplina_id(disciplina)
-    bloco_norm = (bloco_inicial or "A01").strip().upper()
+    bloco_norm = _validar_bloco_disciplina(disc_id, bloco_inicial, fallback_a01=False)
     modo_norm = modo_inicial if modo_inicial in ("pratica", "checagem") else "pratica"
+    status_norm = status_curso if status_curso in ("EM_ANDAMENTO", "CONCLUIDO") else "EM_ANDAMENTO"
     with conectar() as conn:
         row_al = conn.execute("SELECT id FROM alunos WHERE id = ?", (aluno_id,)).fetchone()
         if not row_al:
@@ -320,21 +369,220 @@ def matricular_aluno(
             (aluno_id, disc_id),
         ).fetchone()
         if row:
-            return dict(row)
-        conn.execute(
-            """
-            INSERT INTO matriculas
-            (aluno_id, disciplina, bloco_atual, variante_atual, tentativa_bloco, modo_atual, status_curso, criado_em)
-            VALUES (?, ?, ?, 'V1', 1, ?, 'EM_ANDAMENTO', ?)
-            """,
-            (aluno_id, disc_id, bloco_norm, modo_norm, _agora_iso()),
-        )
+            if not atualizar_existente:
+                return dict(row)
+            conn.execute(
+                """
+                UPDATE matriculas
+                SET bloco_atual = ?, variante_atual = 'V1', tentativa_bloco = 1, modo_atual = ?, status_curso = ?
+                WHERE aluno_id = ? AND disciplina = ?
+                """,
+                (bloco_norm, modo_norm, status_norm, aluno_id, disc_id),
+            )
+        else:
+            conn.execute(
+                """
+                INSERT INTO matriculas
+                (aluno_id, disciplina, bloco_atual, variante_atual, tentativa_bloco, modo_atual, status_curso, criado_em)
+                VALUES (?, ?, ?, 'V1', 1, ?, ?, ?)
+                """,
+                (aluno_id, disc_id, bloco_norm, modo_norm, status_norm, _agora_iso()),
+            )
+        if disc_id == "algoritmos":
+            conn.execute(
+                """
+                UPDATE alunos
+                SET bloco_atual = ?, variante_atual = 'V1', tentativa_bloco = 1, modo_atual = ?, status_curso = ?
+                WHERE id = ?
+                """,
+                (bloco_norm, modo_norm, status_norm, aluno_id),
+            )
         conn.commit()
         row = conn.execute(
             "SELECT * FROM matriculas WHERE aluno_id = ? AND disciplina = ?",
             (aluno_id, disc_id),
         ).fetchone()
         return dict(row)
+
+
+def marcar_periodos_anteriores_concluidos(
+    aluno_id: int,
+    ate_periodo: int,
+    excluir_disciplinas: Optional[List[str]] = None,
+) -> List[Dict[str, Any]]:
+    """Marca disciplinas de periodos anteriores como CONCLUIDO (aproveitamento para aluno avancado)."""
+    inicializar_banco()
+    p_lim = int(ate_periodo or 0)
+    if p_lim <= 0:
+        return []
+    excluir = {config.normalizar_disciplina_id(x) for x in (excluir_disciplinas or []) if str(x or "").strip()}
+    resultados: List[Dict[str, Any]] = []
+    with conectar() as conn:
+        row_al = conn.execute("SELECT id FROM alunos WHERE id = ?", (aluno_id,)).fetchone()
+        if not row_al:
+            raise ValueError(f"Aluno ID {aluno_id} nao encontrado.")
+        for d in config.listar_disciplinas():
+            if int(d.get("periodo", 1)) > p_lim or d["id"] in excluir:
+                continue
+            did = d["id"]
+            ult_bloco = _ultimo_bloco_disciplina(did)
+            row = conn.execute(
+                "SELECT * FROM matriculas WHERE aluno_id = ? AND disciplina = ?",
+                (aluno_id, did),
+            ).fetchone()
+            if row:
+                if row["status_curso"] == "CONCLUIDO":
+                    resultados.append(dict(row))
+                    continue
+                qtd_subs = int(
+                    conn.execute(
+                        "SELECT COUNT(*) AS c FROM submissoes WHERE aluno_id = ? AND COALESCE(disciplina, 'algoritmos') = ?",
+                        (aluno_id, did),
+                    ).fetchone()["c"]
+                )
+                if qtd_subs == 0:
+                    conn.execute(
+                        """
+                        UPDATE matriculas
+                        SET bloco_atual = ?, variante_atual = 'V1', tentativa_bloco = 1, modo_atual = 'checagem', status_curso = 'CONCLUIDO'
+                        WHERE aluno_id = ? AND disciplina = ?
+                        """,
+                        (ult_bloco, aluno_id, did),
+                    )
+                    if did == "algoritmos":
+                        conn.execute(
+                            """
+                            UPDATE alunos
+                            SET bloco_atual = ?, variante_atual = 'V1', tentativa_bloco = 1, modo_atual = 'checagem', status_curso = 'CONCLUIDO'
+                            WHERE id = ?
+                            """,
+                            (ult_bloco, aluno_id),
+                        )
+            else:
+                conn.execute(
+                    """
+                    INSERT INTO matriculas
+                    (aluno_id, disciplina, bloco_atual, variante_atual, tentativa_bloco, modo_atual, status_curso, criado_em)
+                    VALUES (?, ?, ?, 'V1', 1, 'checagem', 'CONCLUIDO', ?)
+                    """,
+                    (aluno_id, did, ult_bloco, _agora_iso()),
+                )
+                if did == "algoritmos":
+                    conn.execute(
+                        """
+                        UPDATE alunos
+                        SET bloco_atual = ?, variante_atual = 'V1', tentativa_bloco = 1, modo_atual = 'checagem', status_curso = 'CONCLUIDO'
+                        WHERE id = ?
+                        """,
+                        (ult_bloco, aluno_id),
+                    )
+            row_f = conn.execute(
+                "SELECT * FROM matriculas WHERE aluno_id = ? AND disciplina = ?",
+                (aluno_id, did),
+            ).fetchone()
+            if row_f:
+                resultados.append(dict(row_f))
+        conn.commit()
+    return resultados
+
+
+def matricular_aluno_periodo(
+    aluno_id: int,
+    periodo: int,
+    bloco_inicial: str = "A01",
+    modo_inicial: str = "pratica",
+    atualizar_existente: bool = False,
+    concluir_anteriores: bool = False,
+) -> List[Dict[str, Any]]:
+    """Matricula um aluno em todas as disciplinas de um periodo (1..8)."""
+    inicializar_banco()
+    p_int = int(periodo)
+    discs = [d for d in config.listar_disciplinas() if int(d.get("periodo", 1)) == p_int]
+    if not discs:
+        raise ValueError(f"Periodo invalido ou sem disciplinas cadastradas: {periodo}")
+    if concluir_anteriores and p_int > 1:
+        marcar_periodos_anteriores_concluidos(aluno_id, p_int - 1)
+    resultados: List[Dict[str, Any]] = []
+    for d in discs:
+        existente = obter_matricula(aluno_id, disciplina=d["id"])
+        bloco_eff = _validar_bloco_disciplina(d["id"], bloco_inicial, fallback_a01=True)
+        mat = matricular_aluno(
+            aluno_id,
+            disciplina=d["id"],
+            bloco_inicial=bloco_eff,
+            modo_inicial=modo_inicial,
+            status_curso="EM_ANDAMENTO",
+            atualizar_existente=atualizar_existente,
+        )
+        out_m = dict(mat)
+        out_m["recem_criada"] = existente is None
+        resultados.append(out_m)
+    return resultados
+
+
+def matricular_aluno_lote(
+    aluno_id: int,
+    disciplinas: List[Any],
+    bloco_inicial: str = "A01",
+    modo_inicial: str = "pratica",
+    status_curso: str = "EM_ANDAMENTO",
+    atualizar_existente: bool = False,
+    concluir_anteriores_ate: int = 0,
+) -> List[Dict[str, Any]]:
+    """Matricula um aluno em multiplas disciplinas (inclusive de periodos diferentes)."""
+    inicializar_banco()
+    if not disciplinas:
+        raise ValueError("Informe ao menos uma disciplina para matricula em lote.")
+    specs: List[Dict[str, Any]] = []
+    vistos: set = set()
+    for item in disciplinas:
+        if isinstance(item, dict):
+            did = config.normalizar_disciplina_id(str(item.get("disciplina") or ""))
+            bl_item = item.get("bloco_inicial")
+            modo_item = str(item.get("modo_inicial") or modo_inicial).strip().lower()
+            st_item = str(item.get("status_curso") or status_curso).strip().upper()
+            bloco_eff = _validar_bloco_disciplina(
+                did,
+                str(bl_item or bloco_inicial),
+                fallback_a01=(bl_item is None or str(bl_item).strip() == ""),
+            )
+        else:
+            did = config.normalizar_disciplina_id(str(item))
+            modo_item = modo_inicial
+            st_item = status_curso
+            bloco_eff = _validar_bloco_disciplina(did, bloco_inicial, fallback_a01=True)
+        if did in vistos:
+            continue
+        vistos.add(did)
+        specs.append(
+            {
+                "disciplina": did,
+                "bloco_inicial": bloco_eff,
+                "modo_inicial": modo_item,
+                "status_curso": st_item,
+            }
+        )
+    if int(concluir_anteriores_ate or 0) > 0:
+        marcar_periodos_anteriores_concluidos(
+            aluno_id,
+            int(concluir_anteriores_ate),
+            excluir_disciplinas=[s["disciplina"] for s in specs],
+        )
+    resultados: List[Dict[str, Any]] = []
+    for sp in specs:
+        existente = obter_matricula(aluno_id, disciplina=sp["disciplina"])
+        mat = matricular_aluno(
+            aluno_id,
+            disciplina=sp["disciplina"],
+            bloco_inicial=sp["bloco_inicial"],
+            modo_inicial=sp["modo_inicial"],
+            status_curso=sp["status_curso"],
+            atualizar_existente=atualizar_existente,
+        )
+        out_m = dict(mat)
+        out_m["recem_criada"] = existente is None
+        resultados.append(out_m)
+    return resultados
 
 
 def _mesclar_aluno_matricula(aluno_row: Dict[str, Any], mat_row: Optional[Dict[str, Any]], incluir_pin: bool) -> Dict[str, Any]:
@@ -358,11 +606,15 @@ def obter_ou_criar_aluno(
     modo_inicial: str = "pratica",
     senha_inicial: str = "",
     disciplina: str = config.DISCIPLINA_PADRAO,
+    status_curso: str = "EM_ANDAMENTO",
+    atualizar_existente: bool = False,
 ) -> Dict[str, Any]:
     inicializar_banco()
     disc_id = config.normalizar_disciplina_id(disciplina)
     email_norm = email.strip().lower()
-    bloco_norm = (bloco_inicial or "A01").strip().upper()
+    bloco_norm = _validar_bloco_disciplina(disc_id, bloco_inicial, fallback_a01=False)
+    modo_norm = modo_inicial if modo_inicial in ("pratica", "checagem") else "pratica"
+    status_norm = status_curso if status_curso in ("EM_ANDAMENTO", "CONCLUIDO") else "EM_ANDAMENTO"
     with conectar() as conn:
         row = conn.execute(
             "SELECT * FROM alunos WHERE email = ?", (email_norm,)
@@ -375,13 +627,14 @@ def obter_ou_criar_aluno(
             cur = conn.execute(
                 """
                 INSERT INTO alunos (nome, email, bloco_atual, variante_atual, tentativa_bloco, modo_atual, status_curso, criado_em, senha_hash, pin_inicial)
-                VALUES (?, ?, ?, 'V1', 1, ?, 'EM_ANDAMENTO', ?, ?, ?)
+                VALUES (?, ?, ?, 'V1', 1, ?, ?, ?, ?, ?)
                 """,
                 (
                     nome.strip(),
                     email_norm,
                     bloco_norm,
-                    modo_inicial,
+                    modo_norm,
+                    status_norm,
                     _agora_iso(),
                     hash_senha(pin),
                     pin,
@@ -391,7 +644,14 @@ def obter_ou_criar_aluno(
             aid = int(cur.lastrowid)
             al_dict = dict(conn.execute("SELECT * FROM alunos WHERE id = ?", (aid,)).fetchone())
 
-    mat = matricular_aluno(aid, disciplina=disc_id, bloco_inicial=bloco_norm, modo_inicial=modo_inicial)
+    mat = matricular_aluno(
+        aid,
+        disciplina=disc_id,
+        bloco_inicial=bloco_norm,
+        modo_inicial=modo_norm,
+        status_curso=status_norm,
+        atualizar_existente=atualizar_existente,
+    )
     return _mesclar_aluno_matricula(al_dict, mat, incluir_pin=True)
 
 
@@ -467,6 +727,7 @@ def excluir_aluno(aluno_id: int) -> Optional[Dict[str, Any]]:
             "DELETE FROM provas_emitidas WHERE aluno_id = ?", (aluno_id,)
         ).rowcount
         mat_rem = conn.execute("DELETE FROM matriculas WHERE aluno_id = ?", (aluno_id,)).rowcount
+        conn.execute("DELETE FROM componentes_integralizacao WHERE aluno_id = ?", (aluno_id,))
         conn.execute("DELETE FROM alunos WHERE id = ?", (aluno_id,))
         conn.commit()
         return {
@@ -654,6 +915,34 @@ def atualizar_estado_matricula(
         return dict(row)
 
 
+def atualizar_fase_aluno(
+    aluno_id: int,
+    disciplina: str,
+    bloco_atual: str,
+    modo_atual: str = "pratica",
+    variante_atual: str = "V1",
+    tentativa_bloco: int = 1,
+    status_curso: str = "EM_ANDAMENTO",
+) -> Dict[str, Any]:
+    """Posiciona ou atualiza a fase/bloco atual de um aluno em determinada disciplina."""
+    inicializar_banco()
+    disc_id = config.normalizar_disciplina_id(disciplina)
+    bloco_norm = _validar_bloco_disciplina(disc_id, bloco_atual, fallback_a01=False)
+    modo_norm = modo_atual if modo_atual in ("pratica", "checagem") else "pratica"
+    var_norm = variante_atual if variante_atual in ("V1", "V2") else "V1"
+    tent_norm = max(1, int(tentativa_bloco or 1))
+    status_norm = status_curso if status_curso in ("EM_ANDAMENTO", "CONCLUIDO") else "EM_ANDAMENTO"
+    return atualizar_estado_matricula(
+        aluno_id=int(aluno_id),
+        disciplina=disc_id,
+        bloco_atual=bloco_norm,
+        variante_atual=var_norm,
+        tentativa_bloco=tent_norm,
+        modo_atual=modo_norm,
+        status_curso=status_norm,
+    )
+
+
 def atualizar_estado_aluno(
     aluno_id: int,
     bloco_atual: str,
@@ -730,12 +1019,8 @@ def obter_prova(protocolo: str) -> Optional[Dict[str, Any]]:
             ).fetchone()
             if row:
                 return dict(row)
-            m = re.search(
-                r"PREP-(?:(MV)-)?([A-H]\d{2})-(V\d+)-T(\d+)-",
-                protocolo.upper(),
-            )
-            if m:
-                disc_fb = "matrizes_vetores" if m.group(1) == "MV" else "algoritmos"
+            parsed_p = config.parse_protocolo(protocolo)
+            if parsed_p:
                 row = conn.execute(
                     """
                     SELECT * FROM provas_emitidas
@@ -743,7 +1028,7 @@ def obter_prova(protocolo: str) -> Optional[Dict[str, Any]]:
                       AND COALESCE(disciplina, 'algoritmos') = ?
                     ORDER BY enviado_em DESC LIMIT 1
                     """,
-                    (m.group(2), m.group(3), int(m.group(4)), disc_fb),
+                    (parsed_p["bloco"], parsed_p["variante"], parsed_p["tentativa"], parsed_p["disciplina"]),
                 ).fetchone()
                 if row:
                     return dict(row)
@@ -1046,6 +1331,165 @@ def obter_resumo_turma(disciplina: str = config.DISCIPLINA_PADRAO) -> List[Dict[
         return resumo
 
 
+def obter_integralizacao_aluno(aluno_id: Optional[int]) -> List[Dict[str, Any]]:
+    inicializar_banco()
+    salvos: Dict[str, Dict[str, Any]] = {}
+    if aluno_id is not None:
+        with conectar() as conn:
+            for r in conn.execute(
+                "SELECT componente_key, horas_cumpridas, observacoes, atualizado_em FROM componentes_integralizacao WHERE aluno_id = ?",
+                (int(aluno_id),),
+            ).fetchall():
+                salvos[str(r["componente_key"])] = dict(r)
+    out: List[Dict[str, Any]] = []
+    for comp in config.COMPONENTES_INTEGRALIZACAO:
+        key = str(comp["key"])
+        exig = float(comp.get("horas_exigidas", 0))
+        reg = salvos.get(key) or {}
+        cump = float(reg.get("horas_cumpridas") or 0.0)
+        pct = min(100.0, round((cump / exig) * 100.0, 1)) if exig > 0 else 100.0
+        out.append(
+            {
+                "key": key,
+                "nome": comp.get("nome", key),
+                "horas_exigidas": exig,
+                "horas_cumpridas": round(cump, 1),
+                "percentual": pct,
+                "concluido": cump >= exig and exig > 0,
+                "descricao": comp.get("descricao", ""),
+                "observacoes": str(reg.get("observacoes") or ""),
+                "atualizado_em": str(reg.get("atualizado_em") or ""),
+            }
+        )
+    return out
+
+
+def atualizar_integralizacao_aluno(
+    aluno_id: int,
+    componente_key: str,
+    horas_cumpridas: float,
+    observacoes: str = "",
+) -> List[Dict[str, Any]]:
+    inicializar_banco()
+    key = str(componente_key or "").strip()
+    if key not in config.COMPONENTES_INTEGRALIZACAO_MAP:
+        raise ValueError(f"Componente de integralizacao desconhecido: '{componente_key}'")
+    horas = max(0.0, float(horas_cumpridas))
+    with conectar() as conn:
+        row_al = conn.execute("SELECT id FROM alunos WHERE id = ?", (int(aluno_id),)).fetchone()
+        if not row_al:
+            raise ValueError(f"Aluno ID {aluno_id} nao encontrado.")
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO componentes_integralizacao
+            (aluno_id, componente_key, horas_cumpridas, observacoes, atualizado_em)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (int(aluno_id), key, horas, str(observacoes or "").strip()[:400], _agora_iso()),
+        )
+        conn.commit()
+    return obter_integralizacao_aluno(int(aluno_id))
+
+
+def obter_resumo_curriculo_aluno(aluno_id: Optional[int]) -> Dict[str, Any]:
+    inicializar_banco()
+    estrutura = config.obter_estrutura_bcc()
+    mats_map: Dict[str, Dict[str, Any]] = {}
+    aprov_por_disc: Dict[str, set] = {}
+    if aluno_id is not None:
+        with conectar() as conn:
+            for r in conn.execute(
+                "SELECT * FROM matriculas WHERE aluno_id = ?",
+                (int(aluno_id),),
+            ).fetchall():
+                mats_map[str(r["disciplina"])] = dict(r)
+            for s in conn.execute(
+                """
+                SELECT COALESCE(disciplina, 'algoritmos') AS disc, bloco
+                FROM submissoes
+                WHERE aluno_id = ? AND resultado_checagem LIKE 'APROVADO%'
+                """,
+                (int(aluno_id),),
+            ).fetchall():
+                aprov_por_disc.setdefault(str(s["disc"]), set()).add(str(s["bloco"]))
+
+    status_por_disc: Dict[str, str] = {}
+    for did in config.DISCIPLINAS_ORDEM:
+        m = mats_map.get(did)
+        if not m:
+            status_por_disc[did] = "nao_matriculada"
+        elif m.get("status_curso") == "CONCLUIDO":
+            status_por_disc[did] = "concluida"
+        else:
+            status_por_disc[did] = "em_andamento"
+
+    periodos_out: List[Dict[str, Any]] = []
+    concluidas_total = 0
+    matriculadas_total = 0
+    for per in estrutura["periodos"]:
+        discs_p: List[Dict[str, Any]] = []
+        concl_p = 0
+        mat_p = 0
+        for d in per["disciplinas"]:
+            did = d["id"]
+            st = status_por_disc[did]
+            m = mats_map.get(did)
+            aprov_qtd = len(aprov_por_disc.get(did, set()))
+            tot_b = int(d["total_blocos"])
+            prereq_pend = [
+                {
+                    "id": pid,
+                    "nome": config.obter_disciplina(pid)["nome"] if pid in config.DISCIPLINAS else pid,
+                    "status": status_por_disc.get(pid, "nao_matriculada"),
+                }
+                for pid in (d.get("pre_requisitos") or [])
+                if status_por_disc.get(pid) != "concluida"
+            ]
+            if st == "concluida":
+                concl_p += 1
+                concluidas_total += 1
+            if st != "nao_matriculada":
+                mat_p += 1
+                matriculadas_total += 1
+            discs_p.append(
+                {
+                    **d,
+                    "status_aluno": st,
+                    "matriculada": st != "nao_matriculada",
+                    "bloco_atual": m["bloco_atual"] if m else "A01",
+                    "modo_atual": m["modo_atual"] if m else "pratica",
+                    "blocos_dominados": aprov_qtd,
+                    "percentual": round((aprov_qtd / float(tot_b)) * 100.0, 1) if tot_b else 0.0,
+                    "prerequisitos_pendentes": prereq_pend,
+                }
+            )
+        periodos_out.append(
+            {
+                "periodo": per["periodo"],
+                "titulo": per["titulo"],
+                "matriculadas": mat_p,
+                "concluidas": concl_p,
+                "total": len(discs_p),
+                "disciplinas": discs_p,
+            }
+        )
+
+    return {
+        "curso": estrutura["curso"],
+        "instituicao": estrutura["instituicao"],
+        "matriz": estrutura["matriz"],
+        "ppc_ano": estrutura["ppc_ano"],
+        "fontes_curriculares": estrutura["fontes_curriculares"],
+        "roteiro_apoio_por_area": estrutura["roteiro_apoio_por_area"],
+        "total_disciplinas": estrutura["total_disciplinas"],
+        "total_blocos_geral": estrutura["total_blocos_geral"],
+        "disciplinas_matriculadas_qtd": matriculadas_total,
+        "disciplinas_concluidas_qtd": concluidas_total,
+        "periodos": periodos_out,
+        "integralizacao": obter_integralizacao_aluno(aluno_id),
+    }
+
+
 def obter_estado_portal_aluno(
     aluno_id: int,
     mapa_blocos: Optional[List[Dict[str, Any]]] = None,
@@ -1067,10 +1511,12 @@ def obter_estado_portal_aluno(
             disc_id = config.normalizar_disciplina_id(disciplina)
             mat_ativa = next((m for m in mats if m["disciplina"] == disc_id), None)
             if not mat_ativa and mats:
-                mat_ativa = mats[0]
+                ativas = [m for m in mats if m.get("status_curso") != "CONCLUIDO"]
+                mat_ativa = ativas[0] if ativas else mats[0]
                 disc_id = mat_ativa["disciplina"]
         else:
-            mat_ativa = mats[0] if mats else None
+            ativas = [m for m in mats if m.get("status_curso") != "CONCLUIDO"]
+            mat_ativa = ativas[0] if ativas else (mats[0] if mats else None)
             disc_id = mat_ativa["disciplina"] if mat_ativa else config.DISCIPLINA_PADRAO
 
         disc_meta = config.obter_disciplina(disc_id)
@@ -1215,6 +1661,8 @@ def obter_estado_portal_aluno(
     for m in mats:
         dm = _disciplina_publica(m["disciplina"])
         dm["bloco_atual"] = m["bloco_atual"]
+        dm["status_curso"] = m.get("status_curso", "EM_ANDAMENTO")
+        dm["modo_atual"] = m.get("modo_atual", "pratica")
         disciplinas_disponiveis.append(dm)
 
     return {
@@ -1226,6 +1674,8 @@ def obter_estado_portal_aluno(
         "provas_recentes": provas[:5],
         "ultima_submissao": ultima_sub,
         "historico_evolucao": historico_evolucao,
+        "integralizacao": obter_integralizacao_aluno(aluno_id),
+        "grade_bcc": obter_resumo_curriculo_aluno(aluno_id),
         "progresso": {
             "blocos_dominados": len(blocos_aprovados),
             "total_blocos": total_blocos,
@@ -1330,4 +1780,6 @@ def obter_estado_dashboard(
         },
         "metricas_jev": obter_metricas_jev_resumo(),
         "acompanhamento_csv": ler_acompanhamento_csv(disciplina=disc_id),
+        "integralizacao": obter_integralizacao_aluno(aluno["id"]) if aluno else [],
+        "grade_bcc": obter_resumo_curriculo_aluno(aluno["id"] if aluno else None),
     }

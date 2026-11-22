@@ -40,6 +40,7 @@ class Questao:
     codigo_referencia: str = ""
     casos_teste: List[dict] = field(default_factory=list)
     spec_matematica: Optional[dict] = None
+    rubrica: Optional[dict] = None
 
 
 @dataclass
@@ -59,6 +60,9 @@ class BlocoCurricular:
     questoes_checagem: List[Questao] = field(default_factory=list)
     tolerancia_numerica: float = 0.01
     disciplina: str = "algoritmos"
+    periodo: int = 1
+    carga_horaria: int = 60
+    material_apoio: List[str] = field(default_factory=list)
 
     def obter_questoes(self, modo: str = "checagem", incluir_opcionais: bool = False) -> List[Questao]:
         base = self.questoes_checagem if modo == "checagem" else self.questoes_pratica
@@ -68,6 +72,83 @@ class BlocoCurricular:
 
     def tempo_alvo(self, modo: str = "checagem") -> int:
         return self.tempo_checagem_min if modo == "checagem" else self.tempo_pratica_min
+
+
+_JSON_PERIODO_CACHE: Dict[str, tuple[float, dict]] = {}
+
+
+def _carregar_json_periodo(arquivo_json: str) -> dict:
+    mtime = os.path.getmtime(arquivo_json) if os.path.isfile(arquivo_json) else -1.0
+    cached = _JSON_PERIODO_CACHE.get(arquivo_json)
+    if cached and cached[0] == mtime:
+        return cached[1]
+    with open(arquivo_json, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    _JSON_PERIODO_CACHE[arquivo_json] = (mtime, data)
+    return data
+
+
+def _carregar_bloco_json(bloco_id: str, disc: dict) -> BlocoCurricular:
+    disc_id = disc["id"]
+    arq = disc.get("arquivo_json", "")
+    if not arq or not os.path.isfile(arq):
+        raise FileNotFoundError(f"Arquivo curricular JSON nao encontrado para '{disc_id}': {arq}")
+    dados = _carregar_json_periodo(arq)
+    blocos_list = ((dados.get("disciplinas") or {}).get(disc_id) or {}).get("blocos") or []
+    alvo = None
+    for b in blocos_list:
+        if str(b.get("bloco_id", "")).strip().upper() == bloco_id:
+            alvo = b
+            break
+    if alvo is None:
+        raise KeyError(f"Bloco '{bloco_id}' nao encontrado em '{disc_id}' ({arq})")
+
+    def _conv_questoes(raw_qs: list, modo: str) -> List[Questao]:
+        qs: List[Questao] = []
+        for q in (raw_qs or []):
+            qid = str(q["questao_id"]).strip().upper()
+            opc = bool(q.get("opcional", False)) or ("-OP" in qid)
+            qs.append(
+                Questao(
+                    questao_id=qid,
+                    titulo=str(q.get("titulo") or qid).strip(),
+                    tipo=str(q.get("tipo") or "conceitual").strip().lower(),
+                    modo=modo,
+                    opcional=opc,
+                    enunciado_md=str(q.get("enunciado_md") or "").strip(),
+                    gabarito_md=str(q.get("gabarito_md") or "").strip(),
+                    codigo_referencia=str(q.get("codigo_referencia") or "").strip(),
+                    casos_teste=list(q.get("casos_teste") or []),
+                    spec_matematica=q.get("spec_matematica"),
+                    rubrica=q.get("rubrica"),
+                )
+            )
+        return qs
+
+    letra = str(alvo.get("estagio_letra") or bloco_id[0]).strip().upper()
+    est_meta = [m for m in disc["estagios_meta"] if m[1] == letra]
+    est_dir = est_meta[0][0] if est_meta else f"estagio_{letra}"
+
+    return BlocoCurricular(
+        bloco_id=bloco_id,
+        estagio_dir=os.path.join(disc["curso_dir"], est_dir),
+        estagio_letra=letra,
+        titulo=str(alvo.get("titulo") or f"Bloco {bloco_id}").strip(),
+        micro_habilidade=str(alvo.get("micro_habilidade") or "").strip(),
+        pre_requisitos=[str(p).strip().upper() for p in (alvo.get("pre_requisitos") or [])],
+        tempo_pratica_min=int(alvo.get("tempo_pratica_min") or 22),
+        tempo_checagem_min=int(alvo.get("tempo_checagem_min") or 18),
+        restricao_escopo=str(alvo.get("restricao_escopo") or "").strip(),
+        instrucoes_curtas_md=str(alvo.get("instrucoes_curtas_md") or "").strip(),
+        exemplos_md=str(alvo.get("exemplos_md") or "").strip(),
+        questoes_pratica=_conv_questoes(alvo.get("questoes_pratica") or [], "pratica"),
+        questoes_checagem=_conv_questoes(alvo.get("questoes_checagem") or [], "checagem"),
+        tolerancia_numerica=float(alvo.get("tolerancia_numerica") or 0.01),
+        disciplina=disc_id,
+        periodo=int(disc.get("periodo", 1)),
+        carga_horaria=int(disc.get("carga_horaria", 60)),
+        material_apoio=list(disc.get("material_apoio") or []),
+    )
 
 
 def _inferir_tipo_questao(
@@ -199,6 +280,8 @@ def carregar_bloco(
     disc_id = config.normalizar_disciplina_id(disciplina)
     disc = config.obter_disciplina(disc_id)
     bloco_id = str(bloco_id or "").strip().upper()
+    if disc.get("fonte") == "json":
+        return _carregar_bloco_json(bloco_id, disc)
     letra = bloco_id[0]
     estagio_meta = [m for m in disc["estagios_meta"] if m[1] == letra]
     if not estagio_meta:
@@ -308,6 +391,9 @@ def carregar_bloco(
         questoes_checagem=q_checagem,
         tolerancia_numerica=tol,
         disciplina=disc_id,
+        periodo=int(disc.get("periodo", 1)),
+        carga_horaria=int(disc.get("carga_horaria", 60)),
+        material_apoio=list(disc.get("material_apoio") or []),
     )
 
 

@@ -515,8 +515,8 @@
           <div class="card-header">
             <h2 id="turma-titulo">Visão Geral da Turma</h2>
             <div class="toolbar">
-              <button type="button" class="btn-primary" onclick="novoAluno()">+ Novo Aluno</button>
-              <button type="button" onclick="abrirModalMatricula()">+ Matricular Aluno</button>
+              <button type="button" class="btn-primary" onclick="abrirModalNovoAluno()">+ Novo Aluno</button>
+              <button type="button" onclick="abrirModalMatricula()">+ Matricular / Fase</button>
               <button type="button" onclick="baixarCsv()">Baixar CSV</button>
             </div>
           </div>
@@ -533,6 +533,32 @@
             </table>
           </div>
           <div class="turma-mobile" id="turma-mobile-cards"></div>
+        </article>
+
+        <article class="card" id="card-grade-bcc">
+          <div class="card-header">
+            <h2 id="bcc-grade-titulo">Grade Completa BCC (Matriz 826 • 1º ao 8º Período)</h2>
+            <div class="toolbar">
+              <label for="filtro-periodo-bcc" class="visually-hidden">Filtrar por período</label>
+              <select id="filtro-periodo-bcc" class="ctrl-select" onchange="renderizarGradeBcc()">
+                <option value="todos">Todos os períodos (1º–8º)</option>
+                <option value="1">1º Período</option>
+                <option value="2">2º Período</option>
+                <option value="3">3º Período</option>
+                <option value="4">4º Período</option>
+                <option value="5">5º Período</option>
+                <option value="6">6º Período</option>
+                <option value="7">7º Período</option>
+                <option value="8">8º Período</option>
+              </select>
+            </div>
+          </div>
+          <p id="bcc-grade-resumo" style="font-size:0.86rem;color:var(--muted);margin:0 0 10px;"></p>
+          <div id="bcc-grade-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;"></div>
+          <details class="quiet-details" style="margin-top:12px;">
+            <summary>Integralização do Curso (Optativas, Estágio, Extensão, Ativ. Complementares e TCC)</summary>
+            <div id="bcc-integralizacao-box" style="margin-top:10px;overflow-x:auto;"></div>
+          </details>
         </article>
       </section>
 
@@ -552,6 +578,7 @@
             </div>
             <div class="toolbar">
               <button type="button" class="btn-primary" onclick="emitirProva()">Emitir &amp; Enviar Prova</button>
+              <button type="button" onclick="abrirModalFaseAluno()">Alterar Fase / Bloco</button>
               <button type="button" onclick="verPortalAluno()">Ver Portal do Aluno</button>
               <button type="button" onclick="resetarPinAluno()">Gerar Novo PIN</button>
             </div>
@@ -797,6 +824,33 @@
       carregarEstado(null, DISCIPLINA_ATIVA, true);
     }
 
+    function rotuloMotorAvaliacao(tipoAv) {
+      const m = {
+        codigo_c: { sub: "Oráculo C99 + OCR + JEV • Progressão por Domínio 100%", badge: "OCR + Oráculo C99" },
+        matematica: { sub: "Oráculo Matemático Exato + OCR + JEV • Progressão por Domínio 100%", badge: "OCR + Oráculo Matemático" },
+        matematica_geral: { sub: "Oráculo Matemático Exato + OCR + JEV • Progressão por Domínio 100%", badge: "OCR + Oráculo Matemático" },
+        logica_matematica: { sub: "Oráculo Lógico-Matemático + OCR + JEV • Progressão por Domínio 100%", badge: "OCR + Oráculo Lógico" },
+        computacao_tecnica: { sub: "Oráculo Técnico + Rubrica + JEV • Progressão por Domínio 100%", badge: "OCR + Rubrica Técnica" },
+        conceitual_textual: { sub: "Rubrica Estruturada + Feedback Socrático • Progressão 100%", badge: "OCR + Rubrica Socrática" },
+      };
+      return m[tipoAv] || m.codigo_c;
+    }
+
+    function renderOptionsDisciplinasPorPeriodo(discs, selecionadaId) {
+      const porPer = {};
+      (discs || []).forEach(d => {
+        const p = Number(d.periodo || 1);
+        if (!porPer[p]) porPer[p] = [];
+        porPer[p].push(d);
+      });
+      return Object.keys(porPer).map(Number).sort((a, b) => a - b).map(p => {
+        const opts = porPer[p].map(d =>
+          `<option value="${escapeHtml(d.id)}" ${d.id === selecionadaId ? "selected" : ""}>${escapeHtml(d.nome_curto || d.nome)}</option>`
+        ).join("");
+        return `<optgroup label="${p}º Período">${opts}</optgroup>`;
+      }).join("");
+    }
+
     function renderizarTudo(forcar = false) {
       if (!ESTADO) return;
       const sig = JSON.stringify(ESTADO);
@@ -805,29 +859,23 @@
 
       const disc = ESTADO.disciplina_ativa || {
         id: DISCIPLINA_ATIVA, codigo: "CC61A", nome: "Algoritmos em C",
-        nome_curto: "Algoritmos C (CC61A)", total_blocos: 73, tipo_avaliacao: "codigo_c"
+        nome_curto: "1º Per. • Algoritmos (CC61A)", total_blocos: 73, tipo_avaliacao: "codigo_c",
+        csv_filename: "00_acompanhamento.csv"
       };
       DISCIPLINA_ATIVA = disc.id || DISCIPLINA_ATIVA;
       const totBlocos = (ESTADO.indicadores && ESTADO.indicadores.total_blocos) || disc.total_blocos || 73;
+      const motor = rotuloMotorAvaliacao(disc.tipo_avaliacao);
 
       document.title = `${disc.nome} (${disc.codigo}) — Painel Gerencial`;
       document.getElementById("hdr-titulo").textContent = `${disc.nome} (${disc.codigo}) — Painel Gerencial`;
-      document.getElementById("hdr-subtitulo").textContent = disc.id === "matrizes_vetores"
-        ? "Oráculo Matemático Exato + OCR + JEV • Progressão por Domínio 100%"
-        : "Oráculo C99 + OCR + JEV • Progressão por Domínio 100%";
-      document.getElementById("badge-motor-correcao").textContent = disc.id === "matrizes_vetores"
-        ? "OCR + Oráculo Matemático"
-        : "OCR + Oráculo C99";
-      document.getElementById("csv-nome-arquivo").textContent = disc.id === "matrizes_vetores"
-        ? "00_acompanhamento_mv.csv"
-        : "00_acompanhamento.csv";
+      document.getElementById("hdr-subtitulo").textContent = motor.sub;
+      document.getElementById("badge-motor-correcao").textContent = motor.badge;
+      document.getElementById("csv-nome-arquivo").textContent = disc.csv_filename || (disc.id === "matrizes_vetores" ? "00_acompanhamento_mv.csv" : "00_acompanhamento.csv");
 
       const selDisc = document.getElementById("sel-disciplina");
       if (selDisc) {
         const discs = ESTADO.disciplinas || [disc];
-        selDisc.innerHTML = discs.map(d =>
-          `<option value="${escapeHtml(d.id)}" ${d.id === DISCIPLINA_ATIVA ? "selected" : ""}>${escapeHtml(d.nome_curto || d.nome)}</option>`
-        ).join("");
+        selDisc.innerHTML = renderOptionsDisciplinasPorPeriodo(discs, DISCIPLINA_ATIVA);
       }
 
       const sel = document.getElementById("sel-aluno");
@@ -907,7 +955,7 @@
           <tr>
             <td><strong>${escapeHtml(t.nome)}</strong></td>
             <td style="color:var(--muted);">${escapeHtml(t.email)}</td>
-            <td><strong>${escapeHtml(t.bloco_atual)}</strong> (${escapeHtml(t.variante_atual)} T#${t.tentativa_bloco} &bull; ${escapeHtml(t.modo_atual)})</td>
+            <td><strong>${escapeHtml(t.bloco_atual)}</strong> (${escapeHtml(t.variante_atual)} T#${t.tentativa_bloco} &bull; ${escapeHtml(t.modo_atual)}) ${t.status_curso === "CONCLUIDO" ? '<span class="badge b-ok">Concluída</span>' : ""}</td>
             <td>${t.blocos_dominados || 0} / ${totBlocos}</td>
             <td>${t.ultimo_acerto_pct !== null && t.ultimo_acerto_pct !== undefined ? t.ultimo_acerto_pct + "%" : "--"}</td>
             <td class="mono">${escapeHtml(t.pin_inicial || "******")}</td>
@@ -928,7 +976,7 @@
                 <strong>${escapeHtml(t.nome)}</strong>
                 <div style="font-size:0.82rem;color:var(--muted);">${escapeHtml(t.email)}</div>
               </div>
-              <span class="badge b-info">${escapeHtml(t.bloco_atual)} (${escapeHtml(t.modo_atual)})</span>
+              <span class="badge ${t.status_curso === "CONCLUIDO" ? "b-ok" : "b-info"}">${t.status_curso === "CONCLUIDO" ? "Concluída • " : ""}${escapeHtml(t.bloco_atual)} (${escapeHtml(t.modo_atual)})</span>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:12px;margin:8px 0 10px;font-size:0.84rem;color:var(--muted);">
               <span>Dominados: <strong>${t.blocos_dominados || 0}/${totBlocos}</strong></span>
@@ -1076,6 +1124,102 @@
           <td>${escapeHtml(em.assunto)}</td>
         </tr>
       `).join("");
+
+      renderizarGradeBcc();
+      renderizarIntegralizacaoBcc();
+    }
+
+    function renderizarGradeBcc() {
+      const grid = document.getElementById("bcc-grade-grid");
+      const resEl = document.getElementById("bcc-grade-resumo");
+      const filtroEl = document.getElementById("filtro-periodo-bcc");
+      if (!grid || !ESTADO) return;
+      const grade = ESTADO.grade_bcc || {};
+      const periodos = grade.periodos || [];
+      const al = ESTADO.aluno_ativo;
+      const filtro = filtroEl ? filtroEl.value : "todos";
+      if (resEl) {
+        resEl.textContent = `${grade.curso || "Ciência da Computação"} (Matriz ${grade.matriz || "826"}) • ${grade.total_disciplinas || 34} componentes • ${grade.total_blocos_geral || 0} blocos avaliáveis` + (al ? ` • Aluno: ${al.nome} (${grade.disciplinas_matriculadas_qtd || 0} matriculadas, ${grade.disciplinas_concluidas_qtd || 0} concluídas)` : "");
+      }
+      const visiveis = filtro === "todos" ? periodos : periodos.filter(p => String(p.periodo) === String(filtro));
+      grid.innerHTML = visiveis.map(p => {
+        const linhas = (p.disciplinas || []).map(d => {
+          const ativa = d.id === DISCIPLINA_ATIVA;
+          const stTxt = d.status_aluno === "concluida" ? "Concluída" : (d.matriculada ? `${d.bloco_atual} (${d.blocos_dominados}/${d.total_blocos})` : "Não matriculada");
+          const stCls = d.status_aluno === "concluida" ? "b-ok" : (d.matriculada ? "b-info" : "b-warn");
+          return `<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid #f1f5f9;">
+            <div style="min-width:0;">
+              <div style="font-size:0.84rem;font-weight:${ativa ? "700" : "600"};">${escapeHtml(d.nome)}</div>
+              <div style="font-size:0.75rem;color:var(--muted);">${escapeHtml(d.codigo)} • ${d.carga_horaria}h • ${d.total_blocos} blocos</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <span class="badge ${stCls}" style="font-size:0.72rem;">${escapeHtml(stTxt)}</span>
+              <button type="button" class="btn-sm" onclick="abrirOuMatricularDisciplinaBcc('${escapeHtml(d.id)}', ${d.matriculada ? "true" : "false"})">${d.matriculada || !al ? "Abrir" : "Matricular"}</button>
+            </div>
+          </div>`;
+        }).join("");
+        return `<div class="sys-card" style="padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+            <strong style="font-size:0.92rem;">${escapeHtml(p.titulo)}</strong>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span class="badge b-info">${p.disciplinas.length} disc.</span>
+              <button type="button" class="btn-sm" onclick="abrirModalMatricula({ periodo: ${Number(p.periodo)} })">Matricular Período</button>
+            </div>
+          </div>
+          ${linhas}
+        </div>`;
+      }).join("");
+    }
+
+    function abrirOuMatricularDisciplinaBcc(discId, matriculada) {
+      const al = ESTADO && ESTADO.aluno_ativo;
+      if (al && !matriculada && MODO_SERVIDOR) {
+        abrirModalMatricula({ discId, alunoId: al.id });
+        return;
+      }
+      carregarEstado(al ? al.id : null, discId, true);
+    }
+
+    function renderizarIntegralizacaoBcc() {
+      const box = document.getElementById("bcc-integralizacao-box");
+      if (!box || !ESTADO) return;
+      const al = ESTADO.aluno_ativo;
+      const lista = ESTADO.integralizacao || [];
+      if (!al || !lista.length) {
+        box.innerHTML = `<p style="font-size:0.84rem;color:var(--muted);margin:0;">Selecione ou cadastre um aluno para acompanhar e atualizar suas horas de integralização.</p>`;
+        return;
+      }
+      box.innerHTML = `<table class="clean-table">
+        <thead><tr><th>Componente (PPC 2022)</th><th>Cumpridas (h)</th><th>Exigidas (h)</th><th>Progresso</th><th>Ação</th></tr></thead>
+        <tbody>
+          ${lista.map(c => `<tr>
+            <td><strong>${escapeHtml(c.nome)}</strong><div style="font-size:0.75rem;color:var(--muted);">${escapeHtml(c.descricao || "")}</div></td>
+            <td><input type="number" min="0" step="1" id="int-h-${escapeHtml(c.key)}" value="${Number(c.horas_cumpridas || 0)}" style="width:76px;padding:4px 6px;" /></td>
+            <td>${c.horas_exigidas}h</td>
+            <td><span class="badge ${c.concluido ? "b-ok" : "b-info"}">${c.percentual}%</span></td>
+            <td><button type="button" class="btn-sm btn-primary" onclick="salvarIntegralizacaoBcc('${escapeHtml(c.key)}')">Salvar</button></td>
+          </tr>`).join("")}
+        </tbody>
+      </table>`;
+    }
+
+    async function salvarIntegralizacaoBcc(compKey) {
+      const al = ESTADO && ESTADO.aluno_ativo;
+      if (!al || !MODO_SERVIDOR) return;
+      const inp = document.getElementById(`int-h-${compKey}`);
+      const horas = Number(inp ? inp.value : 0);
+      const r = await fetch("/api/admin/integralizacao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aluno_id: al.id, componente_key: compKey, horas_cumpridas: horas }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        alert("Erro ao salvar horas: " + (d.erro || r.status));
+        return;
+      }
+      anunciarGlobal("Horas de integralização atualizadas!");
+      await carregarEstado(al.id, DISCIPLINA_ATIVA, true);
     }
 
     function selecionarPontoAdmin(idx) {
@@ -1149,8 +1293,13 @@
     }
 
     function mostrarDetalheBloco(b) {
-      document.getElementById("bloco-detalhe-hover").textContent =
-        `${b.bloco_id}: ${b.micro_habilidade} | Pré-req: ${(b.pre_requisitos || []).join(", ") || "Nenhum"} | Meta checagem: ${b.tempo_checagem_min} min`;
+      const el = document.getElementById("bloco-detalhe-hover");
+      if (!el) return;
+      const al = ESTADO && ESTADO.aluno_ativo;
+      const btnHtml = al && MODO_SERVIDOR
+        ? ` <button type="button" class="btn-sm btn-primary" style="margin-left:8px;" onclick="posicionarAlunoNoBloco('${escapeHtml(b.bloco_id)}')">Posicionar ${escapeHtml(al.nome)} neste bloco</button>`
+        : "";
+      el.innerHTML = `${escapeHtml(b.bloco_id)}: ${escapeHtml(b.micro_habilidade)} | Pré-req: ${escapeHtml((b.pre_requisitos || []).join(", ") || "Nenhum")} | Meta checagem: ${Number(b.tempo_checagem_min || 20)} min${btnHtml}`;
     }
 
     async function acompanharAluno(id) {
@@ -1246,9 +1395,10 @@
       if (!fileInput.files || !fileInput.files[0]) return alert("Selecione uma foto (.png, .jpg ou .pdf) da prova.");
       const file = fileInput.files[0];
       const prot = document.getElementById("input-protocolo").value.trim();
-      document.getElementById("msg-correcao").textContent = DISCIPLINA_ATIVA === "matrizes_vetores"
+      const tipoAvUp = (ESTADO && ESTADO.disciplina_ativa && ESTADO.disciplina_ativa.tipo_avaliacao) || "codigo_c";
+      document.getElementById("msg-correcao").textContent = (tipoAvUp === "matematica" || tipoAvUp === "matematica_geral")
         ? "Enviando e corrigindo com OCR + Oráculo Matemático..."
-        : "Enviando e corrigindo com OCR + Oráculo C99...";
+        : (tipoAvUp === "codigo_c" ? "Enviando e corrigindo com OCR + Oráculo C99..." : "Enviando e corrigindo com OCR + Rubrica Técnica...");
 
       const reader = new FileReader();
       reader.onload = async () => {
@@ -1288,27 +1438,89 @@
       await carregarEstado(ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null, DISCIPLINA_ATIVA, true);
     }
 
-    async function novoAluno() {
-      if (!MODO_SERVIDOR) return;
-      const nome = prompt("Nome do aluno:");
-      if (!nome) return;
-      const email = prompt("E-mail do aluno:");
-      if (!email) return;
-      const bloco = prompt("Bloco inicial (ex: A01, B05):", "A01") || "A01";
-      const r = await fetch("/api/alunos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, email, bloco_inicial: bloco.toUpperCase(), disciplina: DISCIPLINA_ATIVA }),
-      });
-      const al = await r.json();
-      if (al.erro) {
-        alert("Erro: " + al.erro);
+    const BLOCOS_DISC_CACHE = {};
+
+    async function carregarBlocosDisciplina(discId) {
+      if (!discId) return null;
+      if (BLOCOS_DISC_CACHE[discId]) return BLOCOS_DISC_CACHE[discId];
+      if (!MODO_SERVIDOR) return null;
+      try {
+        const r = await fetch(`/api/disciplinas/blocos?disciplina=${encodeURIComponent(discId)}`);
+        if (!r.ok) return null;
+        const d = await r.json();
+        BLOCOS_DISC_CACHE[discId] = d;
+        return d;
+      } catch (_e) {
+        return null;
+      }
+    }
+
+    async function popularSelectBlocos(selectId, discId, blocoPreferido = "A01", blocosPreCarregados = null) {
+      const sel = document.getElementById(selectId);
+      if (!sel) return;
+      sel.innerHTML = `<option value="A01">A01 — Carregando fases...</option>`;
+      let dados = null;
+      if (Array.isArray(blocosPreCarregados) && blocosPreCarregados.length) {
+        dados = { blocos: blocosPreCarregados, estagios_meta: [] };
+      } else {
+        dados = await carregarBlocosDisciplina(discId);
+      }
+      const blocos = (dados && dados.blocos) || [];
+      if (!blocos.length) {
+        sel.innerHTML = `<option value="A01">A01 — Bloco inicial</option>`;
         return;
       }
-      const txt = `Aluno ${al.nome} cadastrado em ${DISCIPLINA_ATIVA}! PIN inicial: ${al.pin_inicial || "(já possuía PIN)"}`;
-      anunciarGlobal(txt);
-      document.getElementById("msg-emissao").textContent = txt;
-      await carregarEstado(al.id, DISCIPLINA_ATIVA, true);
+      const descEst = {};
+      ((dados && dados.estagios_meta) || []).forEach(e => {
+        descEst[e[1]] = e[3] || `Estágio ${e[1]}`;
+      });
+      const porEst = {};
+      blocos.forEach(b => {
+        const est = b.estagio || String(b.bloco_id || "A").slice(0, 1);
+        if (!porEst[est]) porEst[est] = [];
+        porEst[est].push(b);
+      });
+      const alvoNorm = String(blocoPreferido || blocos[0].bloco_id).trim().toUpperCase();
+      sel.innerHTML = Object.keys(porEst).sort().map(est => {
+        const opts = porEst[est].map(b => {
+          const bid = String(b.bloco_id || "");
+          const txt = `${bid} — ${b.titulo || b.micro_habilidade || "Bloco"}`;
+          return `<option value="${escapeHtml(bid)}" ${bid === alvoNorm ? "selected" : ""}>${escapeHtml(txt)}</option>`;
+        }).join("");
+        const rot = descEst[est] || `Estágio ${est}`;
+        return `<optgroup label="${escapeHtml(rot)}">${opts}</optgroup>`;
+      }).join("");
+      if (!Array.from(sel.options).some(o => o.value === alvoNorm) && sel.options.length) {
+        sel.selectedIndex = 0;
+      }
+    }
+
+    function renderizarChecklistDisciplinas(containerId, discs, matriculadasSet, prefixoChk) {
+      const box = document.getElementById(containerId);
+      if (!box) return;
+      const porPer = {};
+      (discs || []).forEach(d => {
+        const p = Number(d.periodo || 1);
+        if (!porPer[p]) porPer[p] = [];
+        porPer[p].push(d);
+      });
+      box.innerHTML = Object.keys(porPer).map(Number).sort((a, b) => a - b).map(p => {
+        const itens = porPer[p].map(d => {
+          const jaMat = matriculadasSet && matriculadasSet.has(d.id);
+          return `<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;padding:2px 0;cursor:pointer;">
+            <input type="checkbox" class="${escapeHtml(prefixoChk)}" value="${escapeHtml(d.id)}" />
+            <span>${escapeHtml(d.nome)} <span style="color:var(--muted);">(${escapeHtml(d.codigo)})</span>${jaMat ? ' <span class="badge b-info" style="font-size:0.7rem;">Já cursada/ativa</span>' : ""}</span>
+          </label>`;
+        }).join("");
+        return `<div style="margin-bottom:8px;">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--muted);margin-bottom:3px;">${p}º Período</div>
+          ${itens}
+        </div>`;
+      }).join("");
+    }
+
+    function novoAluno() {
+      abrirModalNovoAluno();
     }
 
     async function resetarPinAluno() {
@@ -1358,6 +1570,8 @@
     let dlgAuth = null;
     let dlgInt = null;
     let dlgMat = null;
+    let dlgNovo = null;
+    let dlgFase = null;
     let dlgExcluir = null;
     let alunoParaExcluir = null;
 
@@ -1386,10 +1600,14 @@
       dlgAuth = document.getElementById("dlg-auth");
       dlgInt = document.getElementById("dlg-integracoes");
       dlgMat = document.getElementById("dlg-matricula");
+      dlgNovo = document.getElementById("dlg-novo-aluno");
+      dlgFase = document.getElementById("dlg-fase-aluno");
       dlgExcluir = document.getElementById("dlg-excluir-aluno");
       configurarDialogNativo(dlgAuth);
       configurarDialogNativo(dlgInt);
       configurarDialogNativo(dlgMat);
+      configurarDialogNativo(dlgNovo);
+      configurarDialogNativo(dlgFase);
       configurarDialogNativo(dlgExcluir);
       religarFormMatricula();
     }
@@ -1524,27 +1742,203 @@
       }
     }
 
-    function abrirModalMatricula() {
+    async function abrirModalNovoAluno() {
+      if (!MODO_SERVIDOR || !dlgNovo) return;
+      document.getElementById("novo-nome").value = "";
+      document.getElementById("novo-email").value = "";
+      document.getElementById("novo-pin").value = "";
+      const discs = (ESTADO && ESTADO.disciplinas) || [];
+      const selD = document.getElementById("novo-disciplina");
+      selD.innerHTML = renderOptionsDisciplinasPorPeriodo(discs, DISCIPLINA_ATIVA);
+      renderizarChecklistDisciplinas("novo-multiplas-lista", discs, null, "chk-novo-disc");
+      document.getElementById("novo-modo-alocacao").value = "disciplina";
+      document.getElementById("novo-periodo").value = "1";
+      document.getElementById("novo-modo-inicial").value = "pratica";
+      document.getElementById("novo-concluir-anteriores").checked = false;
+      document.getElementById("novo-emitir").checked = false;
+      document.getElementById("novo-modal-msg").textContent = "";
+      alternarModoNovo();
+      dlgNovo.showModal();
+      await popularSelectBlocos("novo-bloco", selD.value || DISCIPLINA_ATIVA, "A01");
+    }
+
+    function fecharModalNovoAluno() {
+      if (dlgNovo && dlgNovo.open) dlgNovo.close();
+    }
+
+    function alternarModoNovo() {
+      const modo = document.getElementById("novo-modo-alocacao").value;
+      document.getElementById("grp-novo-disciplina").hidden = (modo !== "disciplina");
+      document.getElementById("grp-novo-periodo").hidden = (modo !== "periodo");
+      document.getElementById("grp-novo-multiplas").hidden = (modo !== "multiplas");
+      document.getElementById("grp-novo-bloco-select").hidden = (modo !== "disciplina");
+      document.getElementById("grp-novo-bloco-padrao").hidden = (modo === "disciplina");
+    }
+
+    async function aoTrocarDisciplinaNovo() {
+      const discId = document.getElementById("novo-disciplina").value;
+      await popularSelectBlocos("novo-bloco", discId, "A01");
+    }
+
+    async function salvarNovoAluno(e) {
+      e.preventDefault();
+      const msg = document.getElementById("novo-modal-msg");
+      const nome = document.getElementById("novo-nome").value.trim();
+      const email = document.getElementById("novo-email").value.trim();
+      const pin = document.getElementById("novo-pin").value.trim();
+      const modoAloc = document.getElementById("novo-modo-alocacao").value;
+      const modoIni = document.getElementById("novo-modo-inicial").value;
+      const concluirAnt = document.getElementById("novo-concluir-anteriores").checked;
+      const emitir = document.getElementById("novo-emitir").checked;
+      if (!nome || !email) {
+        msg.textContent = "Informe nome e e-mail do aluno.";
+        return;
+      }
+
+      const payload = {
+        nome,
+        email,
+        senha_inicial: pin,
+        modo_inicial: modoIni,
+        concluir_periodos_anteriores: concluirAnt,
+        emitir_prova: emitir,
+      };
+      if (modoAloc === "periodo") {
+        payload.periodo = Number(document.getElementById("novo-periodo").value);
+        payload.bloco_inicial = document.getElementById("novo-bloco-padrao").value.trim().toUpperCase() || "A01";
+      } else if (modoAloc === "multiplas") {
+        const escolhidas = Array.from(document.querySelectorAll(".chk-novo-disc:checked")).map(el => el.value);
+        if (!escolhidas.length) {
+          msg.textContent = "Selecione pelo menos uma disciplina.";
+          return;
+        }
+        payload.disciplinas = escolhidas;
+        payload.bloco_inicial = document.getElementById("novo-bloco-padrao").value.trim().toUpperCase() || "A01";
+        if (concluirAnt) {
+          const discs = (ESTADO && ESTADO.disciplinas) || [];
+          const pers = escolhidas.map(id => Number((discs.find(d => d.id === id) || {}).periodo || 1));
+          const maxP = Math.max(...pers);
+          if (maxP > 1) payload.concluir_periodos_anteriores_ate = maxP - 1;
+        }
+      } else {
+        payload.disciplina = document.getElementById("novo-disciplina").value;
+        payload.bloco_inicial = document.getElementById("novo-bloco").value || "A01";
+      }
+
+      msg.textContent = "Cadastrando aluno e configurando fase inicial...";
+      const r = await fetch("/api/alunos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const al = await r.json();
+      if (!r.ok || al.erro) {
+        msg.textContent = "Erro: " + (al.erro || r.status);
+        return;
+      }
+      const discDest = al.disciplina_destino || payload.disciplina || DISCIPLINA_ATIVA;
+      DISCIPLINA_ATIVA = discDest;
+      fecharModalNovoAluno();
+      const txt = `Aluno ${al.nome} cadastrado! PIN inicial: ${al.pin_inicial || "(já possuía PIN)"}`;
+      anunciarGlobal(txt);
+      document.getElementById("msg-emissao").textContent = txt;
+      await carregarEstado(al.id, discDest, true);
+    }
+
+    async function abrirModalMatricula(opts = {}) {
       if (!MODO_SERVIDOR || !dlgMat) return;
       const todos = (ESTADO && ESTADO.todos_alunos) || [];
+      const alAtivo = ESTADO && ESTADO.aluno_ativo;
+      const aidPref = opts.alunoId || (alAtivo ? alAtivo.id : "");
       const selAl = document.getElementById("mat-aluno");
-      selAl.innerHTML = '<option value="" disabled selected>Selecione um aluno cadastrado...</option>' +
+      selAl.innerHTML = '<option value="" disabled>Selecione um aluno cadastrado...</option>' +
         todos.map(a => {
-          const discsTxt = (a.disciplinas_matriculadas || []).join(", ") || "nenhuma";
-          return `<option value="${a.id}">${escapeHtml(a.nome)} (${escapeHtml(a.email)}) — [${escapeHtml(discsTxt)}]</option>`;
+          const discsTxt = (a.disciplinas_matriculadas || []).length + " disc.";
+          const sel = String(a.id) === String(aidPref) ? "selected" : "";
+          return `<option value="${a.id}" ${sel}>${escapeHtml(a.nome)} (${escapeHtml(a.email)}) — [${escapeHtml(discsTxt)}]</option>`;
         }).join("");
+      if (!aidPref) selAl.selectedIndex = 0;
       selAl.classList.remove("user-invalid-fallback");
       selAl.setAttribute("aria-invalid", "false");
       linkErrMat(selAl, false);
 
       const selD = document.getElementById("mat-disciplina");
       const discs = (ESTADO && ESTADO.disciplinas) || [];
-      selD.innerHTML = discs.map(d =>
-        `<option value="${escapeHtml(d.id)}" ${d.id === DISCIPLINA_ATIVA ? "selected" : ""}>${escapeHtml(d.nome_curto || d.nome)}</option>`
-      ).join("");
-      document.getElementById("mat-bloco").value = "A01";
+      const discPref = opts.discId || DISCIPLINA_ATIVA;
+      selD.innerHTML = renderOptionsDisciplinasPorPeriodo(discs, discPref);
+      if (opts.periodo) {
+        document.getElementById("mat-modo-alocacao").value = "periodo";
+        document.getElementById("mat-periodo").value = String(opts.periodo);
+      } else {
+        document.getElementById("mat-modo-alocacao").value = opts.modoAlocacao || "disciplina";
+      }
+      document.getElementById("mat-modo-inicial").value = "pratica";
+      document.getElementById("mat-status-curso").value = "EM_ANDAMENTO";
+      document.getElementById("mat-atualizar-existente").checked = true;
+      document.getElementById("mat-concluir-anteriores").checked = false;
+      document.getElementById("mat-bloco-padrao").value = "A01";
+      document.getElementById("mat-emitir").checked = false;
       document.getElementById("mat-modal-msg").textContent = "";
+
+      alternarModoMatricula();
+      renderizarChecklistMatriculaAluno();
+      atualizarAvisoPrereqMatricula();
       dlgMat.showModal();
+      await popularSelectBlocos("mat-bloco", selD.value || discPref, "A01");
+    }
+
+    function renderizarChecklistMatriculaAluno() {
+      const discs = (ESTADO && ESTADO.disciplinas) || [];
+      const aid = Number(document.getElementById("mat-aluno").value || 0);
+      const todos = (ESTADO && ESTADO.todos_alunos) || [];
+      const al = todos.find(x => Number(x.id) === aid);
+      const matsAl = new Set((al && al.disciplinas_matriculadas) || []);
+      renderizarChecklistDisciplinas("mat-multiplas-lista", discs, matsAl, "chk-mat-disc");
+    }
+
+    function aoTrocarAlunoMatricula() {
+      renderizarChecklistMatriculaAluno();
+      atualizarAvisoPrereqMatricula();
+    }
+
+    async function aoTrocarDisciplinaMatricula() {
+      atualizarAvisoPrereqMatricula();
+      const discId = document.getElementById("mat-disciplina").value;
+      await popularSelectBlocos("mat-bloco", discId, "A01");
+    }
+
+    function alternarModoMatricula() {
+      const modo = document.getElementById("mat-modo-alocacao").value;
+      document.getElementById("grp-mat-disciplina").hidden = (modo !== "disciplina");
+      document.getElementById("grp-mat-periodo").hidden = (modo !== "periodo");
+      document.getElementById("grp-mat-multiplas").hidden = (modo !== "multiplas");
+      document.getElementById("grp-mat-bloco-select").hidden = (modo !== "disciplina");
+      document.getElementById("grp-mat-bloco-padrao").hidden = (modo === "disciplina");
+      atualizarAvisoPrereqMatricula();
+    }
+
+    function atualizarAvisoPrereqMatricula() {
+      const aviso = document.getElementById("mat-prereq-aviso");
+      if (!aviso) return;
+      const modo = document.getElementById("mat-modo-alocacao").value;
+      const discs = (ESTADO && ESTADO.disciplinas) || [];
+      const aid = Number(document.getElementById("mat-aluno").value || 0);
+      const todos = (ESTADO && ESTADO.todos_alunos) || [];
+      const al = todos.find(x => Number(x.id) === aid);
+      if (modo !== "disciplina") {
+        aviso.style.display = "none";
+        return;
+      }
+      const d = discs.find(x => x.id === document.getElementById("mat-disciplina").value);
+      const prereqs = (d && d.pre_requisitos) || [];
+      const matsAl = new Set((al && al.disciplinas_matriculadas) || []);
+      const faltantes = prereqs.filter(p => !matsAl.has(p));
+      if (prereqs.length && al && faltantes.length) {
+        aviso.style.display = "block";
+        aviso.textContent = `Aviso de pré-requisito no PPC: ${d.nome} recomenda cursar antes ${faltantes.join(", ")} (permitido matricular alunos avançados diretamente em qualquer fase).`;
+      } else {
+        aviso.style.display = "none";
+      }
     }
 
     function fecharModalMatricula() {
@@ -1560,18 +1954,109 @@
         return;
       }
       const aid = Number(document.getElementById("mat-aluno").value);
+      const modoAloc = document.getElementById("mat-modo-alocacao").value;
       const discId = document.getElementById("mat-disciplina").value;
-      const bloco = document.getElementById("mat-bloco").value.trim().toUpperCase() || "A01";
+      const periodoSel = Number(document.getElementById("mat-periodo").value);
+      const blocoSel = document.getElementById("mat-bloco").value || "A01";
+      const blocoPad = document.getElementById("mat-bloco-padrao").value.trim().toUpperCase() || "A01";
+      const modoIni = document.getElementById("mat-modo-inicial").value;
+      const statusIni = document.getElementById("mat-status-curso").value;
+      const atualizarEx = document.getElementById("mat-atualizar-existente").checked;
+      const concluirAnt = document.getElementById("mat-concluir-anteriores").checked;
       const emitir = document.getElementById("mat-emitir").checked;
-      msg.textContent = emitir ? "Matriculando e enviando 1ª folha A4..." : "Salvando matrícula...";
+
+      let payloadMat = {
+        aluno_id: aid,
+        modo_inicial: modoIni,
+        status_curso: statusIni,
+        atualizar_existente: atualizarEx,
+        concluir_periodos_anteriores: concluirAnt,
+        emitir_prova: emitir,
+      };
+      if (modoAloc === "periodo") {
+        payloadMat.periodo = periodoSel;
+        payloadMat.bloco_inicial = blocoPad;
+        msg.textContent = `Matriculando em todo o ${periodoSel}º período...`;
+      } else if (modoAloc === "multiplas") {
+        const escolhidas = Array.from(document.querySelectorAll(".chk-mat-disc:checked")).map(el => el.value);
+        if (!escolhidas.length) {
+          msg.textContent = "Selecione pelo menos uma disciplina.";
+          return;
+        }
+        payloadMat.disciplinas = escolhidas;
+        payloadMat.bloco_inicial = blocoPad;
+        msg.textContent = `Matriculando em ${escolhidas.length} disciplina(s)...`;
+      } else {
+        payloadMat.disciplina = discId;
+        payloadMat.bloco_inicial = blocoSel;
+        msg.textContent = emitir ? "Salvando fase e enviando folha A4..." : "Salvando matrícula / fase...";
+      }
 
       const r = await fetch("/api/matriculas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payloadMat),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        msg.textContent = "Erro: " + (d.erro || r.status);
+        return;
+      }
+      const discDest = (d.matricula && d.matricula.disciplina) || discId;
+      DISCIPLINA_ATIVA = discDest;
+      fecharModalMatricula();
+      const txtOk = modoAloc === "periodo"
+        ? `Aluno matriculado nas ${(d.matriculas || []).length} disciplinas do ${periodoSel}º período!`
+        : (modoAloc === "multiplas"
+          ? `Aluno matriculado em ${(d.matriculas || []).length} disciplinas selecionadas!`
+          : (emitir && d.emissao && d.emissao.prova
+            ? `Fase salva e folha ${d.emissao.prova.protocolo} emitida!`
+            : `Matrícula / fase salva em ${discDest} (${blocoSel} • ${modoIni}).`));
+      anunciarGlobal(txtOk);
+      document.getElementById("msg-emissao").textContent = txtOk;
+      await carregarEstado(aid, discDest, true);
+    }
+
+    async function abrirModalFaseAluno() {
+      if (!MODO_SERVIDOR || !dlgFase) return;
+      const al = ESTADO && ESTADO.aluno_ativo;
+      if (!al) return alert("Selecione um aluno nesta disciplina primeiro.");
+      const disc = ESTADO.disciplina_ativa || {};
+      document.getElementById("fase-aluno-nome").textContent = `${al.nome} — ${disc.nome || DISCIPLINA_ATIVA}`;
+      document.getElementById("fase-modo").value = al.modo_atual || "pratica";
+      document.getElementById("fase-variante").value = al.variante_atual || "V1";
+      document.getElementById("fase-status").value = al.status_curso || "EM_ANDAMENTO";
+      document.getElementById("fase-emitir").checked = false;
+      document.getElementById("fase-modal-msg").textContent = "";
+      dlgFase.showModal();
+      await popularSelectBlocos("fase-bloco", DISCIPLINA_ATIVA, al.bloco_atual || "A01", ESTADO.mapa_blocos || null);
+    }
+
+    function fecharModalFaseAluno() {
+      if (dlgFase && dlgFase.open) dlgFase.close();
+    }
+
+    async function salvarFaseAluno(e) {
+      e.preventDefault();
+      const al = ESTADO && ESTADO.aluno_ativo;
+      if (!al) return;
+      const msg = document.getElementById("fase-modal-msg");
+      const blocoAlvo = document.getElementById("fase-bloco").value || al.bloco_atual;
+      const modoAlvo = document.getElementById("fase-modo").value;
+      const varAlvo = document.getElementById("fase-variante").value;
+      const statusAlvo = document.getElementById("fase-status").value;
+      const emitir = document.getElementById("fase-emitir").checked;
+      msg.textContent = "Atualizando fase do aluno...";
+      const r = await fetch("/api/matriculas/fase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          aluno_id: aid,
-          disciplina: discId,
-          bloco_inicial: bloco,
+          aluno_id: al.id,
+          disciplina: DISCIPLINA_ATIVA,
+          bloco_atual: blocoAlvo,
+          modo_atual: modoAlvo,
+          variante_atual: varAlvo,
+          status_curso: statusAlvo,
           emitir_prova: emitir,
         }),
       });
@@ -1580,14 +2065,36 @@
         msg.textContent = "Erro: " + (d.erro || r.status);
         return;
       }
-      DISCIPLINA_ATIVA = discId;
-      fecharModalMatricula();
-      const txtOk = emitir && d.emissao && d.emissao.prova
-        ? `Matrícula confirmada e folha ${d.emissao.prova.protocolo} emitida!`
-        : `Aluno matriculado com sucesso em ${discId} (bloco ${bloco}).`;
-      anunciarGlobal(txtOk);
-      document.getElementById("msg-emissao").textContent = txtOk;
-      await carregarEstado(aid, discId, true);
+      fecharModalFaseAluno();
+      const txt = `Fase de ${al.nome} atualizada para ${blocoAlvo} (${modoAlvo} / ${statusAlvo})!`;
+      anunciarGlobal(txt);
+      document.getElementById("msg-emissao").textContent = txt;
+      await carregarEstado(al.id, DISCIPLINA_ATIVA, true);
+    }
+
+    async function posicionarAlunoNoBloco(blocoId) {
+      const al = ESTADO && ESTADO.aluno_ativo;
+      if (!al || !MODO_SERVIDOR) return;
+      const r = await fetch("/api/matriculas/fase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          aluno_id: al.id,
+          disciplina: DISCIPLINA_ATIVA,
+          bloco_atual: blocoId,
+          modo_atual: al.modo_atual || "pratica",
+          variante_atual: "V1",
+          status_curso: "EM_ANDAMENTO",
+          emitir_prova: false,
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        alert("Erro ao posicionar aluno: " + (d.erro || r.status));
+        return;
+      }
+      anunciarGlobal(`${al.nome} posicionado no bloco ${blocoId}!`);
+      await carregarEstado(al.id, DISCIPLINA_ATIVA, true);
     }
 
     function abrirModalIntegracoes() {
@@ -1738,7 +2245,7 @@
 
     if (MODO_SERVIDOR) {
       setInterval(() => {
-        const modalAberto = (dlgAuth && dlgAuth.open) || (dlgInt && dlgInt.open) || (dlgMat && dlgMat.open) || (dlgExcluir && dlgExcluir.open);
+        const modalAberto = (dlgAuth && dlgAuth.open) || (dlgInt && dlgInt.open) || (dlgMat && dlgMat.open) || (dlgNovo && dlgNovo.open) || (dlgFase && dlgFase.open) || (dlgExcluir && dlgExcluir.open);
         if (document.visibilityState === "visible" && !modalAberto) {
           carregarEstado(ESTADO && ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null, DISCIPLINA_ATIVA, false);
         }
@@ -1824,35 +2331,214 @@
     </form>
   </dialog>
 
-  <dialog id="dlg-matricula" class="auth-modal" closedby="any" aria-labelledby="dlg-mat-title">
-    <h2 id="dlg-mat-title" style="margin-top: 0; font-size: 1.1rem;">Matricular Aluno Existente</h2>
+  <dialog id="dlg-novo-aluno" class="auth-modal" closedby="any" aria-labelledby="dlg-novo-title">
+    <h2 id="dlg-novo-title" style="margin-top: 0; font-size: 1.1rem;">Cadastrar Novo Aluno (Qualquer Fase do BCC)</h2>
     <p style="font-size: 0.84rem; color: var(--muted); margin-top: 0;">
-      Adicione um aluno já cadastrado a outra disciplina usando o mesmo e-mail e PIN de acesso.
+      Matricule alunos ingressantes ou avançados em um período completo, disciplina específica ou múltiplas disciplinas.
+    </p>
+    <form id="form-novo-aluno" onsubmit="salvarNovoAluno(event)">
+      <div class="modal-field">
+        <label for="novo-nome">Nome completo</label>
+        <input type="text" id="novo-nome" required autofocus />
+      </div>
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+        <div class="modal-field">
+          <label for="novo-email">E-mail do aluno</label>
+          <input type="email" id="novo-email" required />
+        </div>
+        <div class="modal-field">
+          <label for="novo-pin">PIN inicial (opcional)</label>
+          <input type="text" id="novo-pin" placeholder="Auto 6 dígitos" />
+        </div>
+      </div>
+      <div class="modal-field">
+        <label for="novo-modo-alocacao">Tipo de matrícula inicial</label>
+        <select id="novo-modo-alocacao" onchange="alternarModoNovo()">
+          <option value="disciplina">1 Disciplina específica (escolher bloco/fase)</option>
+          <option value="periodo">Período completo (1º ao 8º período)</option>
+          <option value="multiplas">Várias disciplinas / Fases mistas</option>
+        </select>
+      </div>
+      <div class="modal-field" id="grp-novo-disciplina">
+        <label for="novo-disciplina">Disciplina</label>
+        <select id="novo-disciplina" onchange="aoTrocarDisciplinaNovo()"></select>
+      </div>
+      <div class="modal-field" id="grp-novo-periodo" hidden>
+        <label for="novo-periodo">Período de ingresso no BCC</label>
+        <select id="novo-periodo">
+          <option value="1">1º Período (5 disciplinas)</option>
+          <option value="2">2º Período (6 disciplinas)</option>
+          <option value="3">3º Período (6 disciplinas)</option>
+          <option value="4">4º Período (6 disciplinas)</option>
+          <option value="5">5º Período (5 disciplinas)</option>
+          <option value="6">6º Período (4 disciplinas)</option>
+          <option value="7">7º Período (Optativas e TCC)</option>
+          <option value="8">8º Período (TCC e Integralização)</option>
+        </select>
+      </div>
+      <div class="modal-field" id="grp-novo-multiplas" hidden>
+        <label>Disciplinas selecionadas (marque quaisquer períodos)</label>
+        <div id="novo-multiplas-lista" style="max-height:190px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;"></div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div class="modal-field" id="grp-novo-bloco-select">
+          <label for="novo-bloco">Bloco / Fase inicial</label>
+          <select id="novo-bloco"></select>
+        </div>
+        <div class="modal-field" id="grp-novo-bloco-padrao" hidden>
+          <label for="novo-bloco-padrao">Bloco inicial padrão</label>
+          <input type="text" id="novo-bloco-padrao" value="A01" />
+        </div>
+        <div class="modal-field">
+          <label for="novo-modo-inicial">Modalidade inicial</label>
+          <select id="novo-modo-inicial">
+            <option value="pratica">Prática Guiada</option>
+            <option value="checagem">Checagem Independente</option>
+          </select>
+        </div>
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; margin-bottom:6px; cursor:pointer;">
+        <input type="checkbox" id="novo-concluir-anteriores" />
+        Marcar períodos anteriores como concluídos (aproveitamento para aluno avançado)
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; margin-bottom:8px; cursor:pointer;">
+        <input type="checkbox" id="novo-emitir" />
+        Emitir e enviar 1ª folha A4 por e-mail agora
+      </label>
+      <div class="status-msg" id="novo-modal-msg" aria-live="polite"></div>
+      <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
+        <button type="button" onclick="fecharModalNovoAluno()">Cancelar</button>
+        <button type="submit" class="btn-primary">Cadastrar Aluno</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-matricula" class="auth-modal" closedby="any" aria-labelledby="dlg-mat-title">
+    <h2 id="dlg-mat-title" style="margin-top: 0; font-size: 1.1rem;">Matricular / Posicionar Aluno em Fase</h2>
+    <p style="font-size: 0.84rem; color: var(--muted); margin-top: 0;">
+      Adicione disciplinas, períodos ou reposicione o bloco/fase de um aluno existente em qualquer ponto do BCC.
     </p>
     <form id="form-matricula" onsubmit="salvarMatricula(event)">
       <div class="modal-field">
         <label for="mat-aluno">Aluno cadastrado</label>
-        <select id="mat-aluno" name="aluno_id" required aria-invalid="false" data-error="mat-aluno-err" autofocus>
+        <select id="mat-aluno" name="aluno_id" required aria-invalid="false" data-error="mat-aluno-err" onchange="aoTrocarAlunoMatricula()" autofocus>
           <option value="" disabled selected>Selecione um aluno cadastrado...</option>
         </select>
         <div id="mat-aluno-err" class="error-msg">Selecione um aluno antes de confirmar.</div>
       </div>
       <div class="modal-field">
+        <label for="mat-modo-alocacao">Tipo de matrícula</label>
+        <select id="mat-modo-alocacao" onchange="alternarModoMatricula()">
+          <option value="disciplina">1 Disciplina específica (escolher bloco/fase)</option>
+          <option value="periodo">Período completo (1º ao 8º período)</option>
+          <option value="multiplas">Várias disciplinas / Fases mistas</option>
+        </select>
+      </div>
+      <div class="modal-field" id="grp-mat-disciplina">
         <label for="mat-disciplina">Disciplina</label>
-        <select id="mat-disciplina" name="disciplina" required></select>
+        <select id="mat-disciplina" name="disciplina" onchange="aoTrocarDisciplinaMatricula()"></select>
+      </div>
+      <div class="modal-field" id="grp-mat-periodo" hidden>
+        <label for="mat-periodo">Período do BCC (Matriz 826)</label>
+        <select id="mat-periodo" name="periodo">
+          <option value="1">1º Período (5 disciplinas)</option>
+          <option value="2">2º Período (6 disciplinas)</option>
+          <option value="3">3º Período (6 disciplinas)</option>
+          <option value="4">4º Período (6 disciplinas)</option>
+          <option value="5">5º Período (5 disciplinas)</option>
+          <option value="6">6º Período (4 disciplinas)</option>
+          <option value="7">7º Período (Optativas e TCC)</option>
+          <option value="8">8º Período (TCC e Integralização)</option>
+        </select>
+      </div>
+      <div class="modal-field" id="grp-mat-multiplas" hidden>
+        <label>Disciplinas selecionadas (marque quaisquer períodos)</label>
+        <div id="mat-multiplas-lista" style="max-height:190px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;"></div>
+      </div>
+      <div id="mat-prereq-aviso" style="display:none;font-size:0.82rem;color:#92400e;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:8px 10px;margin-bottom:8px;"></div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div class="modal-field" id="grp-mat-bloco-select">
+          <label for="mat-bloco">Bloco / Fase inicial</label>
+          <select id="mat-bloco" name="bloco_inicial"></select>
+        </div>
+        <div class="modal-field" id="grp-mat-bloco-padrao" hidden>
+          <label for="mat-bloco-padrao">Bloco inicial padrão</label>
+          <input type="text" id="mat-bloco-padrao" value="A01" />
+        </div>
+        <div class="modal-field">
+          <label for="mat-modo-inicial">Modalidade inicial</label>
+          <select id="mat-modo-inicial">
+            <option value="pratica">Prática Guiada</option>
+            <option value="checagem">Checagem Independente</option>
+          </select>
+        </div>
       </div>
       <div class="modal-field">
-        <label for="mat-bloco">Bloco inicial (ex.: A01)</label>
-        <input type="text" id="mat-bloco" name="bloco_inicial" value="A01" required />
+        <label for="mat-status-curso">Status inicial na(s) disciplina(s)</label>
+        <select id="mat-status-curso">
+          <option value="EM_ANDAMENTO">Em andamento (aluno vai cursar agora)</option>
+          <option value="CONCLUIDO">Concluída / Aproveitada (crédito de fase anterior)</option>
+        </select>
       </div>
-      <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:8px;">
-        <input type="checkbox" id="mat-emitir" checked />
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; margin-bottom:6px; cursor:pointer;">
+        <input type="checkbox" id="mat-atualizar-existente" checked />
+        Atualizar fase se o aluno já estiver matriculado nesta(s) disciplina(s)
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; margin-bottom:6px; cursor:pointer;">
+        <input type="checkbox" id="mat-concluir-anteriores" />
+        Marcar períodos anteriores como concluídos (aproveitamento para aluno avançado)
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; margin-bottom:8px; cursor:pointer;">
+        <input type="checkbox" id="mat-emitir" />
         Emitir e enviar 1ª folha A4 por e-mail agora
       </label>
       <div class="status-msg" id="mat-modal-msg" aria-live="polite"></div>
       <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
         <button type="button" onclick="fecharModalMatricula()">Cancelar</button>
-        <button type="submit" class="btn-primary">Confirmar Matrícula</button>
+        <button type="submit" class="btn-primary">Confirmar Matrícula / Fase</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-fase-aluno" class="auth-modal" closedby="any" aria-labelledby="dlg-fase-title">
+    <h2 id="dlg-fase-title" style="margin-top: 0; font-size: 1.1rem;">Alterar Fase / Bloco Atual</h2>
+    <p id="fase-aluno-nome" style="font-size: 0.86rem; font-weight: 600; margin-top: 0;"></p>
+    <form id="form-fase-aluno" onsubmit="salvarFaseAluno(event)">
+      <div class="modal-field">
+        <label for="fase-bloco">Posicionar no bloco / fase</label>
+        <select id="fase-bloco" required></select>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div class="modal-field">
+          <label for="fase-modo">Modalidade</label>
+          <select id="fase-modo">
+            <option value="pratica">Prática Guiada</option>
+            <option value="checagem">Checagem Independente</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label for="fase-variante">Variante</label>
+          <select id="fase-variante">
+            <option value="V1">V1 (Principal)</option>
+            <option value="V2">V2 (Recuperação)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label for="fase-status">Status nesta disciplina</label>
+        <select id="fase-status">
+          <option value="EM_ANDAMENTO">Em andamento</option>
+          <option value="CONCLUIDO">Concluída / Aproveitada</option>
+        </select>
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; margin-bottom:8px; cursor:pointer;">
+        <input type="checkbox" id="fase-emitir" />
+        Emitir nova folha A4 para esta fase imediatamente
+      </label>
+      <div class="status-msg" id="fase-modal-msg" aria-live="polite"></div>
+      <div class="toolbar" style="margin-top: 12px; justify-content: flex-end;">
+        <button type="button" onclick="fecharModalFaseAluno()">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Fase</button>
       </div>
     </form>
   </dialog>
