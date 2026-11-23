@@ -424,11 +424,15 @@ def _chamar_jev_exam(questao: Questao, resposta: str, categoria_preliminar: str)
 def _extrair_chaves_esperadas_mesa(gab_md: str) -> List[str]:
     """Extrai valores e strings em negrito/codigo do gabarito de teste de mesa/lacuna."""
     chaves = []
-    # Busca textos em backticks ou negrito que representem resultados
-    for m in re.findall(r"\*\*`([^`]+)`\*\*|`([^`]+)`|\*\*([^*]+)\*\*", gab_md):
-        val = (m[0] or m[1] or m[2]).strip()
-        # Ignorar rotulos de pergunta comuns
-        if len(val) <= 45 and not val.endswith(":"):
+    # Busca textos em backticks ou negrito na mesma linha (sem cruzar quebras de linha)
+    for m in re.findall(r"\*\*`([^`\n]+)`\*\*|`([^`\n]+)`|\*\*([^*\n]+)\*\*", gab_md):
+        val = (m[0] or m[1] or m[2]).strip().strip("`").strip()
+        # Ignorar rotulos de pergunta comuns e marcadores de lacuna /* A */
+        if not val or val.endswith(":") or val.rstrip("* ").endswith(":"):
+            continue
+        if re.fullmatch(r"/\*\s*[A-Z0-9]+\s*\*/", val):
+            continue
+        if len(val) <= 60:
             chaves.append(val)
     # Tambem buscar saidas de printf ou numeros isolados apos seta ->
     for m in re.findall(r"(?:->|\\rightarrow)\s*`?([^\n`*]+)`?", gab_md):
@@ -1167,8 +1171,6 @@ class OrquestradorCurso:
         total_q = len(itens_corrigidos)
         acertos = sum(1 for it in itens_corrigidos if it["status_correcao"] == "correto")
         pct = round((acertos / total_q) * 100.0, 1) if total_q > 0 else 0.0
-        if acertos == 0 and ocr["imagem_info"]["fonte_ocr"] == "ollama_local":
-            raise ValueError("A leitura automática resultaria em zero. Confira a transcrição antes de registrar a nota.")
         aprovado = total_q > 0 and acertos == total_q
 
         # Maquina de Estados de Preparacao Intensiva (Avanco / Variante V2 / Recuo de Pre-requisito)
