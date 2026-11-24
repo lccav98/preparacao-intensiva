@@ -117,7 +117,7 @@ O programa completo abaixo deveria compilar sem avisos e exibir exatamente:
 ```text
 Limite: 100 | Peso: 72.45 kg | Classe: A
 ```
-Identifique os **3 bugs intencionais** presentes no código (anotando no papel ou em comentários `//`) e escreva a **versão corrigida completa**:
+Identifique os **4 bugs intencionais** presentes no código (entre `#define`, especificadores e ordem dos argumentos — anotando no papel ou em comentários `//`) e escreva a **versão corrigida completa**:
 
 ```c
 #include <stdio.h>
@@ -127,7 +127,7 @@ int main(void) {
     double peso = 72.453;
     char classe = 'A';
 
-    printf("Limite: %f | Peso: %.2f kg | Classe: %d\n", LIMITE, peso, classe);
+    printf("Limite: %f | Peso: %.2f kg | Classe: %d\n", peso, LIMITE, classe);
     return 0;
 }
 ```
@@ -154,7 +154,7 @@ Escreva um **programa completo** em C que declare e inicialize diretamente na de
 - real `double peso = 7.2;`
 - caractere `char setor = 'E';`
 
-Sem usar operadores aritméticos nem reatribuição de variáveis, exiba exatamente a ficha formatada abaixo (sem acentos):
+Sem usar operadores aritméticos nem reatribuição de variáveis, exiba exatamente a ficha formatada abaixo (sem acentos) utilizando **apenas uma única chamada `printf` multilinhas**:
 
 ```text
 Ficha 2026 - Setor E

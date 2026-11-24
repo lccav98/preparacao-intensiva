@@ -22,6 +22,7 @@
   1. `scanf("%d", item);` omite o operador `&` antes de `item`.
   2. `scanf("%f", &preco);` usa `%f` em vez de `%lf` para variável `double`.
   3. `scanf("%c", &setor);` omite o espaço inicial `" %c"`, podendo ler `'\n'` deixado pela entrada de `preco`.
+  4. `printf("Preco: R$ %.2f\n", &preco);` passa o endereço `&preco` em vez do valor `preco` para `printf` (comportamento indefinido / aviso de tipo no GCC).
 - **Solução corrigida completa:** [A06_E03_corrigido.c](file:///C:/Users/d7opa/Documents/Algoritmos/Curso_Preparacao_Intensiva_Algoritmos/estagio_A/testes/solucoes/A06_E03_corrigido.c)
 ```c
 #include <stdio.h>

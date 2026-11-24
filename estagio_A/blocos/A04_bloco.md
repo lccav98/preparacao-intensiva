@@ -90,13 +90,15 @@ Complete as lacunas `/* A */`, `/* B */`, `/* C */` e `/* D */` no trecho ilustr
 ---
 
 ### `A04-E03` *(Caça ao Bug em declarações — Trecho ilustrativo)*
-O trecho ilustrativo abaixo contém **4 erros de declaração** (entre regras de formação de identificadores e palavras reservadas). Liste os **4 erros** e reescreva as 4 declarações corrigidas com nomes válidos e mnemônicos:
+O trecho ilustrativo abaixo contém **5 erros de declaração** (entre regras de formação de identificadores, palavras reservadas e redeclaração no mesmo escopo). Liste os **5 erros** e reescreva as declarações corrigidas com nomes válidos e mnemônicos:
 
 ```c
 int 3notas;
 double preco produto;
 char int;
 float taxa%;
+int valorTotal;
+double valorTotal;
 ```
 
 ---
@@ -127,11 +129,13 @@ Um sistema de biblioteca precisa armazenar três informações sobre cada livro:
 ---
 
 ### `A04-E06` *(Resolução independente)*
-Escreva um **programa completo** mínimo em C (`#include <stdio.h>`, `int main(void)`, `return 0;`) que apenas **declare** (sem inicializar, sem `printf` e sem `scanf`) 4 variáveis para registrar dados de uma corrida de rua:
-- número de inscrição do atleta (inteiro);
-- categoria representada por uma única letra;
-- tempo oficial em segundos com dupla precisão;
-- distância percorrida em km com precisão simples.
+Escreva um **programa completo** mínimo em C (`#include <stdio.h>`, `int main(void)`, `return 0;`) que apenas **declare** (sem inicializar, sem `printf` e sem `scanf`) **5 variáveis** para registrar dados de uma corrida de rua, atendendo às restrições abaixo:
+- número de inscrição e número do lote do atleta (dois inteiros declarados em **uma única linha**);
+- identificador válido iniciado por `_` para o código numérico de prioridade (inteiro);
+- categoria representada por uma única letra (`char`);
+- tempo oficial em segundos exigindo dupla precisão (`double`);
+- distância percorrida em km com precisão simples (`float`).
+*(Inclua 1 linha de comentário `//` explicando por que o conteúdo inicial dessas 5 variáveis na memória ainda é indeterminado.)*
 
 ---
 

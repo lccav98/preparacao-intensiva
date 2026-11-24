@@ -26,6 +26,7 @@ Sci=1.500000e+02
   1. `#define LIMITE 100;` inclui ponto-e-vírgula `;` indevido no final da macro (o pré-processador substitui `LIMITE` por `100;` dentro dos parênteses de `printf`, causando erro de sintaxe).
   2. `Limite: %f` usa o especificador de ponto flutuante `%f` para `LIMITE` (que é o inteiro `100`), incompatível com o tipo esperado pelo `printf` (`-Wformat` / saída incorreta). O correto é `%d`.
   3. `Classe: %d` usa `%d` para um `char` (`'A'`), imprimindo o código numérico ASCII `65` em vez do caractere; o correto é `%c`.
+  4. A ordem dos argumentos passados ao `printf` (`peso, LIMITE, classe`) está invertida em relação aos especificadores da string (`Limite ... | Peso ... | Classe ...`); o correto é `LIMITE, peso, classe`.
 - **Solução corrigida completa:** [A05_E03_corrigido.c](file:///C:/Users/d7opa/Documents/Algoritmos/Curso_Preparacao_Intensiva_Algoritmos/estagio_A/testes/solucoes/A05_E03_corrigido.c)
 ```c
 /* Exercicio A05-E03: Correcao de #define e especificadores */
@@ -73,10 +74,7 @@ int main(void) {
     double peso = 7.2;
     char setor = 'E';
 
-    printf("Ficha %d - Setor %c\n", ANO_BASE, setor);
-    printf("Codigo: %d\n", codigo);
-    printf("Valor: R$ %.2f\n", valorUnitario);
-    printf("Peso: %.1f kg\n", peso);
+    printf("Ficha %d - Setor %c\nCodigo: %d\nValor: R$ %.2f\nPeso: %.1f kg\n", ANO_BASE, setor, codigo, valorUnitario, peso);
     return 0;
 }
 ```

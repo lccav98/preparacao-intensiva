@@ -25,7 +25,8 @@ Fim
 - **Erros intencionais:**
   1. Em `C:\usuarios`, a sequência `\u` não usa barra duplicada `\\` (o compilador interpreta `\u` como escape inválido, gerando erro).
   2. Em `\aluno`, a sequência `\a` é interpretada como caractere de controle sonoro (alerta) em vez de `\a` literal; o correto é `\\aluno`.
-  3. Em `"Compilado!"`, as aspas internas não estão escapadas com `\"`, encerrando a string antes da hora e gerando erro de sintaxe.
+  3. Falta `\n` ao final do primeiro `printf("Diretorio: C:\usuarios\aluno");`, o que juntaria `Mensagem:` na mesma linha.
+  4. Em `"Compilado!"`, as aspas internas não estão escapadas com `\"`, encerrando a string antes da hora e gerando erro de sintaxe.
 - **Solução corrigida completa:** [A03_E03_corrigido.c](file:///C:/Users/d7opa/Documents/Algoritmos/Curso_Preparacao_Intensiva_Algoritmos/estagio_A/testes/solucoes/A03_E03_corrigido.c)
 ```c
 /* Exercicio A03-E03: Correcao de barras e aspas */
@@ -57,10 +58,7 @@ Arquivo: [A03_E05.c](file:///C:/Users/d7opa/Documents/Algoritmos/Curso_Preparaca
 #include <stdio.h>
 
 int main(void) {
-    printf("Comando\tFuncao\n");
-    printf("\"gcc\"\tCompila C\n");
-    printf("\\n\tNova linha\n");
-    printf("\\\\\tBarra literal\n");
+    printf("Comando\tFuncao\n\"gcc\"\tCompila C\n\\n\tNova linha\n\\\\\tBarra literal\n");
     return 0;
 }
 ```

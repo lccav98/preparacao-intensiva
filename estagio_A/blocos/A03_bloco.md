@@ -95,13 +95,13 @@ O programa completo abaixo deveria imprimir exatamente as duas linhas:
 Diretorio: C:\usuarios\aluno
 Mensagem: "Compilado!"
 ```
-Identifique os **3 bugs intencionais** nas sequências de escape (anotando no papel ou em comentários `//`) e escreva a **versão corrigida completa**:
+Identifique os **4 bugs intencionais** nas sequências de escape (anotando no papel ou em comentários `//`) e escreva a **versão corrigida completa**:
 
 ```c
 #include <stdio.h>
 
 int main(void) {
-    printf("Diretorio: C:\usuarios\aluno\n");
+    printf("Diretorio: C:\usuarios\aluno");
     printf("Mensagem: "Compilado!"\n");
     return 0;
 }
@@ -121,8 +121,8 @@ Padrao: "C99"
 
 ---
 
-### `A03-E05` *(Resolução independente — Layout tabular e escapes)*
-Escreva um **programa completo** em C que exiba a tabela abaixo no terminal, separando as duas colunas de cada linha com **exatamente uma tabulação (`\t`)** (indicada abaixo por `<TAB>`), preservando aspas duplas, barras invertidas e quebra de linha `\n` ao final de cada linha:
+### `A03-E05` *(Resolução independente — Layout tabular e escapes em único `printf`)*
+Escreva um **programa completo** em C que exiba a tabela abaixo no terminal usando **apenas uma única chamada `printf`**, separando as duas colunas de cada linha com **exatamente uma tabulação (`\t`)** (indicada abaixo por `<TAB>`), preservando aspas duplas, barras invertidas e quebra de linha `\n` ao final de cada linha:
 
 ```text
 Comando<TAB>Funcao

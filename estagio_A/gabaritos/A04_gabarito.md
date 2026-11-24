@@ -27,12 +27,15 @@
   2. `double preco produto;` → identificador inválido porque contém espaço em branco.
   3. `char int;` → inválido porque `int` é uma palavra reservada de C.
   4. `float taxa%;` → identificador inválido porque contém o caractere especial `%`.
+  5. `int valorTotal; double valorTotal;` → redeclaração do mesmo identificador (`valorTotal`) dentro do mesmo escopo, proibida em C.
 - **Versão corrigida (exemplo válido com nomes mnemônicos):**
 ```c
 int notas3;
 double precoProduto;
 char inicial;
 float taxaPercentual;
+int quantidadeTotal;
+double valorTotal;
 ```
 *(Aceitam-se outros identificadores válidos equivalentes, como `qtdNotas`, `preco_produto`, `letra`, `taxa`.)*
 
@@ -56,7 +59,9 @@ char letraEstante;
 #include <stdio.h>
 
 int main(void) {
-    int numeroInscricao;
+    // Conteudo inicial indeterminado ("lixo de memoria") ate receber atribuicao ou leitura
+    int numeroInscricao, numeroLote;
+    int _prioridade;
     char categoria;
     double tempoSegundos;
     float distanciaKm;

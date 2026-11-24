@@ -111,7 +111,7 @@ Item: <item>
 Preco: R$ <preco com 2 casas>
 Setor: <setor>
 ```
-Identifique os **3 bugs intencionais** no `scanf` (anotando no papel ou em comentários `//`) e escreva a **versão corrigida completa**:
+Identifique os **4 bugs intencionais** (entre `scanf` e `printf` — anotando no papel ou em comentários `//`) e escreva a **versão corrigida completa**:
 
 ```c
 #include <stdio.h>
@@ -126,7 +126,7 @@ int main(void) {
     scanf("%c", &setor);
 
     printf("Item: %d\n", item);
-    printf("Preco: R$ %.2f\n", preco);
+    printf("Preco: R$ %.2f\n", &preco);
     printf("Setor: %c\n", setor);
     return 0;
 }
@@ -149,7 +149,7 @@ Limites: <min_val> a <max_val>
 ---
 
 ### `A06-E05` *(Resolução independente — Programa completo)*
-Escreva um **programa completo** em C que leia um código inteiro (`codigo`), uma temperatura real em `double` (`temperatura`) e uma letra de escala (`escala`, tipo `char` — por exemplo `'C'`, `'F'` ou `'K'`), e imprima exatamente (com 1 casa decimal na temperatura):
+Escreva um **programa completo** em C que leia, em **uma única chamada `scanf`** (tratando adequadamente o espaço antes de `%c`), um código inteiro (`codigo`), uma temperatura real em `double` (`temperatura`) e uma letra de escala (`escala`, tipo `char` — por exemplo `'C'`, `'F'` ou `'K'`), e imprima exatamente (com 1 casa decimal na temperatura):
 ```text
 Sensor <codigo>: <temperatura> <escala>
 ```
