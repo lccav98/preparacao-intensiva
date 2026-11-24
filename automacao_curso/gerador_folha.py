@@ -668,13 +668,15 @@ def gerar_folha_prova(
     .linha-codigo, .linha-texto {{
       display: flex;
       align-items: flex-end;
-      height: 19px;
+      height: 29px;
+      margin-bottom: 2px;
       border-bottom: 1px solid #cbd5e1;
     }}
     .num-linha {{
       width: 24px;
       font-family: monospace;
       font-size: 7.5pt;
+      padding-bottom: 2px;
       color: #94a3b8;
     }}
     .rodape-devolucao {{
