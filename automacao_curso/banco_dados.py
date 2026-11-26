@@ -1539,18 +1539,26 @@ def obter_estado_portal_aluno(
             (aluno_id, disc_id),
         ).fetchall()
 
+        itens_por_sub: Dict[int, List[Dict[str, Any]]] = {}
+        if subs_raw:
+            sub_ids = [int(s["id"]) for s in subs_raw]
+            placeholders = ",".join("?" for _ in sub_ids)
+            for ir in conn.execute(
+                f"""
+                SELECT submissao_id, questao_id, tipo_questao, resposta_extraida, status_correcao, categoria_erro, feedback_item
+                FROM itens_submissao
+                WHERE submissao_id IN ({placeholders})
+                ORDER BY submissao_id ASC, id ASC
+                """,
+                sub_ids,
+            ).fetchall():
+                d_ir = dict(ir)
+                sid_row = int(d_ir.pop("submissao_id"))
+                itens_por_sub.setdefault(sid_row, []).append(d_ir)
+
         ultima_sub = None
         if subs_raw:
             s0 = dict(subs_raw[0])
-            itens_rows = conn.execute(
-                """
-                SELECT questao_id, tipo_questao, resposta_extraida, status_correcao, categoria_erro, feedback_item
-                FROM itens_submissao
-                WHERE submissao_id = ?
-                ORDER BY id ASC
-                """,
-                (s0["id"],),
-            ).fetchall()
             ultima_sub = {
                 "id": s0["id"],
                 "protocolo": s0["protocolo"],
@@ -1569,7 +1577,7 @@ def obter_estado_portal_aluno(
                 "dificuldade_observada": s0["dificuldade_observada"],
                 "proxima_acao": s0["proxima_acao"],
                 "bloco_destino": s0["bloco_destino"],
-                "itens": [dict(ir) for ir in itens_rows],
+                "itens": list(itens_por_sub.get(int(s0["id"]), [])),
             }
 
     provas = [
@@ -1605,8 +1613,11 @@ def obter_estado_portal_aluno(
 
     historico_evolucao = [
         {
+            "id": s["id"],
             "data": str(s["recebido_em"])[:10],
+            "recebido_em": s["recebido_em"],
             "protocolo": s["protocolo"],
+            "disciplina": disc_id,
             "bloco": s["bloco"],
             "variante": s["variante"],
             "tentativa": s["tentativa"],
@@ -1616,8 +1627,11 @@ def obter_estado_portal_aluno(
             "percentual_acerto": s["percentual_acerto"],
             "tempo_declarado_min": s["tempo_declarado_min"],
             "fluencia_tempo": s["fluencia_tempo"],
+            "resultado_checagem": s["resultado_checagem"],
             "aprovado": str(s["resultado_checagem"] or "").startswith("APROVADO"),
             "proxima_acao": s["proxima_acao"],
+            "bloco_destino": s["bloco_destino"],
+            "itens": list(itens_por_sub.get(int(s["id"]), [])),
         }
         for s in reversed(subs_raw)
     ]

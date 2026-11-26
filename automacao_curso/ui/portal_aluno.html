@@ -716,6 +716,7 @@
     let jobPollTimer = null;
     let lastRenderSig = "";
     let chartPointSelectedIdx = -1;
+    let resultadoSelecionadoSubId = null;
 
     const ICONS = {
       doc: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
@@ -1188,9 +1189,28 @@
       `;
     }
 
+    function selecionarResultadoHistorico(subIdStr) {
+      resultadoSelecionadoSubId = subIdStr ? Number(subIdStr) : null;
+      renderizarResultados();
+    }
+
+    function abrirCorrecaoHistorico(subId) {
+      resultadoSelecionadoSubId = subId ? Number(subId) : null;
+      ativarAba("resultados");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     function renderizarResultados() {
       const pane = document.getElementById("pane-resultados");
-      const sub = ESTADO.ultima_submissao;
+      const hist = (ESTADO && ESTADO.historico_evolucao) || [];
+      const histDesc = hist.slice().reverse();
+      let sub = null;
+      if (resultadoSelecionadoSubId != null) {
+        sub = histDesc.find(h => Number(h.id) === Number(resultadoSelecionadoSubId)) || null;
+      }
+      if (!sub) {
+        sub = ESTADO.ultima_submissao || histDesc[0] || null;
+      }
       if (!sub) {
         pane.innerHTML = `
           <div class="card">
@@ -1200,6 +1220,24 @@
         `;
         return;
       }
+
+      const subMaisRecente = ESTADO.ultima_submissao || histDesc[0];
+      const ehHistoricoAntigo = subMaisRecente && sub.id != null && subMaisRecente.id != null && Number(sub.id) !== Number(subMaisRecente.id);
+      const seletorHistoricoHtml = histDesc.length > 1 ? `
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--border);">
+          <label for="sel-resultado-historico" style="font-size:0.84rem;font-weight:600;color:var(--muted);">Tentativa exibida (${histDesc.length} corrigidas):</label>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <select id="sel-resultado-historico" aria-label="Selecionar tentativa corrigida" onchange="selecionarResultadoHistorico(this.value)" style="font:inherit;font-size:0.86rem;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);">
+              ${histDesc.map(h => `
+                <option value="${Number(h.id)}" ${Number(h.id) === Number(sub.id) ? "selected" : ""}>
+                  ${escapeHtml(h.data)} • Bloco ${escapeHtml(h.bloco)} (${escapeHtml(h.variante)} #${h.tentativa}) — ${h.acertos_iniciais}/${h.total_questoes} (${h.percentual_acerto}%)
+                </option>
+              `).join("")}
+            </select>
+            ${ehHistoricoAntigo ? `<button type="button" class="btn-ghost btn-sm" onclick="selecionarResultadoHistorico('')">Mais recente</button>` : ""}
+          </div>
+        </div>
+      ` : "";
 
       const okTotal = sub.percentual_acerto >= 100;
       const itens = sub.itens || [];
@@ -1249,6 +1287,7 @@
 
       pane.innerHTML = `
         <article class="card">
+          ${seletorHistoricoHtml}
           <div class="result-hero">
             <div>
               <h2 class="activity-title" style="font-size:1.15rem;">Bloco ${escapeHtml(sub.bloco)} (${escapeHtml(sub.variante)} • Tentativa #${sub.tentativa})</h2>
@@ -1333,16 +1372,17 @@
       const tabelaDesktop = histRev.length ? `
         <table class="hist-table">
           <thead>
-            <tr><th>Data</th><th>Bloco</th><th>Tempo</th><th>Nota</th><th>Status</th></tr>
+            <tr><th>Data</th><th>Bloco</th><th>Tempo</th><th>Nota</th><th>Status</th><th>Correção</th></tr>
           </thead>
           <tbody>
             ${histRev.map(hItem => `
               <tr>
                 <td>${escapeHtml(hItem.data)}</td>
-                <td><strong>${escapeHtml(hItem.bloco)}</strong> (${escapeHtml(hItem.variante)})</td>
+                <td><strong>${escapeHtml(hItem.bloco)}</strong> (${escapeHtml(hItem.variante)} #${hItem.tentativa || 1})</td>
                 <td>${hItem.tempo_declarado_min} min</td>
                 <td>${hItem.acertos_iniciais}/${hItem.total_questoes} (${hItem.percentual_acerto}%)</td>
                 <td><span class="pill ${hItem.aprovado ? "pill-ok" : "pill-warn"}">${hItem.aprovado ? "Aprovado" : "Em reforço"}</span></td>
+                <td><button type="button" class="btn-ghost btn-sm" onclick="abrirCorrecaoHistorico(${Number(hItem.id)})">Ver correção</button></td>
               </tr>
             `).join("")}
           </tbody>
@@ -1351,12 +1391,15 @@
           ${histRev.map(hItem => `
             <div class="hist-card">
               <div>
-                <strong>Bloco ${escapeHtml(hItem.bloco)} (${escapeHtml(hItem.variante)})</strong>
+                <strong>Bloco ${escapeHtml(hItem.bloco)} (${escapeHtml(hItem.variante)} #${hItem.tentativa || 1})</strong>
                 <div style="font-size:0.82rem;color:var(--muted);">${escapeHtml(hItem.data)} • ${hItem.tempo_declarado_min} min</div>
               </div>
               <div style="text-align:right;">
                 <div style="font-weight:700;font-size:0.9rem;">${hItem.acertos_iniciais}/${hItem.total_questoes} (${hItem.percentual_acerto}%)</div>
-                <span class="pill ${hItem.aprovado ? "pill-ok" : "pill-warn"}">${hItem.aprovado ? "Aprovado" : "Em reforço"}</span>
+                <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:4px;">
+                  <span class="pill ${hItem.aprovado ? "pill-ok" : "pill-warn"}">${hItem.aprovado ? "Aprovado" : "Em reforço"}</span>
+                  <button type="button" class="btn-ghost btn-sm" onclick="abrirCorrecaoHistorico(${Number(hItem.id)})">Ver correção</button>
+                </div>
               </div>
             </div>
           `).join("")}
@@ -1465,6 +1508,7 @@
       pararCronometroVisual();
       limparArquivoSelecionado(false);
       pararJobPolling();
+      resultadoSelecionadoSubId = null;
       DISCIPLINA_ATIVA = discId;
       jobAtivo = carregarJobStorage();
       recarregarEstado(discId, true).then(() => {
