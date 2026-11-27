@@ -261,10 +261,45 @@ def _bloco_resposta_html(q: Questao, disciplina: str = "algoritmos") -> str:
         tipo_av = config.obter_disciplina(disciplina).get("tipo_avaliacao", "")
     except Exception:
         tipo_av = ""
+    spec_dict = q.spec_matematica if isinstance(q.spec_matematica, dict) else {}
+    spec_tipo = str(spec_dict.get("tipo_resposta", "")).lower()
+    enunc_low = (q.enunciado_md or "").lower()
+    eh_matriz = (
+        q.tipo == "matriz"
+        or spec_tipo == "matriz"
+        or (
+            disciplina == "matrizes_vetores"
+            and any(
+                tok in enunc_low
+                for tok in ("matriz", "determinante", "inversa", "escalon", "gauss", "sistema", "\\begin{bmatrix}", "\\begin{pmatrix}")
+            )
+        )
+    )
+    if eh_matriz:
+        linhas = "".join(
+            '<div class="linha-texto"><span class="traco"></span></div>'
+            for _ in range(1, 15)
+        )
+        dica = "Desenvolva passo a passo (operacoes/linhas legiveis) e escreva a Matriz Final no quadro ampliado abaixo."
+        return f"""
+        <div class="caixa-resposta caixa-mv">
+          <div class="marcador-ocr">[QUESTAO: {html.escape(q.questao_id)}] &bull; {html.escape(dica)}</div>
+          <div class="area-manuscrita">{linhas}</div>
+          <div class="resposta-final-box resposta-matriz">
+            <strong>Resposta Final (Matriz):</strong>
+            <div class="linha-matriz-final"></div>
+            <div class="linha-matriz-final"></div>
+            <div class="linha-matriz-final"></div>
+            <div class="linha-matriz-final"></div>
+          </div>
+          <div class="marcador-ocr-fim">[/QUESTAO]</div>
+        </div>
+        """
+
     if disciplina == "matrizes_vetores":
         linhas = "".join(
             '<div class="linha-texto"><span class="traco"></span></div>'
-            for _ in range(1, 9)
+            for _ in range(1, 13)
         )
         dica = "Desenvolva passo a passo (fracoes/radicais exatos) e destaque a Resposta Final na linha abaixo."
         return f"""
@@ -279,25 +314,25 @@ def _bloco_resposta_html(q: Questao, disciplina: str = "algoritmos") -> str:
     if q.tipo == "codigo":
         linhas = "".join(
             f'<div class="linha-codigo"><span class="num-linha">{i:02d}</span><span class="traco"></span></div>'
-            for i in range(1, 19)
+            for i in range(1, 21)
         )
         dica = "Escreva o programa ou algoritmo completo a caneta mantendo sintaxe, tipos e casos de borda."
     elif q.tipo == "sql":
         linhas = "".join(
             f'<div class="linha-codigo"><span class="num-linha">{i:02d}</span><span class="traco"></span></div>'
-            for i in range(1, 13)
+            for i in range(1, 15)
         )
         dica = "Escreva os comandos SQL (DDL/DML/consultas) a caneta respeitando chaves, juncoes e restricoes."
     elif q.tipo == "bug":
         linhas = "".join(
             f'<div class="linha-codigo"><span class="num-linha">{i:02d}</span><span class="traco"></span></div>'
-            for i in range(1, 11)
+            for i in range(1, 13)
         )
         dica = "Identifique o erro da solucao acima e reescreva a versao corrigida."
     elif q.spec_matematica or tipo_av == "matematica_geral" or q.tipo in ("calculo", "matriz", "vetor"):
         linhas = "".join(
             '<div class="linha-texto"><span class="traco"></span></div>'
-            for _ in range(1, 9)
+            for _ in range(1, 12)
         )
         dica = "Desenvolva passo a passo e destaque a Resposta Final na linha abaixo."
         return f"""
@@ -311,7 +346,7 @@ def _bloco_resposta_html(q: Questao, disciplina: str = "algoritmos") -> str:
     elif tipo_av == "logica_matematica" or q.tipo == "logica":
         linhas = "".join(
             '<div class="linha-texto"><span class="traco"></span></div>'
-            for _ in range(1, 9)
+            for _ in range(1, 11)
         )
         dica = "Desenvolva passos, tabela/derivacao ou representacao formal e registre a conclusao abaixo."
         return f"""
@@ -325,13 +360,13 @@ def _bloco_resposta_html(q: Questao, disciplina: str = "algoritmos") -> str:
     elif tipo_av == "conceitual_textual" or q.tipo in ("conceitual", "redacao", "projeto"):
         linhas = "".join(
             '<div class="linha-texto"><span class="traco"></span></div>'
-            for _ in range(1, 9)
+            for _ in range(1, 11)
         )
         dica = "Redija sua resposta estruturada, objetiva e fundamentada nas linhas abaixo."
     else:
         linhas = "".join(
             '<div class="linha-texto"><span class="traco"></span></div>'
-            for _ in range(1, 8)
+            for _ in range(1, 11)
         )
         dica = "Preencha passo a passo o teste de mesa / resposta final de forma legivel."
 
@@ -652,11 +687,20 @@ def gerar_folha_prova(
       background: #fff;
     }}
     .resposta-final-box {{
-      margin-top: 8px;
-      padding: 6px 8px;
+      margin-top: 10px;
+      padding: 8px 10px;
+      min-height: 44px;
       border: 1.2px dashed #475569;
       background: #f8fafc;
       font-size: 9.2pt;
+    }}
+    .resposta-final-box.resposta-matriz {{
+      min-height: 118px;
+    }}
+    .linha-matriz-final {{
+      height: 26px;
+      border-bottom: 1px dotted #cbd5e1;
+      margin-top: 2px;
     }}
     .marcador-ocr, .marcador-ocr-fim {{
       font-family: monospace;
@@ -668,8 +712,8 @@ def gerar_folha_prova(
     .linha-codigo, .linha-texto {{
       display: flex;
       align-items: flex-end;
-      height: 29px;
-      margin-bottom: 2px;
+      height: 31px;
+      margin-bottom: 3px;
       border-bottom: 1px solid #cbd5e1;
     }}
     .num-linha {{

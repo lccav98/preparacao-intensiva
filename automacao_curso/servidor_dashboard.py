@@ -680,7 +680,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._enviar_json({"erro": "Acesso negado a folha de outro aluno."}, status=403)
                 return
             folha_path = os.path.join(config.FOLHAS_DIR, f"{prot_safe}.html")
-            if not os.path.isfile(folha_path):
+            if (not os.path.isfile(folha_path)) or (str(prova.get("status") or "").lower() != "corrigida"):
                 try:
                     al_f = banco_dados.obter_aluno_por_id(int(prova["aluno_id"]), incluir_pin=False)
                     disc_p = config.normalizar_disciplina_id(

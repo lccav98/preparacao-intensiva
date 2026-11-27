@@ -2894,26 +2894,41 @@
           "questoes_checagem": [
             {
               "questao_id": "E03-C01",
-              "titulo": "Classificação de grafo com dois vértices ímpares",
-              "tipo": "logica",
-              "enunciado_md": "Um grafo simples conexo possui sequência de graus $(3, 3, 2, 2, 2)$. Classifique-o como `euleriano`, `semi-euleriano` ou `nao euleriano`.\n\n**Formato de resposta:** `euleriano`, `semi-euleriano` ou `nao euleriano`",
-              "gabarito_md": "- Há exatamente **2** vértices de grau ímpar ($3$ e $3$).\n- Logo, o grafo não possui circuito fechado, mas possui trilha euleriana aberta ligando os dois vértices ímpares: é **semi-euleriano**.\n- **Resposta Final:** `semi-euleriano`",
+              "titulo": "Vetor de graus e classificação euleriana de grafo",
+              "tipo": "vetor",
+              "enunciado_md": "Considere o grafo simples e conexo com $V = \\{1, 2, 3, 4, 5\\}$ e arestas $E = \\{\\{1,2\\}, \\{1,3\\}, \\{2,3\\}, \\{2,4\\}, \\{3,4\\}, \\{2,5\\}, \\{4,5\\}\\}$. \n**(a)** Informe o vetor de graus $(d(1), d(2), d(3), d(4), d(5))$.\n**(b)** Classifique o grafo quanto à existência de percurso euleriano: `euleriano`, `semi-euleriano` ou `nao euleriano`.\n\n**Formato de resposta:** `(a) (d1, d2, d3, d4, d5) (b) classificacao`",
+              "gabarito_md": "- Contando os vizinhos de cada vértice nas arestas $E$:\n  - $d(1) = 2$ ($\\{2,3\\}$), $d(2) = 4$ ($\\{1,3,4,5\\}$), $d(3) = 3$ ($\\{1,2,4\\}$), $d(4) = 3$ ($\\{2,3,5\\}$), $d(5) = 2$ ($\\{2,4\\}$).\n- Como há exatamente **2** vértices de grau ímpar ($3$ e $4$) em grafo conexo, existe trilha euleriana aberta (`semi-euleriano`), sem circuito fechado.\n- **Resposta Final:** `(a) (2, 4, 3, 3, 2) (b) semi-euleriano`",
               "spec_matematica": {
-                "tipo_resposta": "classificacao",
-                "esperado": "semi-euleriano",
-                "sinonimos": [
-                  "semieuleriano",
-                  "trilha euleriana"
-                ],
-                "exemplo_correto": "semi-euleriano",
-                "exemplo_incorreto": "euleriano",
-                "dica_erro": "Exatamente 2 vértices de grau ímpar caracterizam trilha aberta (semi-euleriano)."
+                "tipo_resposta": "composta",
+                "esperado": {
+                  "a": {
+                    "tipo_resposta": "vetor",
+                    "esperado": [
+                      2,
+                      4,
+                      3,
+                      3,
+                      2
+                    ]
+                  },
+                  "b": {
+                    "tipo_resposta": "classificacao",
+                    "esperado": "semi-euleriano",
+                    "sinonimos": [
+                      "semieuleriano",
+                      "trilha euleriana"
+                    ]
+                  }
+                },
+                "exemplo_correto": "(a) (2, 4, 3, 3, 2) (b) semi-euleriano",
+                "exemplo_incorreto": "(a) (2, 4, 3, 3, 2) (b) euleriano",
+                "dica_erro": "Conte os vizinhos de cada vértice: os vértices 3 e 4 têm grau ímpar (3), portanto o grafo conexo admite trilha aberta (semi-euleriano)."
               }
             },
             {
               "questao_id": "E03-C02",
               "titulo": "Ordem de visitação em Busca em Largura (BFS)",
-              "tipo": "mesa",
+              "tipo": "vetor",
               "enunciado_md": "Considere o grafo não direcionado com $V = \\{1, 2, 3, 4, 5, 6\\}$ e arestas $\\{\\{1,2\\}, \\{1,4\\}, \\{2,3\\}, \\{2,5\\}, \\{4,5\\}, \\{5,6\\}\\}$.\nExecutando uma BFS partindo do vértice $1$ e enfileirando vizinhos não visitados em ordem numérica crescente, informe o vetor com a **ordem de visitação** dos $6$ vértices.\n\n**Formato de resposta:** `(v1, v2, v3, v4, v5, v6)`",
               "gabarito_md": "- Inicia com `1` na fila $\\implies$ visita `1`; enfileira vizinhos `2`, `4`.\n- Retira `2` $\\implies$ visita `2`; enfileira vizinhos ainda não descobertos `3`, `5`. Fila: `[4, 3, 5]`.\n- Retira `4` $\\implies$ visita `4`; seu único vizinho novo seria `5`, já marcado. Fila: `[3, 5]`.\n- Retira `3` $\\implies$ visita `3`; sem vizinhos novos. Fila: `[5]`.\n- Retira `5` $\\implies$ visita `5`; enfileira `6`.\n- Retira `6` $\\implies$ visita `6`.\n- Ordem: `(1, 2, 4, 3, 5, 6)`.\n- **Resposta Final:** `(1, 2, 4, 3, 5, 6)`",
               "spec_matematica": {
@@ -2945,77 +2960,90 @@
           "tempo_pratica_min": 28,
           "tempo_checagem_min": 20,
           "restricao_escopo": "Permitido: caminhos mínimos com pesos positivos, árvores (|E|=|V|-1), DAG e ordenação topológica (Kahn), grafos bipartidos e 2-coloração via BFS. Proibido: complexidade NP-completa formal.",
-          "instrucoes_curtas_md": "1. **Árvore:** grafo conexo e acíclico. Toda árvore com $n$ vértices possui exatamente **$n - 1$ arestas**; remover qualquer aresta desconecta e adicionar qualquer aresta cria ciclo.\n2. **DAG e Ordenação Topológica:** um **grafo acíclico direcionado (DAG)** modela dependências sem ciclos. No algoritmo de Kahn, escolhe-se repetidamente um vértice com **grau de entrada $0$**, removendo suas arestas de saída.\n3. **Grafo Bipartido:** um grafo é bipartido (2-colorível sem conflitos) se e somente se **não contém ciclos ímpares** (verificável com BFS alternando cores).",
+          "instrucoes_curtas_md": "1. **Algoritmo de Dijkstra (caminhos mínimos):** parte da origem $d(s)=0$, escolhe iterativamente o vértice ainda não fechado de menor estimativa $d(u)$ e relaxa suas arestas ($d(v) = \\min(d(v), d(u) + w(u,v))$).\n2. **Árvore Geradora Mínima (Kruskal):** ordena as arestas por peso crescente e adiciona $|V|-1$ arestas que conectam componentes distintos sem formar ciclos.\n3. **Ordenação Topológica (Algoritmo de Kahn em DAG):** lista vértices com grau de entrada zero ($\\text{in}(v)=0$), remove-os e decrementa o grau de entrada dos sucessores.\n4. **Grafo Bipartido / 2-Coloração (BFS):** alterna as cores `0` e `1` por camadas de distância a partir da origem.",
           "exemplos_md": "### Exemplo 1 — Caminho mínimo em rede\nSe $A \\to B$ custa $5$, mas $A \\to C \\to B$ custa $2 + 1 = 3$, o menor custo de latência é $3$.\n\n### Exemplo 2 — Árvore geradora\nPara conectar $8$ servidores sem redundância cíclica, precisamos de exatamente $8 - 1 = 7$ enlaces.",
           "questoes_pratica": [
             {
               "questao_id": "E04-E01",
-              "titulo": "Latência mínima em rede ponderada",
-              "tipo": "calculo",
-              "enunciado_md": "Uma rede de roteadores possui vértices $\\{A, B, C, D, E\\}$ e enlaces bidirecionais com latências positivas:\n$(A,B)=4$, $(A,C)=2$, $(C,B)=1$, $(B,D)=5$, $(C,D)=8$, $(D,E)=3$ e $(B,E)=10$.\nCalcule a **latência mínima total** para transmitir um pacote de $A$ até $E$.\n\n**Formato de resposta:** `numero`",
-              "gabarito_md": "- Explorando os caminhos de $A$ a $E$:\n  - $A \\to B \\to D \\to E$: $4 + 5 + 3 = 12$.\n  - $A \\to C \\to B \\to D \\to E$: $2 + 1 + 5 + 3 = 11$.\n  - $A \\to C \\to D \\to E$: $2 + 8 + 3 = 13$.\n  - $A \\to C \\to B \\to E$: $2 + 1 + 10 = 13$.\n- O menor custo é **$11$**.\n- **Resposta Final:** `11`",
+              "titulo": "Vetor de distâncias mínimas via Algoritmo de Dijkstra",
+              "tipo": "vetor",
+              "enunciado_md": "Considere o grafo não direcionado ponderado com $V = \\{1, 2, 3, 4, 5\\}$ e arestas com pesos positivos: $\\{1,2\\}=4$, $\\{1,3\\}=2$, $\\{2,3\\}=1$, $\\{2,4\\}=5$, $\\{3,4\\}=8$, $\\{4,5\\}=3$ e $\\{2,5\\}=10$. Executando o **Algoritmo de Dijkstra** a partir do vértice $1$, informe o vetor de menores custos $(d(1), d(2), d(3), d(4), d(5))$.\n\n**Formato de resposta:** `(d1, d2, d3, d4, d5)`",
+              "gabarito_md": "- Início: $d(1)=0$, demais $\\infty$.\n- Fecha `1` ($0$): $d(2)=4, d(3)=2$.\n- Fecha `3` ($2$): relaxa `{3,2}=1` $\\implies d(2)=\\min(4, 2+1)=3$; relaxa `{3,4}=8` $\\implies d(4)=10$.\n- Fecha `2` ($3$): relaxa `{2,4}=5` $\\implies d(4)=\\min(10, 3+5)=8$; relaxa `{2,5}=10` $\\implies d(5)=13$.\n- Fecha `4` ($8$): relaxa `{4,5}=3` $\\implies d(5)=\\min(13, 8+3)=11$.\n- Fecha `5` ($11$).\n- **Resposta Final:** `(0, 3, 2, 8, 11)`",
               "spec_matematica": {
-                "tipo_resposta": "numero",
-                "esperado": 11,
-                "exemplo_correto": "11",
-                "exemplo_incorreto": "12",
-                "dica_erro": "Verifique se passar por C reduz o custo para chegar até B (2 + 1 < 4)."
+                "tipo_resposta": "vetor",
+                "esperado": [
+                  0,
+                  3,
+                  2,
+                  8,
+                  11
+                ],
+                "exemplo_correto": "(0, 3, 2, 8, 11)",
+                "exemplo_incorreto": "(0, 4, 2, 9, 12)",
+                "dica_erro": "O caminho 1 -> 3 -> 2 custa 2 + 1 = 3 < 4, reduzindo também d(4) para 8 e d(5) para 11."
               }
             },
             {
               "questao_id": "E04-E02",
-              "titulo": "Número de enlaces em árvore geradora de rede",
-              "tipo": "calculo",
-              "enunciado_md": "Uma infraestrutura de $12$ servidores deve ser interconectada formando uma **árvore geradora** (conexa e sem ciclos, ligando todos os $12$ vértices). Quantos enlaces (arestas) terá exatamente essa topologia?\n\n**Formato de resposta:** `numero`",
-              "gabarito_md": "- Toda árvore com $|V|$ vértices possui exatamente $|E| = |V| - 1$ arestas.\n- Logo, $|E| = 12 - 1 = 11$.\n- **Resposta Final:** `11`",
+              "titulo": "Árvore Geradora Mínima (Algoritmo de Kruskal)",
+              "tipo": "vetor",
+              "enunciado_md": "Em uma rede com $V = \\{1, 2, 3, 4, 5\\}$ e enlaces ponderados $\\{1,2\\}=3$, $\\{1,3\\}=1$, $\\{2,3\\}=2$, $\\{2,4\\}=6$, $\\{3,4\\}=4$, $\\{3,5\\}=7$ e $\\{4,5\\}=5$, aplique o **Algoritmo de Kruskal** para encontrar uma Árvore Geradora Mínima (AGM).\n**(a)** Informe o vetor com os pesos das $4$ arestas escolhidas em ordem crescente `(p1, p2, p3, p4)`.\n**(b)** Informe o custo total mínimo da árvore geradora.\n\n**Formato de resposta:** `(a) (p1, p2, p3, p4) (b) numero`",
+              "gabarito_md": "- Ordenando as arestas por peso: `{1,3}=1`, `{2,3}=2`, `{1,2}=3`, `{3,4}=4`, `{4,5}=5`, `{2,4}=6`, `{3,5}=7`.\n- Seleciona `1` (`{1,3}`), `2` (`{2,3}`); descarta `3` (`{1,2}` fecha ciclo `1-2-3`); seleciona `4` (`{3,4}`) e `5` (`{4,5}`).\n- Pesos escolhidos: `(1, 2, 4, 5)`; soma total: $1 + 2 + 4 + 5 = 12$.\n- **Resposta Final:** `(a) (1, 2, 4, 5) (b) 12`",
               "spec_matematica": {
-                "tipo_resposta": "numero",
-                "esperado": 11,
-                "exemplo_correto": "11",
-                "exemplo_incorreto": "12",
-                "dica_erro": "Uma árvore conexa com n vértices sem ciclos possui sempre n - 1 arestas."
+                "tipo_resposta": "composta",
+                "esperado": {
+                  "a": {
+                    "tipo_resposta": "vetor",
+                    "esperado": [
+                      1,
+                      2,
+                      4,
+                      5
+                    ]
+                  },
+                  "b": {
+                    "tipo_resposta": "numero",
+                    "esperado": 12
+                  }
+                },
+                "exemplo_correto": "(a) (1, 2, 4, 5) (b) 12",
+                "exemplo_incorreto": "(a) (1, 2, 3, 4) (b) 10",
+                "dica_erro": "A aresta {1,2} de peso 3 forma ciclo com {1,3} e {2,3}, devendo ser descartada na construção da árvore geradora mínima."
               }
             },
             {
               "questao_id": "E04-E03",
-              "titulo": "Modelagem de pré-requisitos curriculares com DAG",
-              "tipo": "conceitual",
-              "enunciado_md": "Explique como modelar a grade de pré-requisitos de disciplinas de um curso de Ciência da Computação como um **grafo direcionado**:\n1. O que representam vértices e arcos;\n2. Por que o grafo precisa ser um **DAG** (acíclico);\n3. Qual algoritmo/conceito extrai uma ordem válida de matrícula.",
-              "gabarito_md": "1. **Modelagem:** Cada disciplina é um **vértice**, e cada arco direcionado $u \\to v$ significa que a disciplina $u$ é pré-requisito de $v$.\n2. **Exigência de DAG:** Se houvesse um **ciclo** (dependência circular, ex.: $A \\to B \\to A$), nenhuma disciplina do ciclo poderia ser cursada primeiro, tornando o currículo inviável. Logo, o grafo precisa ser acíclico direcionado (**DAG**).\n3. **Extração da sequência:** A **ordenação topológica** (por exemplo, via algoritmo de Kahn por grau de entrada zero) produz uma sequência linear válida respeitando todos os pré-requisitos.",
-              "rubrica": {
-                "criterios": [
-                  {
-                    "nome": "Mapeia disciplinas a vértices e pré-requisitos a arcos",
-                    "termos_any": [
-                      "vertice",
-                      "arco",
-                      "aresta"
-                    ],
-                    "obrigatorio": true
+              "titulo": "Graus de entrada e ordenação topológica (Algoritmo de Kahn)",
+              "tipo": "vetor",
+              "enunciado_md": "Considere o DAG com $V = \\{1, 2, 3, 4, 5\\}$ e arcos direcionados $2 \\to 1$, $2 \\to 4$, $1 \\to 3$, $4 \\to 3$ e $3 \\to 5$.\n**(a)** Informe o vetor dos graus de entrada iniciais $(\\text{in}(1), \\text{in}(2), \\text{in}(3), \\text{in}(4), \\text{in}(5))$.\n**(b)** Aplicando o **Algoritmo de Kahn** e desempatando pelo **menor índice disponível**, informe a ordenação topológica resultante.\n\n**Formato de resposta:** `(a) (g1, g2, g3, g4, g5) (b) (v1, v2, v3, v4, v5)`",
+              "gabarito_md": "- Graus de entrada: $\\text{in}(1)=1$ (`2->1`), $\\text{in}(2)=0$, $\\text{in}(3)=2$ (`1->3, 4->3`), $\\text{in}(4)=1$ (`2->4`), $\\text{in}(5)=1$ (`3->5`) $\\implies$ `(1, 0, 2, 1, 1)`.\n- Kahn: sai `2` (libera `1` e `4`); desempate `<` escolhe `1`, depois `4` (libera `3`); sai `3` (libera `5`); sai `5`.\n- Ordem: `(2, 1, 4, 3, 5)`.\n- **Resposta Final:** `(a) (1, 0, 2, 1, 1) (b) (2, 1, 4, 3, 5)`",
+              "spec_matematica": {
+                "tipo_resposta": "composta",
+                "esperado": {
+                  "a": {
+                    "tipo_resposta": "vetor",
+                    "esperado": [
+                      1,
+                      0,
+                      2,
+                      1,
+                      1
+                    ]
                   },
-                  {
-                    "nome": "Justifica ausência de ciclos (DAG) contra deadlock curricular",
-                    "termos_any": [
-                      "ciclo",
-                      "dag",
-                      "aciclico",
-                      "circular"
-                    ],
-                    "obrigatorio": true
-                  },
-                  {
-                    "nome": "Identifica ordenação topológica",
-                    "termos_any": [
-                      "topologica",
-                      "kahn",
-                      "grau de entrada"
-                    ],
-                    "obrigatorio": true
+                  "b": {
+                    "tipo_resposta": "vetor",
+                    "esperado": [
+                      2,
+                      1,
+                      4,
+                      3,
+                      5
+                    ]
                   }
-                ],
-                "termos_proibidos": [],
-                "min_criterios_aprovacao": 3,
-                "dica_socratica": "Relacione 'dependência circular' com ciclos no dígrafo e lembre do nome da ordenação específica para DAGs."
+                },
+                "exemplo_correto": "(a) (1, 0, 2, 1, 1) (b) (2, 1, 4, 3, 5)",
+                "exemplo_incorreto": "(a) (1, 0, 2, 1, 1) (b) (2, 4, 1, 3, 5)",
+                "dica_erro": "Após retirar 2, tanto 1 quanto 4 ficam com grau de entrada 0; pelo desempate do menor índice, 1 sai antes de 4."
               }
             }
           ],
@@ -3024,61 +3052,41 @@
               "questao_id": "E04-C01",
               "titulo": "Ordenação topológica lexicográfica (Algoritmo de Kahn)",
               "tipo": "vetor",
-              "enunciado_md": "Considere o DAG de tarefas $V = \\{1, 2, 3, 4\\}$ com dependências direcionadas $1 \\to 2$, $1 \\to 3$, $2 \\to 4$ e $3 \\to 4$.\nAplicando o algoritmo de ordenação topológica de Kahn e sempre escolhendo o **menor índice disponível** (grau de entrada zero) em caso de empate, informe a sequência topológica resultante.\n\n**Formato de resposta:** `(t1, t2, t3, t4)`",
-              "gabarito_md": "- Graus de entrada iniciais: $\\text{in}(1)=0, \\text{in}(2)=1, \\text{in}(3)=1, \\text{in}(4)=2$.\n- Passo 1: único com entrada $0$ é `1` $\\implies$ libera `2` e `3`.\n- Passo 2: disponíveis `2` e `3` $\\implies$ desempate pelo menor escolhe `2` (reduz $\\text{in}(4)$ para $1$).\n- Passo 3: disponível `3` $\\implies$ escolhe `3` (reduz $\\text{in}(4)$ para $0$).\n- Passo 4: escolhe `4`.\n- Sequência: `(1, 2, 3, 4)`.\n- **Resposta Final:** `(1, 2, 3, 4)`",
+              "enunciado_md": "Considere o DAG de tarefas $V = \\{1, 2, 3, 4, 5\\}$ com dependências direcionadas $3 \\to 1$, $3 \\to 2$, $1 \\to 4$, $2 \\to 5$ e $4 \\to 5$.\nAplicando o algoritmo de ordenação topológica de Kahn e sempre escolhendo o **menor índice disponível** (grau de entrada zero) em caso de empate, informe a sequência topológica resultante.\n\n**Formato de resposta:** `(t1, t2, t3, t4, t5)`",
+              "gabarito_md": "- Graus iniciais: $\\text{in}(1)=1, \\text{in}(2)=1, \\text{in}(3)=0, \\text{in}(4)=1, \\text{in}(5)=2$.\n- Passo 1: sai `3` $\\implies$ disponíveis `{1, 2}`.\n- Passo 2: menor índice escolhe `1` $\\implies$ libera `4`; disponíveis `{2, 4}`.\n- Passo 3: menor índice escolhe `2` (reduz `in(5)` para `1`); disponível `{4}`.\n- Passo 4: sai `4` $\\implies$ libera `5`; Passo 5: sai `5`.\n- **Resposta Final:** `(3, 1, 2, 4, 5)`",
               "spec_matematica": {
                 "tipo_resposta": "vetor",
                 "esperado": [
+                  3,
                   1,
                   2,
-                  3,
-                  4
+                  4,
+                  5
                 ],
-                "exemplo_correto": "(1, 2, 3, 4)",
-                "exemplo_incorreto": "(1, 3, 2, 4)",
-                "dica_erro": "Quando 2 e 3 ficarem com grau de entrada 0 ao mesmo tempo, escolha o menor índice (2) primeiro."
+                "exemplo_correto": "(3, 1, 2, 4, 5)",
+                "exemplo_incorreto": "(3, 1, 4, 2, 5)",
+                "dica_erro": "Após retirar 1 e liberar 4, os disponíveis são {2, 4}; pelo critério do menor índice, 2 deve ser escolhido antes de 4."
               }
             },
             {
               "questao_id": "E04-C02",
-              "titulo": "Alocação em dois turnos via grafos bipartidos",
-              "tipo": "conceitual",
-              "enunciado_md": "Um sistema de ensalamento precisa dividir provas em exatamente **2 turnos** (Manhã e Tarde) de modo que duas provas com alunos em comum (ligadas por uma aresta no grafo de conflitos) não ocorram no mesmo turno.\nExplique como verificar algoritmicamente se isso é possível usando **BFS / 2-coloração** e qual propriedade estrutural do grafo impede a divisão.",
-              "gabarito_md": "- A divisão em 2 turnos livres de conflitos equivale a verificar se o grafo de conflitos é **bipartido** (admite **2-coloração** de seus vértices sem arestas ligando vértices da mesma cor).\n- **Algoritmo:** Executamos uma **BFS** (ou DFS) em cada componente conexo atribuindo alternadamente as cores Manhã e Tarde aos vizinhos. Se em algum momento encontrarmos uma aresta ligando dois vértices que já receberam a **mesma cor**, o grafo falha.\n- **Obstrução estrutural:** Isso acontece se e somente se o grafo contiver pelo menos um **ciclo ímpar** (por exemplo, um triângulo $K_3$).",
-              "rubrica": {
-                "criterios": [
-                  {
-                    "nome": "Associa 2 turnos a grafo bipartido / 2-coloração",
-                    "termos_any": [
-                      "bipartido",
-                      "2-coloracao",
-                      "duas cores"
-                    ],
-                    "obrigatorio": true
-                  },
-                  {
-                    "nome": "Descreve verificação via BFS alternando cores e detectando conflito",
-                    "termos_any": [
-                      "bfs",
-                      "mesma cor",
-                      "conflito",
-                      "vizinho"
-                    ],
-                    "obrigatorio": true
-                  },
-                  {
-                    "nome": "Identifica ciclo ímpar como impedimento",
-                    "termos_any": [
-                      "ciclo impar",
-                      "ciclos impares",
-                      "triangulo"
-                    ],
-                    "obrigatorio": true
-                  }
+              "titulo": "Vetor de 2-coloração via BFS em grafo bipartido",
+              "tipo": "vetor",
+              "enunciado_md": "Considere o grafo de conflitos $V = \\{1, 2, 3, 4, 5, 6\\}$ com arestas $E = \\{\\{1,2\\}, \\{1,6\\}, \\{2,3\\}, \\{3,4\\}, \\{4,5\\}, \\{5,6\\}, \\{2,5\\}\\}$. Executando uma **BFS para 2-coloração** a partir do vértice $1$ com $\\text{cor}(1) = 0$ e alternando entre `0` e `1` a cada camada, informe o vetor de cores $(c(1), c(2), c(3), c(4), c(5), c(6))$.\n\n**Formato de resposta:** `(c1, c2, c3, c4, c5, c6)`",
+              "gabarito_md": "- Camada 0: `cor(1) = 0`.\n- Camada 1 (vizinhos de `1`): `cor(2) = 1`, `cor(6) = 1`.\n- Camada 2 (vizinhos de `2` e `6` não coloridos): `cor(3) = 0`, `cor(5) = 0`.\n- Camada 3 (vizinho de `3` e `5`): `cor(4) = 1`. (A aresta `{2,5}` liga `1` com `0`, sem conflito.)\n- **Resposta Final:** `(0, 1, 0, 1, 0, 1)`",
+              "spec_matematica": {
+                "tipo_resposta": "vetor",
+                "esperado": [
+                  0,
+                  1,
+                  0,
+                  1,
+                  0,
+                  1
                 ],
-                "termos_proibidos": [],
-                "min_criterios_aprovacao": 3,
-                "dica_socratica": "Conecte 'dividir em 2 grupos sem arestas internas' ao conceito de grafo bipartido e lembre qual tipo de ciclo quebra a alternância de cores."
+                "exemplo_correto": "(0, 1, 0, 1, 0, 1)",
+                "exemplo_incorreto": "(0, 1, 1, 0, 1, 0)",
+                "dica_erro": "Na camada 0 tem-se cor(1)=0; na camada 1 (vizinhos 2 e 6) cor=1; na camada 2 (3 e 5) cor=0; na camada 3 (4) cor=1."
               }
             }
           ]
