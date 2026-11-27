@@ -730,6 +730,7 @@
     let cronInicioMs = null;
     let lastAdminSig = "";
     let chartAdminIdx = -1;
+    let adminSubmissaoSelId = null;
 
     const MODO_SERVIDOR = window.location.protocol.startsWith("http");
 
@@ -791,6 +792,8 @@
     }
 
     async function carregarEstado(alunoId = null, discOverride = null, forcar = true) {
+      const prevAid = ESTADO && ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null;
+      const prevDisc = DISCIPLINA_ATIVA;
       if (discOverride) DISCIPLINA_ATIVA = discOverride;
       if (MODO_SERVIDOR) {
         const params = new URLSearchParams();
@@ -806,12 +809,17 @@
           DISCIPLINA_ATIVA = ESTADO.disciplina_ativa.id;
         }
       }
+      const nextAid = ESTADO && ESTADO.aluno_ativo ? ESTADO.aluno_ativo.id : null;
+      if (nextAid !== prevAid || DISCIPLINA_ATIVA !== prevDisc) {
+        adminSubmissaoSelId = null;
+      }
       renderizarTudo(forcar);
     }
 
     function trocarDisciplina() {
       const val = document.getElementById("sel-disciplina").value;
       DISCIPLINA_ATIVA = val || "algoritmos";
+      adminSubmissaoSelId = null;
       if (cronInterval) {
         clearInterval(cronInterval);
         cronInterval = null;
@@ -1013,11 +1021,15 @@
         if (!cronInterval) document.getElementById("cronometro-display").textContent = "00:00";
       }
 
-      // Último feedback (erros em destaque, corretos recolhidos se houver revisão)
+      // Último feedback (erros em destaque, legendas, cartões coloridos, esquema visual e seleção do histórico)
       const subs = ESTADO.submissoes || [];
       const fbDiv = document.getElementById("ultimo-feedback");
       if (subs.length > 0) {
-        const s = subs[0];
+        let s = subs[0];
+        if (adminSubmissaoSelId != null) {
+          const achada = subs.find(x => Number(x.id) === Number(adminSubmissaoSelId));
+          if (achada) s = achada;
+        }
         const cls = s.percentual_acerto >= 100 ? "b-ok" : "b-err";
         document.getElementById("fb-resumo-badge").innerHTML =
           `<span class="badge ${cls}">${escapeHtml(s.bloco)} (${escapeHtml(s.variante)}): ${s.acertos_iniciais}/${s.total_questoes} (${s.percentual_acerto}%) • ${escapeHtml(s.proxima_acao)}</span>`;
@@ -1025,6 +1037,158 @@
         const itens = s.itens || [];
         const errados = itens.filter(it => it.status_correcao !== "correto");
         const corretos = itens.filter(it => it.status_correcao === "correto");
+
+        const renderizarLegendaFeedback = () => `
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:8px 11px;margin:4px 0 10px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;font-size:0.75rem;color:#334155;">
+            <strong style="color:#0f172a;margin-right:2px;">🎨 Legenda da Correção:</strong>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;font-weight:600;">🔴 🎯 Diagnóstico</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46;font-weight:600;">🟢 ✍️ Como Corrigir</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:#f5f3ff;border:1px solid #c4b5fd;color:#5b21b6;font-weight:600;">🟣 📝 Sintaxe / Formato</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:#eff6ff;border:1px solid #93c5fd;color:#1e40af;font-weight:600;">🔵 📘 Onde Revisar</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:#fffbeb;border:1px solid #fcd34d;color:#92400e;font-weight:600;">🟠 ⚖️ Critérios</span>
+          </div>
+        `;
+
+        const destacarTextoImportante = (raw) => {
+          let st = escapeHtml(raw || "");
+          st = st.replace(/^\[([A-Z0-9-]+)\]\s*/, '<span style="display:inline-block;background:#1e293b;color:#ffffff;font-weight:700;font-size:0.72rem;padding:1px 7px;border-radius:4px;margin-right:5px;vertical-align:middle;">$1</span>');
+          st = st.replace(/`([^`\n]{1,120}?)`/g, '<code style="background:rgba(15,23,42,0.08);padding:1px 5px;border-radius:4px;color:#0f172a;font-family:Consolas,monospace;font-weight:700;">$1</code>');
+          st = st.replace(/&quot;([^&]{1,140}?)&quot;/g, '<strong style="background:rgba(15,23,42,0.07);padding:1px 5px;border-radius:4px;color:#0f172a;">&ldquo;$1&rdquo;</strong>');
+          st = st.replace(/(int main\(void\)|printf|scanf|return 0|#include|BFS|DFS|Dijkstra|Kruskal|Kahn|matriz|vetor|grafo|caso de borda|Bloco\s+[A-H][0-9]{2})/g, "<strong>$1</strong>");
+          return st;
+        };
+
+        const renderizarFeedbackDestacado = (fbBruto, ehOk) => {
+          const txt = String(fbBruto || "").trim();
+          if (!txt) return "";
+          const partes = txt.split(/\n•\s+/);
+          const cabecalho = partes[0].trim();
+          const topicos = partes.slice(1);
+          const blocosHtml = [];
+
+          if (ehOk) {
+            blocosHtml.push(`
+              <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-left:4px solid #16a34a;border-radius:8px;padding:8px 11px;color:#14532d;font-size:0.84rem;line-height:1.48;">
+                ✅ <strong>Domínio Comprovado:</strong> ${destacarTextoImportante(cabecalho)}
+              </div>
+            `);
+          } else {
+            blocosHtml.push(`
+              <div style="background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #dc2626;border-radius:8px;padding:8px 11px;color:#7f1d1d;font-size:0.84rem;line-height:1.5;">
+                <div style="font-weight:700;color:#991b1b;margin-bottom:3px;">🔴 🎯 Diagnóstico Principal</div>
+                <div>${destacarTextoImportante(cabecalho)}</div>
+              </div>
+            `);
+          }
+
+          for (const top of topicos) {
+            const t = top.trim();
+            if (!t) continue;
+            if (/^(Como corrigir|Versão corrigida|Como estruturar)/i.test(t)) {
+              const idxSep = t.indexOf(":");
+              const tit = idxSep !== -1 ? t.slice(0, idxSep).trim() : "Como corrigir";
+              const corpo = idxSep !== -1 ? t.slice(idxSep + 1).trim() : t;
+              const linhas = corpo.split(/\n/).filter(l => l.trim()).map(l => `<div style="margin-top:3px;">${destacarTextoImportante(l)}</div>`).join("");
+              blocosHtml.push(`
+                <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-left:4px solid #059669;border-radius:8px;padding:8px 11px;color:#064e3b;font-size:0.83rem;line-height:1.48;">
+                  <div style="font-weight:700;color:#047857;">🟢 ✍️ ${escapeHtml(tit)}</div>
+                  ${linhas}
+                </div>
+              `);
+            } else if (/^(Sintaxe e Formato|Correção Gramatical)/i.test(t)) {
+              const idxSep = t.indexOf(":");
+              const tit = idxSep !== -1 ? t.slice(0, idxSep).trim() : "Sintaxe e Formato Técnico";
+              const corpo = idxSep !== -1 ? t.slice(idxSep + 1).trim() : t;
+              blocosHtml.push(`
+                <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-left:4px solid #7c3aed;border-radius:8px;padding:8px 11px;color:#4c1d95;font-size:0.82rem;line-height:1.46;">
+                  <div style="font-weight:700;color:#6d28d9;">🟣 📝 ${escapeHtml(tit)}</div>
+                  <div style="margin-top:3px;">${destacarTextoImportante(corpo)}</div>
+                </div>
+              `);
+            } else if (/^O que revisar/i.test(t)) {
+              const corpo = t.replace(/^O que revisar[^:]*:\s*/i, "");
+              blocosHtml.push(`
+                <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #2563eb;border-radius:8px;padding:8px 11px;color:#1e3a8a;font-size:0.83rem;line-height:1.48;">
+                  <strong>🔵 📘 Onde Revisar no Bloco:</strong> ${destacarTextoImportante(corpo)}
+                </div>
+              `);
+            } else if (/^(Critérios de Avaliação|Barema)/i.test(t)) {
+              const idxSep = t.indexOf(":");
+              const tit = idxSep !== -1 ? t.slice(0, idxSep).trim() : "Critérios de Avaliação";
+              const corpo = idxSep !== -1 ? t.slice(idxSep + 1).trim() : "";
+              const chips = corpo.split(/\s*;\s*/).filter(Boolean).map(
+                c => `<span style="display:inline-block;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:2px 8px;margin:4px 5px 0 0;font-size:0.76rem;font-weight:600;color:#92400e;">${escapeHtml(c)}</span>`
+              ).join("");
+              blocosHtml.push(`
+                <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:8px;padding:8px 11px;color:#78350f;font-size:0.82rem;">
+                  <div style="font-weight:700;color:#92400e;">🟠 ⚖️ ${escapeHtml(tit)}</div>
+                  <div>${chips}</div>
+                </div>
+              `);
+            } else {
+              blocosHtml.push(`
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 11px;font-size:0.83rem;">
+                  ${destacarTextoImportante(t)}
+                </div>
+              `);
+            }
+          }
+          return `<div style="display:grid;gap:7px;margin-top:8px;">${blocosHtml.join("")}</div>`;
+        };
+
+        const renderizarEsquemaGrafico = (esq) => {
+          if (!esq || !Array.isArray(esq.colunas) || esq.colunas.length !== 3) return "";
+          const c = esq.colunas;
+          const setaSvg = `<svg width="24" height="16" viewBox="0 0 24 16" style="display:block;margin:0 auto;"><line x1="2" y1="8" x2="19" y2="8" stroke="#6e6d68" stroke-width="1.6"/><polyline points="14,3.5 19.5,8 14,12.5" fill="none" stroke="#6e6d68" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+          const boxTopo = (col) => {
+            const dado = col.tom === "dado";
+            return `<div style="background:${dado ? "#efefea" : "#e3f5ee"};border:1.2px solid ${dado ? "#8c8b84" : "#1b8a6b"};border-radius:9px;padding:8px 9px;text-align:center;">
+              <div style="font-weight:700;font-size:0.82rem;color:${dado ? "#2d2d2a" : "#0c543f"};">${escapeHtml(col.titulo || "")}</div>
+              <div style="font-size:0.73rem;color:${dado ? "#5c5b55" : "#167a5c"};margin-top:2px;">${escapeHtml(col.subtitulo || "")}</div>
+            </div>`;
+          };
+          const boxComo = (col) => {
+            const dado = col.tom === "dado";
+            const linhas = (col.como_escrever || []).map(l => `<div>${escapeHtml(l)}</div>`).join("");
+            return `<div style="background:${dado ? "#efefea" : "#e3f5ee"};border:1.2px solid ${dado ? "#8c8b84" : "#1b8a6b"};border-radius:9px;padding:8px 10px;font-size:0.74rem;line-height:1.42;color:${dado ? "#494843" : "#0f634a"};">${linhas}</div>`;
+          };
+          const boxErro = (col) => {
+            const ok = Boolean(col.ok);
+            return `<div style="background:${ok ? "#f2faf6" : "#fbece7"};border:${ok ? "1px dashed #6eb89e" : "1.2px solid #c86448"};border-radius:9px;padding:8px 10px;font-size:0.76rem;font-weight:500;line-height:1.35;color:${ok ? "#166e52" : "#8c3119"};">${escapeHtml(col.erro_aluno || "")}</div>`;
+          };
+          const titEsq = escapeHtml(esq.titulo_esquema || "Mapa Visual de Resolução");
+          const arco = escapeHtml(esq.arco_retorno || "Validar saída frente ao enunciado");
+          return `
+            <div style="margin:8px 0 6px;padding:10px 12px;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;overflow-x:auto;">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f1f5f9;font-size:0.74rem;">
+                <strong style="color:#0f172a;">🗺️ ${titEsq}</strong>
+                <span style="display:inline-flex;flex-wrap:wrap;gap:8px;color:#475569;">
+                  <span><span style="display:inline-block;width:9px;height:9px;border-radius:3px;background:#e3f5ee;border:1px solid #1b8a6b;vertical-align:middle;margin-right:3px;"></span>Etapa autoral</span>
+                  <span><span style="display:inline-block;width:9px;height:9px;border-radius:3px;background:#efefea;border:1px solid #8c8b84;vertical-align:middle;margin-right:3px;"></span>Base dada</span>
+                  <span><span style="display:inline-block;width:9px;height:9px;border-radius:3px;background:#fbece7;border:1px solid #c86448;vertical-align:middle;margin-right:3px;"></span>Ponto a corrigir</span>
+                </span>
+              </div>
+              <div style="min-width:500px;">
+                <div style="display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;align-items:center;">
+                  ${boxTopo(c[0])}<div>${setaSvg}</div>${boxTopo(c[1])}<div>${setaSvg}</div>${boxTopo(c[2])}
+                </div>
+                <div style="font-size:0.74rem;font-weight:600;color:#575650;margin:8px 0 4px;">Como resolver</div>
+                <div style="display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;align-items:stretch;">
+                  ${boxComo(c[0])}<div></div>${boxComo(c[1])}<div></div>${boxComo(c[2])}
+                </div>
+                <div style="font-size:0.74rem;font-weight:600;color:#575650;margin:8px 0 4px;">Diagnóstico na tentativa</div>
+                <div style="display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;align-items:stretch;">
+                  ${boxErro(c[0])}<div></div>${boxErro(c[1])}<div></div>${boxErro(c[2])}
+                </div>
+                <svg viewBox="0 0 600 40" style="width:100%;height:38px;display:block;margin-top:2px;">
+                  <path d="M 504 2 L 504 18 L 96 18 L 96 5" fill="none" stroke="#1b8a6b" stroke-width="1.8" stroke-dasharray="5,4"/>
+                  <polyline points="91,11 96,4 101,11" fill="none" stroke="#1b8a6b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <text x="300" y="34" text-anchor="middle" fill="#4b4a45" font-size="11.5" font-family="system-ui,Segoe UI,sans-serif">${arco}</text>
+                </svg>
+              </div>
+            </div>
+          `;
+        };
 
         const renderItem = (it) => {
           const ok = it.status_correcao === "correto";
@@ -1034,21 +1198,35 @@
               <span>${ok ? "CORRETO" : "ERRO (" + escapeHtml(it.categoria_erro) + ")"} &bull; Camada ${escapeHtml(it.camada_avaliacao)}</span>
             </div>
             <div class="ocr-box">${formatarRespostaVisual(it.resposta_extraida)}</div>
-            <div style="color:var(--muted);">${escapeHtml(it.feedback_item)}</div>
+            ${renderizarEsquemaGrafico(it.esquema_grafico)}
+            ${renderizarFeedbackDestacado(it.feedback_item, ok)}
           </div>`;
         };
 
-        const errHtml = errados.length ? errados.map(renderItem).join("") : "";
+        const errHtml = errados.length ? `${renderizarLegendaFeedback()}${errados.map(renderItem).join("")}` : "";
         const corHtml = corretos.length ? (
           errados.length === 0
             ? corretos.map(renderItem).join("")
             : `<details class="quiet-details"><summary>Ver ${corretos.length} questões corretas</summary>${corretos.map(renderItem).join("")}</details>`
         ) : "";
 
-        fbDiv.innerHTML = `<p style="margin-top:0;font-size:0.88rem;color:var(--ink);">
-          <strong>Protocolo:</strong> <code class="mono">${escapeHtml(s.protocolo)}</code> &bull; <strong>Tempo:</strong> ${s.tempo_declarado_min} min (${escapeHtml(s.fluencia_tempo)}) &bull;
-          <strong>Dificuldades:</strong> ${escapeHtml(s.dificuldade_observada)} &bull; <strong>Decisão:</strong> <strong>${escapeHtml(s.proxima_acao)}</strong>
-        </p>${errHtml}${corHtml}`;
+        const selSubHtml = subs.length > 1 ? `
+          <select aria-label="Selecionar submissão corrigida" onchange="selecionarSubmissaoAdmin(this.value)" style="font:inherit;font-size:0.78rem;padding:4px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;">
+            ${subs.map(sx => `<option value="${Number(sx.id)}" ${Number(sx.id) === Number(s.id) ? "selected" : ""}>${escapeHtml(sx.bloco)} (${escapeHtml(sx.variante)} #${sx.tentativa}) • ${sx.acertos_iniciais}/${sx.total_questoes} (${sx.percentual_acerto}%)</option>`).join("")}
+          </select>
+        ` : "";
+
+        fbDiv.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          <p style="margin:0;font-size:0.88rem;color:var(--ink);">
+            <strong>Protocolo:</strong> <code class="mono">${escapeHtml(s.protocolo)}</code> &bull; <strong>Tempo:</strong> ${s.tempo_declarado_min} min (${escapeHtml(s.fluencia_tempo)}) &bull;
+            <strong>Dificuldades:</strong> ${escapeHtml(s.dificuldade_observada)} &bull; <strong>Decisão:</strong> <strong>${escapeHtml(s.proxima_acao)}</strong>
+          </p>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            ${selSubHtml}
+            <button type="button" class="btn-outline" style="padding:4px 10px;font-size:0.78rem;" onclick="reavaliarSubmissaoAtual(${Number(s.id)})">Reavaliar Correção Detalhada</button>
+            <button type="button" class="btn-outline" style="padding:4px 10px;font-size:0.78rem;" onclick="reavaliarTodasSubmissoes()">Reavaliar Todas</button>
+          </div>
+        </div>${errHtml}${corHtml}`;
       } else {
         document.getElementById("fb-resumo-badge").innerHTML = "";
         fbDiv.textContent = "Nenhuma prova corrigida ainda para este aluno.";
@@ -1330,6 +1508,48 @@
       msgEl.textContent = textoOk;
       anunciarGlobal(textoOk);
       await carregarEstado(al.id, DISCIPLINA_ATIVA, true);
+    }
+
+    function selecionarSubmissaoAdmin(subIdStr) {
+      adminSubmissaoSelId = subIdStr ? Number(subIdStr) : null;
+      lastAdminSig = "";
+      renderizarTudo();
+    }
+
+    async function reavaliarSubmissaoAtual(subId) {
+      if (!MODO_SERVIDOR) return alert("Inicie servidor_dashboard.py para reavaliar submissões ao vivo.");
+      const al = ESTADO.aluno_ativo;
+      anunciarGlobal("Reavaliando correção detalhada da submissão...");
+      const r = await fetch("/api/admin/reavaliar-submissao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ submissao_id: subId, aluno_id: al ? al.id : 0, disciplina: DISCIPLINA_ATIVA }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        anunciarGlobal(`Erro ao reavaliar: ${d.erro || r.status}`);
+        return;
+      }
+      anunciarGlobal(`Correção detalhada atualizada (${d.resultado.acertos}/${d.resultado.total} • ${d.resultado.percentual}%).`);
+      if (al) await carregarEstado(al.id, DISCIPLINA_ATIVA, true);
+    }
+
+    async function reavaliarTodasSubmissoes() {
+      if (!MODO_SERVIDOR) return alert("Inicie servidor_dashboard.py para reavaliar submissões ao vivo.");
+      const al = ESTADO.aluno_ativo;
+      anunciarGlobal("Reavaliando todas as submissões salvas...");
+      const r = await fetch("/api/admin/reavaliar-submissao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ todas: true, aluno_id: al ? al.id : 0, disciplina: DISCIPLINA_ATIVA }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.erro) {
+        anunciarGlobal(`Erro ao reavaliar em lote: ${d.erro || r.status}`);
+        return;
+      }
+      anunciarGlobal(`Lote reavaliado com sucesso (${d.reavaliadas} submissões atualizadas).`);
+      await carregarEstado(al ? al.id : null, DISCIPLINA_ATIVA, true);
     }
 
     function abrirFolhaImpressao() {

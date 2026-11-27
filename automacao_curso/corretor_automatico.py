@@ -696,7 +696,7 @@ def _avaliar_conceitual_portugues(questao: Questao, resp: str, bloco: BlocoCurri
     return None
 
 
-def corrigir_item(questao: Questao, resposta_aluno: str, bloco: BlocoCurricular) -> Dict[str, Any]:
+def _corrigir_item_nucleo(questao: Questao, resposta_aluno: str, bloco: BlocoCurricular) -> Dict[str, Any]:
     resp = (resposta_aluno or "").strip()
     if not resp:
         banco_dados.registrar_metrica_jev("local", "validador_vazio", 1.0, questao.questao_id)
@@ -912,6 +912,270 @@ def corrigir_item(questao: Questao, resposta_aluno: str, bloco: BlocoCurricular)
     }
 
 
+_DISCS_MATEMATICAS_BCC = {
+    "matrizes_vetores",
+    "matematica_discreta",
+    "pre_calculo",
+    "calculo_1",
+    "calculo_2",
+    "algebra_linear",
+    "calculo_numerico",
+    "probabilidade_estatistica",
+}
+
+
+def gerar_esquema_grafico_para_item(
+    item: Dict[str, Any],
+    bloco_id: str,
+    disciplina: str = "algoritmos",
+    questao: Optional[Questao] = None,
+) -> Dict[str, Any]:
+    """Gera esquema pedagogico de 3 etapas + arco de retorno adaptado ao dominio de Ciencia da Computacao."""
+    status = str(item.get("status_correcao") or "incorreto")
+    cat = str(item.get("categoria_erro") or "")
+    tipo = str(item.get("tipo_questao") or (questao.tipo if questao else "") or "codigo").lower()
+    eh_ok = status == "correto"
+    em_branco = cat == "resposta_em_branco"
+
+    if tipo in ("codigo", "bug", "sql"):
+        if em_branco:
+            s1, s2, s3 = "Nao identificado na folha", "Codigo ausente ou ilegivel", "Sem saida verificavel"
+            ok1, ok2, ok3 = False, False, False
+        elif eh_ok:
+            s1, s2, s3 = "Assinatura/tipos corretos", "Sintaxe e logica validas", "Saida e bordas OK"
+            ok1, ok2, ok3 = True, True, True
+        elif cat in ("erro_sintaxe_ou_balanceamento", "violacao_escopo"):
+            s1 = "Rever declaracoes/escopo"
+            s2 = "Falha de sintaxe C99/SQL (ex.: ';', '{ }', tipos)"
+            s3 = "Corrigir antes de testar casos de borda"
+            ok1, ok2, ok3 = True, False, False
+        else:
+            s1 = "Entrada e estrutura reconhecidas"
+            s2 = "Verificar fluxo logico / comandos"
+            s3 = "Divergencia na saida ou caso de borda"
+            ok1, ok2, ok3 = True, False, False
+        return {
+            "titulo_esquema": "Mapa Visual de Resolucao (Codigo / Algoritmos)",
+            "arco_retorno": "A saida produzida deve atender integralmente ao contrato e aos casos de borda do enunciado",
+            "colunas": [
+                {
+                    "titulo": "1. Contrato e Entradas",
+                    "subtitulo": f"Bloco {bloco_id} ({tipo.upper()})",
+                    "tom": "dado",
+                    "como_escrever": [
+                        "Identificar entradas, tipos e restricoes",
+                        "Declarar variaveis e headers obrigatorios",
+                    ],
+                    "ok": ok1,
+                    "erro_aluno": s1,
+                },
+                {
+                    "titulo": "2. Logica e Sintaxe",
+                    "subtitulo": "Desenvolvimento estruturado",
+                    "tom": "autoral",
+                    "como_escrever": [
+                        "Encadear passos sem atalhos ou erros de sintaxe",
+                        "Preservar indentacao, chaves e ';'",
+                    ],
+                    "ok": ok2,
+                    "erro_aluno": s2,
+                },
+                {
+                    "titulo": "3. Saida e Casos de Borda",
+                    "subtitulo": "Validacao final",
+                    "tom": "autoral",
+                    "como_escrever": [
+                        "Rastrear no papel para N=0, negativos ou vazios",
+                        "Conferir formato exato da impressao",
+                    ],
+                    "ok": ok3,
+                    "erro_aluno": s3,
+                },
+            ],
+        }
+
+    if tipo in ("matriz", "vetor", "calculo") or disciplina in _DISCS_MATEMATICAS_BCC:
+        if em_branco:
+            s1, s2, s3 = "Dados nao lidos", "Passos em branco", "Sem resposta final"
+            ok1, ok2, ok3 = False, False, False
+        elif eh_ok:
+            s1, s2, s3 = "Dados e notacao corretos", "Passos consistentes", "Resultado exato conferido"
+            ok1, ok2, ok3 = True, True, True
+        elif cat in ("resposta_incompleta", "erro_formato_ou_leitura", "formato_invalido"):
+            s1 = "Enunciado lido"
+            s2 = "Passo a passo ou subitem incompleto"
+            s3 = "Preencher todos os itens no formato pedido"
+            ok1, ok2, ok3 = True, False, False
+        else:
+            s1 = "Enunciado mapeado"
+            s2 = "Revisar operacoes intermediarias / sinal"
+            s3 = "Valor/dimensao divergente na Resposta Final"
+            ok1, ok2, ok3 = True, False, False
+        return {
+            "titulo_esquema": "Mapa Visual de Resolucao (Matrizes / Matematica)",
+            "arco_retorno": "Conferir se a Resposta Final satisfaz as equacoes/dimensoes iniciais do problema",
+            "colunas": [
+                {
+                    "titulo": "1. Dados e Estrutura",
+                    "subtitulo": f"Bloco {bloco_id} ({tipo.upper()})",
+                    "tom": "dado",
+                    "como_escrever": [
+                        "Extrair vetores, matrizes ou grafos do enunciado",
+                        "Conferir dimensoes, indices e unidades",
+                    ],
+                    "ok": ok1,
+                    "erro_aluno": s1,
+                },
+                {
+                    "titulo": "2. Desenvolvimento",
+                    "subtitulo": "Calculo passo a passo",
+                    "tom": "autoral",
+                    "como_escrever": [
+                        "Manter fracoes e sinais exatos por etapa",
+                        "Registrar pivôs, arestas ou camadas intermediarias",
+                    ],
+                    "ok": ok2,
+                    "erro_aluno": s2,
+                },
+                {
+                    "titulo": "3. Conferencia Final",
+                    "subtitulo": "Formato exato exigido",
+                    "tom": "autoral",
+                    "como_escrever": [
+                        "Substituir o resultado para validar",
+                        "Destacar na caixa Resposta Final",
+                    ],
+                    "ok": ok3,
+                    "erro_aluno": s3,
+                },
+            ],
+        }
+
+    # Perfil Conceitual / Mesa / Lacuna / Logica / Projeto
+    if em_branco:
+        s1, s2, s3 = "Caixa em branco", "Argumentacao ausente", "Sem conclusao"
+        ok1, ok2, ok3 = False, False, False
+    elif eh_ok:
+        s1, s2, s3 = "Definicao precisa", "Fundamentacao tecnica OK", "Criterios e conclusao completos"
+        ok1, ok2, ok3 = True, True, True
+    elif cat == "termo_proibido":
+        s1 = "Abordagem fora do escopo do bloco"
+        s2 = "Evitar termos/recursos nao permitidos ainda"
+        s3 = "Reescrever usando apenas ferramentas do bloco"
+        ok1, ok2, ok3 = False, False, False
+    else:
+        s1 = "Tema central identificado"
+        s2 = "Faltou articular criterio ou rastreamento"
+        s3 = "Completar conclusao objetiva com termos-chave"
+        ok1, ok2, ok3 = True, False, False
+    return {
+        "titulo_esquema": "Mapa Visual de Resolucao (Conceitual / Teste de Mesa)",
+        "arco_retorno": "A resposta final deve fechar diretamente o objetivo pedido no enunciado",
+        "colunas": [
+            {
+                "titulo": "1. Conceito do Bloco",
+                "subtitulo": f"Bloco {bloco_id}",
+                "tom": "dado",
+                "como_escrever": [
+                    "Identificar o que a questao pede exatamente",
+                    "Respeitar a restricao de escopo do bloco",
+                ],
+                "ok": ok1,
+                "erro_aluno": s1,
+            },
+            {
+                "titulo": "2. Desenvolvimento / Rastreio",
+                "subtitulo": "Etapas e justificativa",
+                "tom": "autoral",
+                "como_escrever": [
+                    "Explicar o mecanismo passo a passo (causa -> efeito)",
+                    "Usar termos tecnicos corretos e exatos",
+                ],
+                "ok": ok2,
+                "erro_aluno": s2,
+            },
+            {
+                "titulo": "3. Sintese e Criterios",
+                "subtitulo": "Fechamento verificavel",
+                "tom": "autoral",
+                "como_escrever": [
+                    "Responder todos os subitens (a), (b), ...",
+                    "Conferir clareza e completude antes de enviar",
+                ],
+                "ok": ok3,
+                "erro_aluno": s3,
+            },
+        ],
+    }
+
+
+def _dica_padrao_categoria(cat: str, tipo: str) -> str:
+    mapa = {
+        "resposta_em_branco": "Preencha a caixa correspondente a caneta mantendo os marcadores [QUESTAO: ...] e [/QUESTAO] visiveis na foto.",
+        "erro_sintaxe_ou_balanceamento": "Revise ';' ao fim de instrucoes, balanceamento de chaves/parenteses, headers (#include) e tipos em C.",
+        "erro_logico_ou_borda": "Execute um teste de mesa passo a passo e confira casos extremos (zeros, negativos, empates ou subitens faltantes).",
+        "erro_calculo_ou_sinal": "Refaca as contas etapa por etapa mantendo fracoes/radicais exatos e conferindo sinais + e -.",
+        "resposta_incompleta": "Responda todos os subitens solicitados ((a), (b), ...) exatamente no formato pedido no enunciado.",
+        "termo_proibido": "Use exclusivamente os recursos permitidos na restricao de escopo deste bloco.",
+        "violacao_escopo": "Ajuste a solucao para permanecer estritamente dentro das ferramentas liberadas neste bloco.",
+    }
+    return mapa.get(cat, "Compare cada passo da sua solucao com os exemplos guiados do bloco mantendo sua abordagem principal.")
+
+
+def _enriquecer_feedback_pedagogico_bcc(
+    item: Dict[str, Any], questao: Questao, bloco: BlocoCurricular
+) -> Dict[str, Any]:
+    """Estrutura o feedback em topicos claros mantendo 100% do diagnostico principal e anexa esquema visual."""
+    out = dict(item)
+    disc_id = getattr(bloco, "disciplina", "algoritmos")
+    out["esquema_grafico"] = gerar_esquema_grafico_para_item(out, bloco.bloco_id, disc_id, questao=questao)
+    if out.get("status_correcao") == "correto":
+        return out
+
+    fb = str(out.get("feedback_item") or "").strip()
+    cat = str(out.get("categoria_erro") or "erro_logico_ou_borda")
+    if "\n• " in fb:
+        return out
+
+    spec = questao.spec_matematica if isinstance(questao.spec_matematica, dict) else {}
+    rub = questao.rubrica if isinstance(questao.rubrica, dict) else {}
+    dica_spec = str(spec.get("dica_erro") or rub.get("dica_socratica") or "").strip()
+    como = dica_spec or _dica_padrao_categoria(cat, questao.tipo)
+
+    partes = [fb, f"Como corrigir (mantendo sua ideia): {como}"]
+
+    if cat in ("erro_sintaxe_ou_balanceamento", "violacao_escopo", "formato_invalido", "erro_formato_ou_leitura", "resposta_incompleta"):
+        fmt_hint = (
+            "Confira sintaxe exata (chaves, parenteses, ';', especificadores %d/%lf/%c)."
+            if questao.tipo in ("codigo", "bug", "sql")
+            else "Escreva a resposta no formato pedido no enunciado (ex.: subitens (a), (b), matriz [[...]] ou vetor (...))."
+        )
+        partes.append(f"Sintaxe e Formato Tecnico: {fmt_hint}")
+
+    try:
+        disc_nome = config.obter_disciplina(disc_id)["nome"]
+    except Exception:
+        disc_nome = disc_id
+    titulo_limpo = re.sub(r"`([^`]+)`", r"\1", getattr(bloco, "titulo", "") or bloco.bloco_id)
+    micro = str(getattr(bloco, "micro_habilidade", "") or "").strip()
+    revisar = f"Releia as Instrucoes Curtas e exemplos do Bloco {bloco.bloco_id} ({titulo_limpo}) em {disc_nome}"
+    if micro:
+        revisar += f" — foco: {micro}"
+    partes.append(f"O que revisar no bloco: {revisar}")
+
+    cat_rot = CATEGORIAS_ERRO.get(cat, cat or "Criterio tecnico do bloco")
+    camada_rot = str(out.get("camada_avaliacao") or "local").upper()
+    partes.append(f"Critérios de Avaliação: {cat_rot}; Camada {camada_rot}")
+
+    out["feedback_item"] = "\n• ".join(partes)
+    return out
+
+
+def corrigir_item(questao: Questao, resposta_aluno: str, bloco: BlocoCurricular) -> Dict[str, Any]:
+    it = _corrigir_item_nucleo(questao, resposta_aluno, bloco)
+    return _enriquecer_feedback_pedagogico_bcc(it, questao, bloco)
+
+
 def _avaliar_fluencia_tempo(tempo_min: float, tempo_alvo_min: int) -> Tuple[str, str]:
     if tempo_min <= 0:
         return "nao_informado", "Tempo nao informado na folha; lembre-se de registrar Hora Inicio e Termino."
@@ -936,6 +1200,180 @@ def _rotulo_origem_tempo(origem_tempo: str) -> str:
     return rotulos.get(origem_tempo, origem_tempo)
 
 
+def renderizar_esquema_grafico_html(esq: Optional[Dict[str, Any]]) -> str:
+    """Renderiza o esquema visual pedagogico de 3 etapas e arco de retorno em HTML/SVG inline (e-mail)."""
+    if not isinstance(esq, dict):
+        return ""
+    cols = esq.get("colunas") or []
+    if len(cols) != 3:
+        return ""
+    seta_svg = (
+        '<svg width="24" height="16" viewBox="0 0 24 16" style="display:block;margin:0 auto;">'
+        '<line x1="2" y1="8" x2="19" y2="8" stroke="#6e6d68" stroke-width="1.6"/>'
+        '<polyline points="14,3.5 19.5,8 14,12.5" fill="none" stroke="#6e6d68" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
+        "</svg>"
+    )
+
+    def _box_topo(c: Dict[str, Any]) -> str:
+        dado = c.get("tom") == "dado"
+        bg = "#efefea" if dado else "#e3f5ee"
+        bd = "#8c8b84" if dado else "#1b8a6b"
+        tcol = "#2d2d2a" if dado else "#0c543f"
+        scol = "#5c5b55" if dado else "#167a5c"
+        return (
+            f'<div style="background:{bg};border:1.2px solid {bd};border-radius:8px;padding:8px 10px;text-align:center;">'
+            f'<div style="font-weight:700;font-size:12.5px;color:{tcol};">{html.escape(str(c.get("titulo") or ""))}</div>'
+            f'<div style="font-size:11px;color:{scol};margin-top:2px;">{html.escape(str(c.get("subtitulo") or ""))}</div>'
+            "</div>"
+        )
+
+    def _box_como(c: Dict[str, Any]) -> str:
+        dado = c.get("tom") == "dado"
+        bg = "#efefea" if dado else "#e3f5ee"
+        bd = "#8c8b84" if dado else "#1b8a6b"
+        col = "#494843" if dado else "#0f634a"
+        linhas = "".join(f"<div>{html.escape(str(x))}</div>" for x in (c.get("como_escrever") or []))
+        return (
+            f'<div style="background:{bg};border:1.2px solid {bd};border-radius:8px;padding:8px 10px;font-size:11.5px;line-height:1.45;color:{col};">'
+            f"{linhas}</div>"
+        )
+
+    def _box_erro(c: Dict[str, Any]) -> str:
+        ok = bool(c.get("ok"))
+        bg = "#f2faf6" if ok else "#fbece7"
+        bd = "1px dashed #6eb89e" if ok else "1.2px solid #c86448"
+        col = "#166e52" if ok else "#8c3119"
+        return (
+            f'<div style="background:{bg};border:{bd};border-radius:8px;padding:8px 10px;font-size:11.8px;font-weight:500;line-height:1.38;color:{col};">'
+            f"{html.escape(str(c.get('erro_aluno') or ''))}</div>"
+        )
+
+    tit_esq = html.escape(str(esq.get("titulo_esquema") or "Mapa Visual de Resolucao"))
+    arco_lbl = html.escape(str(esq.get("arco_retorno") or "Validar saida frente ao enunciado"))
+    return (
+        '<div style="margin:10px 0 6px;padding:12px 14px;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;overflow-x:auto;">'
+        '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid #f1f5f9;font-size:11.5px;">'
+        f'<strong style="color:#0f172a;">🗺️ {tit_esq}</strong>'
+        '<span style="color:#475569;">🟢 Etapa autoral &nbsp;&bull;&nbsp; ⚪ Base do enunciado &nbsp;&bull;&nbsp; 🔴 Ponto a corrigir</span>'
+        "</div>"
+        '<div style="min-width:520px;font-family:Segoe UI,system-ui,Arial,sans-serif;">'
+        '<div style="display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr;align-items:center;">'
+        f"{_box_topo(cols[0])}<div>{seta_svg}</div>{_box_topo(cols[1])}<div>{seta_svg}</div>{_box_topo(cols[2])}"
+        "</div>"
+        '<div style="font-size:11.5px;font-weight:600;color:#575650;margin:9px 0 4px;">Como resolver</div>'
+        '<div style="display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr;align-items:stretch;">'
+        f"{_box_como(cols[0])}<div></div>{_box_como(cols[1])}<div></div>{_box_como(cols[2])}"
+        "</div>"
+        '<div style="font-size:11.5px;font-weight:600;color:#575650;margin:9px 0 4px;">Diagnostico na tentativa</div>'
+        '<div style="display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr;align-items:stretch;">'
+        f"{_box_erro(cols[0])}<div></div>{_box_erro(cols[1])}<div></div>{_box_erro(cols[2])}"
+        "</div>"
+        '<svg viewBox="0 0 600 42" style="width:100%;height:40px;display:block;margin-top:2px;">'
+        '<path d="M 504 2 L 504 19 L 96 19 L 96 5" fill="none" stroke="#1b8a6b" stroke-width="1.8" stroke-dasharray="5,4"/>'
+        '<polyline points="91,11 96,4 101,11" fill="none" stroke="#1b8a6b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+        f'<text x="300" y="36" text-anchor="middle" fill="#4b4a45" font-size="11.5" font-family="Segoe UI,Arial,sans-serif">{arco_lbl}</text>'
+        "</svg></div></div>"
+    )
+
+
+def _destacar_texto_feedback_html(raw: str) -> str:
+    s = html.escape(str(raw or ""))
+    s = re.sub(
+        r"^\[([A-Z0-9-]+)\]\s*",
+        r'<span style="display:inline-block;background:#1e293b;color:#ffffff;font-weight:700;font-size:11.5px;padding:1px 7px;border-radius:4px;margin-right:5px;">\1</span>',
+        s,
+    )
+    s = re.sub(
+        r"`([^`\n]{1,120}?)`",
+        r'<code style="background:rgba(15,23,42,0.08);padding:1px 5px;border-radius:4px;color:#0f172a;font-family:Consolas,monospace;font-weight:700;">\1</code>',
+        s,
+    )
+    s = re.sub(
+        r"&quot;([^&]{1,140}?)&quot;",
+        r'<strong style="background:rgba(15,23,42,0.07);padding:1px 5px;border-radius:4px;color:#0f172a;">&ldquo;\1&rdquo;</strong>',
+        s,
+    )
+    s = re.sub(
+        r"(int main\(void\)|printf|scanf|return 0|#include|BFS|DFS|Dijkstra|Kruskal|Kahn|matriz|vetor|grafo|caso de borda|Bloco\s+[A-H][0-9]{2})",
+        r"<strong>\1</strong>",
+        s,
+    )
+    return s
+
+
+def formatar_feedback_destacado_html(fb_bruto: str, eh_ok: bool) -> str:
+    """Formata o texto de feedback em cartoes semanticos coloridos com emojis e negrito."""
+    txt = str(fb_bruto or "").strip()
+    if not txt:
+        return ""
+    partes = re.split(r"\n•\s+", txt)
+    cabecalho = partes[0].strip()
+    topicos = partes[1:]
+    blocos: List[str] = []
+
+    if eh_ok:
+        blocos.append(
+            '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-left:4px solid #16a34a;border-radius:6px;padding:8px 11px;color:#14532d;font-size:13px;line-height:1.5;margin-top:6px;">'
+            f"✅ <strong>Domínio Comprovado:</strong> {_destacar_texto_feedback_html(cabecalho)}"
+            "</div>"
+        )
+    else:
+        blocos.append(
+            '<div style="background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #dc2626;border-radius:6px;padding:8px 11px;color:#7f1d1d;font-size:13px;line-height:1.52;margin-top:6px;">'
+            '<div style="font-weight:700;color:#991b1b;margin-bottom:3px;">🔴 🎯 Diagnóstico Principal</div>'
+            f"<div>{_destacar_texto_feedback_html(cabecalho)}</div>"
+            "</div>"
+        )
+
+    for top in topicos:
+        t = top.strip()
+        if not t:
+            continue
+        if re.match(r"^(Como corrigir|Versão corrigida|Como estruturar)", t, flags=re.IGNORECASE):
+            tit, _, corpo = t.partition(":")
+            corpo_html = "".join(
+                f'<div style="margin-top:3px;">{_destacar_texto_feedback_html(ln)}</div>'
+                for ln in corpo.strip().splitlines()
+                if ln.strip()
+            )
+            blocos.append(
+                '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-left:4px solid #059669;border-radius:6px;padding:8px 11px;color:#064e3b;font-size:12.8px;line-height:1.48;margin-top:6px;">'
+                f'<div style="font-weight:700;color:#047857;">🟢 ✍️ {html.escape(tit.strip())}</div>'
+                f"{corpo_html}</div>"
+            )
+        elif re.match(r"^(Sintaxe e Formato|Correção Gramatical)", t, flags=re.IGNORECASE):
+            tit, _, corpo = t.partition(":")
+            blocos.append(
+                '<div style="background:#f5f3ff;border:1px solid #ddd6fe;border-left:4px solid #7c3aed;border-radius:6px;padding:8px 11px;color:#4c1d95;font-size:12.5px;line-height:1.46;margin-top:6px;">'
+                f'<div style="font-weight:700;color:#6d28d9;">🟣 📝 {html.escape(tit.strip())}</div>'
+                f'<div style="margin-top:3px;">{_destacar_texto_feedback_html(corpo.strip())}</div></div>'
+            )
+        elif re.match(r"^O que revisar", t, flags=re.IGNORECASE):
+            _, _, corpo = t.partition(":")
+            blocos.append(
+                '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #2563eb;border-radius:6px;padding:7px 11px;color:#1e3a8a;font-size:12.5px;line-height:1.46;margin-top:6px;">'
+                f"<strong>🔵 📘 Onde Revisar no Bloco:</strong> {_destacar_texto_feedback_html(corpo.strip())}</div>"
+            )
+        elif re.match(r"^(Critérios de Avaliação|Barema)", t, flags=re.IGNORECASE):
+            tit, _, corpo = t.partition(":")
+            chips = "".join(
+                f'<span style="display:inline-block;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:2px 8px;margin:4px 5px 0 0;font-size:11.8px;font-weight:600;color:#92400e;">{html.escape(c.strip())}</span>'
+                for c in corpo.split(";")
+                if c.strip()
+            )
+            blocos.append(
+                '<div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:6px;padding:7px 11px;color:#78350f;font-size:12.5px;margin-top:6px;">'
+                f'<div style="font-weight:700;color:#92400e;">🟠 ⚖️ {html.escape(tit.strip())}</div>'
+                f"<div>{chips}</div></div>"
+            )
+        else:
+            blocos.append(
+                '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:7px 11px;font-size:12.5px;margin-top:6px;">'
+                f"{_destacar_texto_feedback_html(t)}</div>"
+            )
+    return "".join(blocos)
+
+
 def _montar_html_feedback(
     aluno: Dict[str, Any],
     bloco: BlocoCurricular,
@@ -955,12 +1393,13 @@ def _montar_html_feedback(
 ) -> str:
     linhas_itens = []
     for it in itens:
-        cor = "#16a34a" if it["status_correcao"] == "correto" else "#dc2626"
-        bg = "#f0fdf4" if it["status_correcao"] == "correto" else "#fef2f2"
-        badge = "CORRETO" if it["status_correcao"] == "correto" else "ERRO"
+        eh_ok = it["status_correcao"] == "correto"
+        cor = "#16a34a" if eh_ok else "#dc2626"
+        bg = "#f0fdf4" if eh_ok else "#fef2f2"
+        badge = "CORRETO" if eh_ok else ("PARCIAL" if it["status_correcao"] == "parcial" else "REVISAR")
         linhas_itens.append(
             f"""
-            <div style="border-left: 4px solid {cor}; background: {bg}; padding: 10px 12px; margin-bottom: 10px; border-radius: 4px;">
+            <div style="border-left: 4px solid {cor}; background: {bg}; padding: 10px 12px; margin-bottom: 10px; border-radius: 6px;">
               <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 4px;">
                 <span>{html.escape(it['questao_id'])} ({html.escape(it['tipo_questao'])})</span>
                 <span style="color: {cor};">{badge} &bull; Camada: {html.escape(it['camada_avaliacao'])}</span>
@@ -969,10 +1408,26 @@ def _montar_html_feedback(
                 <strong>Transcricao OCR capturada:</strong>
                 <pre style="background: #ffffff; border: 1px solid #cbd5e1; padding: 6px; margin: 4px 0; font-family: Consolas, monospace; font-size: 12px; white-space: pre-wrap;">{html.escape(it['resposta_extraida'] or '(em branco)')}</pre>
               </div>
-              <div style="font-size: 13.5px; color: #0f172a;"><strong>Feedback:</strong> {html.escape(it['feedback_item'])}</div>
+              {renderizar_esquema_grafico_html(it.get("esquema_grafico"))}
+              {formatar_feedback_destacado_html(it['feedback_item'], eh_ok)}
             </div>
             """
         )
+
+    legenda_html = (
+        ""
+        if acertos == total
+        else (
+            '<div style="padding:8px 11px;margin:8px 0 12px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;color:#334155;">'
+            '<strong style="color:#0f172a;margin-right:4px;">🎨 Legenda da Correção:</strong> '
+            '<span style="color:#991b1b;font-weight:600;">🔴 🎯 Diagnóstico</span> &bull; '
+            '<span style="color:#065f46;font-weight:600;">🟢 ✍️ Como Corrigir</span> &bull; '
+            '<span style="color:#5b21b6;font-weight:600;">🟣 📝 Sintaxe/Formato</span> &bull; '
+            '<span style="color:#1e40af;font-weight:600;">🔵 📘 Onde Revisar</span> &bull; '
+            '<span style="color:#92400e;font-weight:600;">🟠 ⚖️ Critérios</span>'
+            "</div>"
+        )
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -1000,6 +1455,7 @@ def _montar_html_feedback(
       <strong>Proximo Passo:</strong> {html.escape(decisao_desc)}
     </p>
     <h3>Detalhamento Item a Item</h3>
+    {legenda_html}
     {"".join(linhas_itens)}
   </div>
 </body>
@@ -1379,3 +1835,116 @@ class OrquestradorCurso:
                     }
                 )
         return resultados
+
+
+def reavaliar_submissao_existente(
+    submissao_id: int, orq: Optional[OrquestradorCurso] = None
+) -> Optional[Dict[str, Any]]:
+    """Reavalia os itens salvos de uma submissao aplicando o corretor, feedback estruturado e esquema grafico atuais."""
+    sub = banco_dados.obter_submissao_por_id(int(submissao_id))
+    if not sub:
+        return None
+    ctrl = orq or OrquestradorCurso()
+    disc_id = config.normalizar_disciplina_id(sub.get("disciplina") or config.DISCIPLINA_PADRAO)
+    cat = ctrl.obter_catalogo(disc_id)
+    bloco = cat.obter(sub["bloco"])
+    modo = str(sub.get("modo") or "pratica")
+    questoes = bloco.obter_questoes(modo=modo, incluir_opcionais=True)
+    mapa_q = {q.questao_id: q for q in questoes}
+
+    novos_itens: List[Dict[str, Any]] = []
+    erros_cats: List[str] = []
+    for ir in (sub.get("itens") or []):
+        qid = str(ir.get("questao_id") or "")
+        resp_q = str(ir.get("resposta_extraida") or "")
+        q_obj = mapa_q.get(qid)
+        if q_obj is not None:
+            it = corrigir_item(q_obj, resp_q, bloco)
+            it["resposta_extraida"] = resp_q
+        else:
+            it = dict(ir)
+            it["esquema_grafico"] = gerar_esquema_grafico_para_item(it, bloco.bloco_id, disc_id)
+        novos_itens.append(it)
+        if it.get("status_correcao") != "correto" and it.get("categoria_erro"):
+            erros_cats.append(str(it["categoria_erro"]))
+
+    total_q = len(novos_itens)
+    acertos = sum(1 for it in novos_itens if it.get("status_correcao") == "correto")
+    pct = round((acertos / total_q) * 100.0, 1) if total_q > 0 else 0.0
+    dificuldade = ", ".join(sorted(set(erros_cats))) if erros_cats else "nenhuma"
+
+    aluno = banco_dados.obter_aluno_por_id(int(sub["aluno_id"]), incluir_pin=False, disciplina=disc_id) or {
+        "id": sub["aluno_id"],
+        "nome": "Aluno",
+        "email": "",
+    }
+    prova = banco_dados.obter_prova(sub["protocolo"]) or {}
+    tempo_alvo = int(
+        prova.get("tempo_alvo_min")
+        or (bloco.tempo_pratica_min if modo == "pratica" else bloco.tempo_checagem_min)
+        or 20
+    )
+    tempo_decl = float(sub.get("tempo_declarado_min") or 0.0)
+    _, fluencia_msg = _avaliar_fluencia_tempo(tempo_decl, tempo_alvo)
+    decisao_titulo = str(sub.get("proxima_acao") or "REAVALIADO")
+    decisao_desc = f"Reavaliacao detalhada executada ({acertos}/{total_q} - {pct:.0f}%)."
+    html_fb = _montar_html_feedback(
+        aluno=aluno,
+        bloco=bloco,
+        protocolo=str(sub["protocolo"]),
+        variante=str(sub["variante"]),
+        tentativa=int(sub["tentativa"]),
+        tempo_min=tempo_decl,
+        tempo_alvo=tempo_alvo,
+        fluencia_msg=fluencia_msg,
+        acertos=acertos,
+        total=total_q,
+        pct=pct,
+        itens=novos_itens,
+        decisao_titulo=decisao_titulo,
+        decisao_desc=decisao_desc,
+    )
+    banco_dados.atualizar_reavaliacao_submissao(
+        submissao_id=int(submissao_id),
+        acertos=acertos,
+        total=total_q,
+        pct=pct,
+        dificuldade=dificuldade,
+        relatorio_html=html_fb,
+        itens=novos_itens,
+    )
+    return {
+        "submissao_id": int(submissao_id),
+        "aluno_id": int(sub["aluno_id"]),
+        "disciplina": disc_id,
+        "acertos": acertos,
+        "total": total_q,
+        "percentual": pct,
+        "itens": novos_itens,
+    }
+
+
+def reavaliar_feedbacks_salvos(
+    disciplina: Optional[str] = None,
+    aluno_id: Optional[int] = None,
+    orq: Optional[OrquestradorCurso] = None,
+) -> int:
+    """Reavalia em lote submissoes ja salvas para atualizar feedback estruturado e esquemas graficos."""
+    banco_dados.inicializar_banco()
+    ctrl = orq or OrquestradorCurso()
+    clausulas: List[str] = []
+    params: List[Any] = []
+    if disciplina:
+        clausulas.append("COALESCE(disciplina, 'algoritmos') = ?")
+        params.append(config.normalizar_disciplina_id(disciplina))
+    if aluno_id is not None:
+        clausulas.append("aluno_id = ?")
+        params.append(int(aluno_id))
+    where_sql = ("WHERE " + " AND ".join(clausulas)) if clausulas else ""
+    with banco_dados.conectar() as conn:
+        rows = conn.execute(f"SELECT id FROM submissoes {where_sql} ORDER BY id DESC", params).fetchall()
+    qtd = 0
+    for r in rows:
+        if reavaliar_submissao_existente(int(r["id"]), orq=ctrl) is not None:
+            qtd += 1
+    return qtd

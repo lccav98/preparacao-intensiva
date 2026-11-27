@@ -24,6 +24,7 @@ from typing import Any, Dict, Optional
 
 import banco_dados
 import config
+import corretor_automatico
 import gerador_folha
 import servico_email
 from catalogo_curricular import CatalogoCurricular
@@ -202,6 +203,7 @@ def _sanitizar_resumo_correcao_aluno(res: Dict[str, Any]) -> Dict[str, Any]:
             "status_correcao": it.get("status_correcao", ""),
             "categoria_erro": it.get("categoria_erro", ""),
             "feedback_item": it.get("feedback_item", ""),
+            "esquema_grafico": it.get("esquema_grafico"),
         }
         for it in (res.get("itens") or [])
     ]
@@ -1538,6 +1540,88 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     return
                 resultados = obter_watcher().executar_ciclo_agora()
                 self._enviar_json({"processados": len(resultados), "resultados": resultados})
+                return
+
+            if path == "/api/aluno/nova-tentativa":
+                sess = self._exigir_sessao_api()
+                if not sess:
+                    return
+                disc_req = config.normalizar_disciplina_id(
+                    body.get("disciplina") or config.DISCIPLINA_PADRAO
+                )
+                if sess["role"] == "aluno":
+                    aid_req = int(sess["aluno_id"])
+                else:
+                    aid_req = int(body.get("aluno_id") or 0)
+                if aid_req <= 0:
+                    self._enviar_json({"erro": "Aluno nao identificado."}, status=400)
+                    return
+                al_atual = banco_dados.obter_aluno_por_id(aid_req, incluir_pin=False, disciplina=disc_req)
+                if not al_atual:
+                    self._enviar_json({"erro": "Aluno nao encontrado."}, status=404)
+                    return
+                if al_atual.get("status_curso") == "CONCLUIDO":
+                    self._enviar_json({"erro": "Disciplina ja concluida com 100% de dominio."}, status=400)
+                    return
+                pendente = banco_dados.obter_prova_pendente_por_aluno_id(aid_req, disciplina=disc_req)
+                if pendente:
+                    self._enviar_json({"ok": True, "prova": pendente, "ja_existia": True})
+                    return
+
+                estado_al = banco_dados.obter_estado_portal_aluno(aid_req, disciplina=disc_req) or {}
+                ultima_sub = estado_al.get("ultima_submissao") or {}
+                bloco_alvo = al_atual["bloco_atual"]
+                var_alvo = al_atual["variante_atual"]
+                modo_alvo = al_atual["modo_atual"]
+                tent_alvo = int(al_atual.get("tentativa_bloco") or 1)
+                if (
+                    ultima_sub
+                    and ultima_sub.get("bloco") == bloco_alvo
+                    and ultima_sub.get("modo") == modo_alvo
+                    and int(ultima_sub.get("tentativa") or 0) >= tent_alvo
+                    and float(ultima_sub.get("percentual_acerto") or 0) < 100.0
+                ):
+                    tent_alvo = int(ultima_sub["tentativa"]) + 1
+                    banco_dados.atualizar_estado_aluno(
+                        aid_req, bloco_alvo, var_alvo, tent_alvo, modo_alvo, disciplina=disc_req
+                    )
+                res_em = orq.emitir_e_enviar_prova(
+                    aluno_id=aid_req,
+                    bloco_id=bloco_alvo,
+                    variante=var_alvo,
+                    tentativa=tent_alvo,
+                    modo=modo_alvo,
+                    disciplina=disc_req,
+                )
+                gerar_snapshot_dashboard(aid_req, disciplina=disc_req)
+                self._enviar_json({"ok": True, "prova": res_em["prova"], "ja_existia": False})
+                return
+
+            if path == "/api/admin/reavaliar-submissao":
+                if not self._exigir_admin_api():
+                    return
+                todas = bool(body.get("todas", False))
+                aid_alvo = int(body.get("aluno_id") or 0) if str(body.get("aluno_id") or "").isdigit() else None
+                disc_req = config.normalizar_disciplina_id(body.get("disciplina") or config.DISCIPLINA_PADRAO)
+                if todas:
+                    qtd = corretor_automatico.reavaliar_feedbacks_salvos(
+                        disciplina=body.get("disciplina") or None,
+                        aluno_id=aid_alvo if (aid_alvo and aid_alvo > 0) else None,
+                        orq=orq,
+                    )
+                    gerar_snapshot_dashboard(aid_alvo, disciplina=disc_req)
+                    self._enviar_json({"ok": True, "reavaliadas": qtd})
+                    return
+                sid = int(body.get("submissao_id") or 0)
+                if sid <= 0:
+                    self._enviar_json({"erro": "Informe submissao_id valido ou todas=true."}, status=400)
+                    return
+                res_reav = corretor_automatico.reavaliar_submissao_existente(sid, orq=orq)
+                if not res_reav:
+                    self._enviar_json({"erro": "Submissao nao encontrada."}, status=404)
+                    return
+                gerar_snapshot_dashboard(res_reav.get("aluno_id") or aid_alvo, disciplina=res_reav.get("disciplina") or disc_req)
+                self._enviar_json({"ok": True, "resultado": res_reav})
                 return
 
             if path == "/api/admin/config-integracoes":

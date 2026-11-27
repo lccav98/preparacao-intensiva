@@ -9,6 +9,7 @@ import csv
 import datetime
 import hashlib
 import hmac
+import json
 import os
 import re
 import secrets
@@ -238,6 +239,7 @@ def inicializar_banco() -> None:
                 status_correcao TEXT NOT NULL,
                 categoria_erro TEXT NOT NULL DEFAULT '',
                 feedback_item TEXT NOT NULL,
+                esquema_json TEXT NOT NULL DEFAULT '',
                 camada_avaliacao TEXT NOT NULL DEFAULT 'local',
                 confianca REAL NOT NULL DEFAULT 1.0,
                 FOREIGN KEY (submissao_id) REFERENCES submissoes(id)
@@ -284,6 +286,10 @@ def inicializar_banco() -> None:
         cols_subs = [r["name"] for r in conn.execute("PRAGMA table_info(submissoes)").fetchall()]
         if "disciplina" not in cols_subs:
             conn.execute("ALTER TABLE submissoes ADD COLUMN disciplina TEXT NOT NULL DEFAULT 'algoritmos'")
+
+        cols_itens = [r["name"] for r in conn.execute("PRAGMA table_info(itens_submissao)").fetchall()]
+        if "esquema_json" not in cols_itens:
+            conn.execute("ALTER TABLE itens_submissao ADD COLUMN esquema_json TEXT NOT NULL DEFAULT ''")
 
         cols_alunos = [r["name"] for r in conn.execute("PRAGMA table_info(alunos)").fetchall()]
         if "senha_hash" not in cols_alunos:
@@ -1147,12 +1153,15 @@ def registrar_submissao(dados: Dict[str, Any], itens: List[Dict[str, Any]]) -> i
         )
         sub_id = cur.lastrowid
         for it in itens:
+            esq_raw = it.get("esquema_json")
+            if not esq_raw and it.get("esquema_grafico"):
+                esq_raw = json.dumps(it["esquema_grafico"], ensure_ascii=False)
             conn.execute(
                 """
                 INSERT INTO itens_submissao (
                     submissao_id, questao_id, tipo_questao, resposta_extraida,
-                    status_correcao, categoria_erro, feedback_item, camada_avaliacao, confianca
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    status_correcao, categoria_erro, feedback_item, esquema_json, camada_avaliacao, confianca
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     sub_id,
@@ -1162,12 +1171,110 @@ def registrar_submissao(dados: Dict[str, Any], itens: List[Dict[str, Any]]) -> i
                     it["status_correcao"],
                     it.get("categoria_erro", ""),
                     it["feedback_item"],
+                    str(esq_raw or ""),
                     it.get("camada_avaliacao", "local"),
                     it.get("confianca", 1.0),
                 ),
             )
         conn.commit()
         return int(sub_id)
+
+
+def obter_submissao_por_id(submissao_id: int) -> Optional[Dict[str, Any]]:
+    inicializar_banco()
+    with conectar() as conn:
+        row = conn.execute("SELECT * FROM submissoes WHERE id = ?", (int(submissao_id),)).fetchone()
+        if not row:
+            return None
+        sub = dict(row)
+        itens_rows = conn.execute(
+            "SELECT * FROM itens_submissao WHERE submissao_id = ? ORDER BY id ASC",
+            (int(submissao_id),),
+        ).fetchall()
+        sub["itens"] = [dict(r) for r in itens_rows]
+        return sub
+
+
+def atualizar_reavaliacao_submissao(
+    submissao_id: int,
+    acertos: int,
+    total: int,
+    pct: float,
+    dificuldade: str,
+    relatorio_html: str,
+    itens: List[Dict[str, Any]],
+) -> None:
+    inicializar_banco()
+    with conectar() as conn:
+        conn.execute(
+            """
+            UPDATE submissoes
+            SET acertos_iniciais = ?,
+                total_questoes = ?,
+                acertos_apos_correcao = ?,
+                percentual_acerto = ?,
+                dificuldade_observada = ?,
+                relatorio_feedback_html = ?
+            WHERE id = ?
+            """,
+            (
+                int(acertos),
+                int(total),
+                int(acertos),
+                float(pct),
+                str(dificuldade or "nenhuma"),
+                str(relatorio_html or ""),
+                int(submissao_id),
+            ),
+        )
+        conn.execute("DELETE FROM itens_submissao WHERE submissao_id = ?", (int(submissao_id),))
+        for it in itens:
+            esq_raw = it.get("esquema_json")
+            if not esq_raw and it.get("esquema_grafico"):
+                esq_raw = json.dumps(it["esquema_grafico"], ensure_ascii=False)
+            conn.execute(
+                """
+                INSERT INTO itens_submissao (
+                    submissao_id, questao_id, tipo_questao, resposta_extraida,
+                    status_correcao, categoria_erro, feedback_item, esquema_json, camada_avaliacao, confianca
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    int(submissao_id),
+                    it["questao_id"],
+                    it["tipo_questao"],
+                    it.get("resposta_extraida", ""),
+                    it["status_correcao"],
+                    it.get("categoria_erro", ""),
+                    it["feedback_item"],
+                    str(esq_raw or ""),
+                    it.get("camada_avaliacao", "local"),
+                    it.get("confianca", 1.0),
+                ),
+            )
+        conn.commit()
+
+
+def _enriquecer_item_exibicao(
+    item: Dict[str, Any], bloco_id: str, disciplina: str = config.DISCIPLINA_PADRAO
+) -> Dict[str, Any]:
+    out = dict(item)
+    esq_obj = out.get("esquema_grafico")
+    if not esq_obj and out.get("esquema_json"):
+        try:
+            esq_obj = json.loads(str(out["esquema_json"]))
+        except Exception:
+            esq_obj = None
+    if not esq_obj and str(out.get("status_correcao") or "") != "correto":
+        try:
+            import corretor_automatico as _ca_esq
+
+            esq_obj = _ca_esq.gerar_esquema_grafico_para_item(out, bloco_id, disciplina)
+        except Exception:
+            esq_obj = None
+    out["esquema_grafico"] = esq_obj
+    out.pop("esquema_json", None)
+    return out
 
 
 def registrar_metrica_jev(camada: str, modulo: str, confianca: float, detalhes: str = "") -> None:
@@ -1541,11 +1648,12 @@ def obter_estado_portal_aluno(
 
         itens_por_sub: Dict[int, List[Dict[str, Any]]] = {}
         if subs_raw:
-            sub_ids = [int(s["id"]) for s in subs_raw]
+            sub_bloco_map = {int(s["id"]): str(s["bloco"]) for s in subs_raw}
+            sub_ids = list(sub_bloco_map.keys())
             placeholders = ",".join("?" for _ in sub_ids)
             for ir in conn.execute(
                 f"""
-                SELECT submissao_id, questao_id, tipo_questao, resposta_extraida, status_correcao, categoria_erro, feedback_item
+                SELECT submissao_id, questao_id, tipo_questao, resposta_extraida, status_correcao, categoria_erro, feedback_item, esquema_json
                 FROM itens_submissao
                 WHERE submissao_id IN ({placeholders})
                 ORDER BY submissao_id ASC, id ASC
@@ -1554,6 +1662,7 @@ def obter_estado_portal_aluno(
             ).fetchall():
                 d_ir = dict(ir)
                 sid_row = int(d_ir.pop("submissao_id"))
+                d_ir = _enriquecer_item_exibicao(d_ir, sub_bloco_map.get(sid_row, ""), disc_id)
                 itens_por_sub.setdefault(sid_row, []).append(d_ir)
 
         ultima_sub = None
@@ -1752,7 +1861,7 @@ def obter_estado_dashboard(
             ]
             for s in subs:
                 itens = [
-                    dict(ir)
+                    _enriquecer_item_exibicao(dict(ir), s["bloco"], disc_id)
                     for ir in conn.execute(
                         "SELECT * FROM itens_submissao WHERE submissao_id = ? ORDER BY id ASC",
                         (s["id"],),
